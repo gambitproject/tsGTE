@@ -34,7 +34,7 @@ module GTE{
         convertToChance(probabilities?:Array<number>){
             this.type = NodeType.CHANCE;
             if(probabilities && this.childrenMoves.length == probabilities.length){
-                for (var i = 0; i < this.childrenMoves.length; i++) {
+                for (let i = 0; i < this.childrenMoves.length; i++) {
                     this.childrenMoves[i].convertToChance(1/probabilities[i]);
                 }
             }
@@ -54,14 +54,16 @@ module GTE{
         }
 
         addChild(node?:Node){
-            var child = node || new Node();
+            let child = node || new Node();
 
-            node.parent = this;
-            node.type = NodeType.DEFAULT;
-            node.depth = this.depth+1;
+            child.parent = this;
+            child.type = NodeType.DEFAULT;
+            child.depth = this.depth+1;
 
-            this.children.push(node);
-            this.childrenMoves.push(new Move(this,node));
+            this.children.push(child);
+            let move = new Move(this,child);
+            child.parentMove=move;
+            this.childrenMoves.push(move);
         }
 
         removeChild(node:Node){
