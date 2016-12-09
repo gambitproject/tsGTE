@@ -16,7 +16,6 @@ module GTE{
                 } else{
                     this.playerPayoffPairs.push({player:players[i],payoff:0});
                 }
-
             }
         }
 

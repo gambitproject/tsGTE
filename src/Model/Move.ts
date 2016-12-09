@@ -10,7 +10,6 @@ module GTE {
             this.type = MoveType.DEFAULT;
             this.from = from;
             this.to = to;
-
         }
 
         convertToLabeled(label?:string){
