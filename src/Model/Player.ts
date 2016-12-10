@@ -2,10 +2,12 @@ module GTE{
     export class Player{
         id:number;
         label: string;
+        color: string;
 
-        constructor(id?:number,label?:string){
+        constructor(id?:number,label?:string, color?:string){
             this.id = id || 0;
             this.label = label || "";
+            this.color = color || "#000";
         }
 
         destroy(){

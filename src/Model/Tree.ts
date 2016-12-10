@@ -8,7 +8,10 @@ module GTE {
         strategicForm: StrategicForm;
 
         constructor() {
-
+            this.nodes = [];
+            this.moves = [];
+            this.iSets = [];
+            this.players = [];
         }
 
         addPlayer(player:Player){
