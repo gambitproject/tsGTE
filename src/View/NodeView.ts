@@ -1,89 +1,75 @@
 module GTE {
-    export class NodeView {
+    export class NodeView extends Phaser.Sprite{
         game: Phaser.Game;
         node: Node;
-        x: number;
-        y: number;
 
-        //The overlay is used to detect actions on the sprite
-        overlay:Phaser.Sprite;
         circle: Phaser.Sprite;
         square: Phaser.Sprite;
         label: Phaser.Text;
         //Horizontal offset: -1 for left, 1 for right;
-        labelHorizontalOffset:number;
+        labelHorizontalOffset: number;
         tint: number;
-        scale: number;
-
-        inputHandler:Phaser.Signal;
-
-        signal: Phaser.Signal;
+        inputHandler: Phaser.Signal;
 
         constructor(game: Phaser.Game, node: Node, x?: number, y?: number) {
-            this.game = game;
+            super(game,x,y,"");
+            this.anchor.set(0.5, 0.5);
+            this.scale.set(OVERLAY_SCALE, OVERLAY_SCALE);
+            this.inputEnabled = true;
             this.node = node;
-            this.x = x || 0;
-            this.y = y || 0;
-            if(this.node.owner) {
+            if (this.node.owner) {
                 this.tint = Phaser.Color.hexToRGB(node.owner.color);
             }
-            else{
+            else {
                 this.tint = Phaser.Color.hexToRGB("#000");
             }
-            this.labelHorizontalOffset = -1;
+            this.labelHorizontalOffset = 1;
 
             this.createSprites();
             this.createLabel();
 
             this.inputHandler = new Phaser.Signal();
+
+            this.game.add.existing(this);
         }
 
-        private createSprites(){
-            this.circle = this.game.add.sprite(this.x,this.y,this.game.cache.getBitmapData("node-circle"));
-            this.square = this.game.add.sprite(this.x,this.y,this.game.cache.getBitmapData("node-square"));
+        private createSprites() {
+            this.circle = this.game.add.sprite(this.x, this.y, this.game.cache.getBitmapData("node-circle"));
+            this.square = this.game.add.sprite(this.x, this.y, this.game.cache.getBitmapData("node-square"));
             this.circle.tint = this.tint;
             this.square.tint = this.tint;
             this.square.alpha = 0;
-            this.circle.anchor.set(0.5,0.5);
-            this.square.anchor.set(0.5,0.5);
-            this.circle.scale.set(1/NODE_SCALE,1/NODE_SCALE);
-            this.square.anchor.set(1/NODE_SCALE,1/NODE_SCALE);
+            this.circle.anchor.set(0.5, 0.5);
+            this.square.anchor.set(0.5, 0.5);
+            this.circle.smoothed = true;
 
-            this.overlay = this.game.add.sprite(this.x,this.y,"");
-            this.overlay.width = this.circle.width*OVERLAY_SCALE;
-            this.overlay.height = this.circle.width*OVERLAY_SCALE;
-            this.overlay.anchor.set(0.5,0.5);
-            this.overlay.inputEnabled = true;
-
-            this.overlay.events.onInputOver.add(()=>this.inputHandler.dispatch(this,"inputOver"));
-            this.overlay.events.onInputOut.add(()=>this.inputHandler.dispatch(this,"inputOut"));
-            this.overlay.events.onInputDown.add(()=>this.inputHandler.dispatch(this,"inputDown"));
+            this.events.onInputOver.add(() => this.inputHandler.dispatch(this, "inputOver"));
+            this.events.onInputOut.add(() => this.inputHandler.dispatch(this, "inputOut"));
+            this.events.onInputDown.add(() => this.inputHandler.dispatch(this, "inputDown"));
         }
 
-        private createLabel(){
-            this.label = this.game.add.text(this.x+this.labelHorizontalOffset*this.circle.width,
-                this.y-this.circle.width, "",null);
-            if(this.node.owner){
+        private createLabel() {
+            this.label = this.game.add.text(this.x + this.labelHorizontalOffset * this.circle.width,
+                this.y - this.circle.width, "", null);
+            if (this.node.owner) {
                 this.label.text = this.node.owner.label;
             }
-            else{
+            else {
                 this.label.text = "A";
             }
-            this.label.fontSize = this.circle.width*LABEL_SIZE;
+            this.label.fontSize = this.circle.width * LABEL_SIZE;
             this.label.fill = this.tint;
-            this.label.anchor.set(0.5,0.5);
+            this.label.anchor.set(0.5, 0.5);
         }
 
-        destroy(){
+        destroy() {
             this.node.destroy();
             this.circle.destroy();
             this.square.destroy();
             this.label.destroy();
-            this.x=null;
-            this.y=null;
-            this.tint=null;
-            this.scale=null;
-            this.labelHorizontalOffset=null;
+            this.tint = null;
+            this.scale = null;
+            this.labelHorizontalOffset = null;
         }
     }
 }

@@ -77,7 +77,7 @@ module GTE {
         createBitmapPoint() {
             this.bmd = this.game.make.bitmapData(this.game.height * 0.04, this.game.height * 0.04, "point", true);
             this.bmd.ctx.fillStyle = "#000000";
-            this.bmd.ctx.arc(this.bmd.width / 2, this.bmd.height / 2, this.radius, 0, Math.PI * 2);
+            this.bmd.ctx.arc(this.bmd.width /2, this.bmd.height / 2, this.radius, 0, Math.PI * 2);
             this.bmd.ctx.fill();
         }
 
@@ -89,18 +89,13 @@ module GTE {
         }
 
         createTextures(){
-             this.bmd = this.game.make.bitmapData(this.game.height*NODE_RADIUS*NODE_SCALE,this.game.height*NODE_RADIUS*NODE_SCALE,"node-circle",true);
-             this.bmd.ctx.fillStyle = "#fff";
-             this.bmd.ctx.arc(this.bmd.width/2,this.bmd.width/2,this.bmd.width/2-1,0,Math.PI*2);
-             this.bmd.ctx.fill();
-
             this.bmd = this.game.make.bitmapData(this.game.height*NODE_RADIUS*NODE_SCALE,this.game.height*NODE_RADIUS*NODE_SCALE,"node-square",true);
             this.bmd.ctx.fillStyle = "#fff";
             this.bmd.ctx.fillRect(0,0,this.game.height*NODE_RADIUS*NODE_SCALE,this.game.height*NODE_RADIUS*NODE_SCALE);
 
-            this.bmd = this.game.make.bitmapData(this.game.height*LINE_WIDTH*NODE_SCALE,this.game.height*LINE_WIDTH*NODE_SCALE,"line",true);
+            this.bmd = this.game.make.bitmapData(Math.round(this.game.height*LINE_WIDTH),Math.round(this.game.height*LINE_WIDTH),"move-line",true);
             this.bmd.ctx.fillStyle = "#fff";
-            this.bmd.ctx.fillRect(0,0,1,this.bmd.height);
+            this.bmd.ctx.fillRect(0,0,this.bmd.height,this.bmd.height);
         }
     }
 }

@@ -7,9 +7,9 @@ module GTE{
     export const INTRO_TEXT_SIZE = 0.15;
 
     //Node Constants
-    export const NODE_RADIUS = 0.018;
+    export const NODE_RADIUS = 0.03;
     export const NODE_SCALE = 3;
-    export const LINE_WIDTH = 0.01;
+    export const LINE_WIDTH = 0.005;
     export const LABEL_SIZE = 1.5;
     export const OVERLAY_SCALE = 3;
 }
