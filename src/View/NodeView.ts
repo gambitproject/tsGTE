@@ -1,5 +1,5 @@
 module GTE {
-    export class NodeView extends Phaser.Sprite{
+    export class NodeView extends Phaser.Sprite {
         game: Phaser.Game;
         node: Node;
 
@@ -12,7 +12,7 @@ module GTE {
         inputHandler: Phaser.Signal;
 
         constructor(game: Phaser.Game, node: Node, x?: number, y?: number) {
-            super(game,x,y,"");
+            super(game, x, y, "");
             this.anchor.set(0.5, 0.5);
             this.scale.set(OVERLAY_SCALE, OVERLAY_SCALE);
             this.inputEnabled = true;
@@ -29,13 +29,17 @@ module GTE {
             this.createLabel();
 
             this.inputHandler = new Phaser.Signal();
-
+            // this.input.enableDrag(true);
             this.game.add.existing(this);
         }
+
+
 
         private createSprites() {
             this.circle = this.game.add.sprite(this.x, this.y, this.game.cache.getBitmapData("node-circle"));
             this.square = this.game.add.sprite(this.x, this.y, this.game.cache.getBitmapData("node-square"));
+            this.circle.position = this.position;
+            this.square.position = this.position;
             this.circle.tint = this.tint;
             this.square.tint = this.tint;
             this.square.alpha = 0;
@@ -57,9 +61,16 @@ module GTE {
             else {
                 this.label.text = "A";
             }
+            // this.label.position = this.position.add(this.labelHorizontalOffset*this.circle.width,this.y-this.circle.width);
             this.label.fontSize = this.circle.width * LABEL_SIZE;
             this.label.fill = this.tint;
             this.label.anchor.set(0.5, 0.5);
+        }
+
+        setPosition(x:number,y:number){
+            this.position.set(x,y);
+            this.label.position.set(this.x + this.labelHorizontalOffset * this.circle.width,
+                this.y - this.circle.width);
         }
 
         destroy() {
@@ -70,6 +81,7 @@ module GTE {
             this.tint = null;
             this.scale = null;
             this.labelHorizontalOffset = null;
+            super.destroy();
         }
     }
 }

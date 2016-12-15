@@ -39,11 +39,15 @@ module GTE {
             }
         }
 
+        getIndexFromParent(){
+            return this.parent.children.indexOf(this);
+        }
+
         convertToDefault() {
             this.type = NodeType.DEFAULT;
             this.owner = null;
             this.payoff = null;
-            if(this.iSet){
+            if (this.iSet) {
                 this.iSet.removeNode(this);
             }
 
@@ -62,7 +66,7 @@ module GTE {
             this.type = NodeType.LEAF;
             this.payoff = payoff;
             this.owner = null;
-            if(this.iSet){
+            if (this.iSet) {
                 this.iSet.removeNode(this);
             }
         }
@@ -72,7 +76,7 @@ module GTE {
             this.payoff = null;
             this.owner = null;
 
-            if(this.iSet){
+            if (this.iSet) {
                 this.iSet.removeNode(this);
             }
 

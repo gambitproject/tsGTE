@@ -1,4 +1,4 @@
-module GTE{
+module GTE {
 
     //Boot Menu Constants
     export const INTRO_DISTANCE = 0.15;

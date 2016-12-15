@@ -27,8 +27,8 @@ module GTE {
             this.createLines();
             this.createText();
 
-            this.game.time.events.add(1000,()=>{
-               this.game.state.start("MainScene");
+            this.game.time.events.add(1000, () => {
+                this.game.state.start("MainScene");
             });
         }
 
@@ -53,8 +53,8 @@ module GTE {
             this.line2.scale.set(0, 5);
             this.line1.rotation = -Math.PI * 0.25;
             this.line2.rotation = Math.PI * 0.25;
-            this.game.add.tween(this.line1.scale).to({x: this.distance * 1.44}, INTRO_TWEEN_DURATION, Phaser.Easing.Default, true, INTRO_TWEEN_DURATION*2+200);
-            this.game.add.tween(this.line2.scale).to({x: this.distance * 1.44}, INTRO_TWEEN_DURATION, Phaser.Easing.Default, true, INTRO_TWEEN_DURATION*3+200);
+            this.game.add.tween(this.line1.scale).to({x: this.distance * 1.44}, INTRO_TWEEN_DURATION, Phaser.Easing.Default, true, INTRO_TWEEN_DURATION * 2 + 200);
+            this.game.add.tween(this.line2.scale).to({x: this.distance * 1.44}, INTRO_TWEEN_DURATION, Phaser.Easing.Default, true, INTRO_TWEEN_DURATION * 3 + 200);
         }
 
         private createPoints() {
@@ -69,15 +69,24 @@ module GTE {
             this.point2.scale.set(0, 0);
             this.point3.scale.set(0, 0);
 
-            this.game.add.tween(this.point1.scale).to({x: 1, y: 1}, INTRO_TWEEN_DURATION, Phaser.Easing.Back.Out, true, INTRO_TWEEN_DURATION + Math.random() * INTRO_TWEEN_DURATION);
-            this.game.add.tween(this.point2.scale).to({x: 1, y: 1}, INTRO_TWEEN_DURATION, Phaser.Easing.Back.Out, true, INTRO_TWEEN_DURATION + Math.random() * INTRO_TWEEN_DURATION);
-            this.game.add.tween(this.point3.scale).to({x: 1, y: 1}, INTRO_TWEEN_DURATION, Phaser.Easing.Back.Out, true, INTRO_TWEEN_DURATION + Math.random() * INTRO_TWEEN_DURATION);
+            this.game.add.tween(this.point1.scale).to({
+                x: 1,
+                y: 1
+            }, INTRO_TWEEN_DURATION, Phaser.Easing.Back.Out, true, INTRO_TWEEN_DURATION + Math.random() * INTRO_TWEEN_DURATION);
+            this.game.add.tween(this.point2.scale).to({
+                x: 1,
+                y: 1
+            }, INTRO_TWEEN_DURATION, Phaser.Easing.Back.Out, true, INTRO_TWEEN_DURATION + Math.random() * INTRO_TWEEN_DURATION);
+            this.game.add.tween(this.point3.scale).to({
+                x: 1,
+                y: 1
+            }, INTRO_TWEEN_DURATION, Phaser.Easing.Back.Out, true, INTRO_TWEEN_DURATION + Math.random() * INTRO_TWEEN_DURATION);
         }
 
         createBitmapPoint() {
             this.bmd = this.game.make.bitmapData(this.game.height * 0.04, this.game.height * 0.04, "point", true);
             this.bmd.ctx.fillStyle = "#000000";
-            this.bmd.ctx.arc(this.bmd.width /2, this.bmd.height / 2, this.radius, 0, Math.PI * 2);
+            this.bmd.ctx.arc(this.bmd.width / 2, this.bmd.height / 2, this.radius, 0, Math.PI * 2);
             this.bmd.ctx.fill();
         }
 
@@ -88,14 +97,14 @@ module GTE {
             this.bmd.ctx.fillRect(0, 0, 1, 1);
         }
 
-        createTextures(){
-            this.bmd = this.game.make.bitmapData(this.game.height*NODE_RADIUS*NODE_SCALE,this.game.height*NODE_RADIUS*NODE_SCALE,"node-square",true);
+        createTextures() {
+            this.bmd = this.game.make.bitmapData(this.game.height * NODE_RADIUS * NODE_SCALE, this.game.height * NODE_RADIUS * NODE_SCALE, "node-square", true);
             this.bmd.ctx.fillStyle = "#fff";
-            this.bmd.ctx.fillRect(0,0,this.game.height*NODE_RADIUS*NODE_SCALE,this.game.height*NODE_RADIUS*NODE_SCALE);
+            this.bmd.ctx.fillRect(0, 0, this.game.height * NODE_RADIUS * NODE_SCALE, this.game.height * NODE_RADIUS * NODE_SCALE);
 
-            this.bmd = this.game.make.bitmapData(Math.round(this.game.height*LINE_WIDTH),Math.round(this.game.height*LINE_WIDTH),"move-line",true);
+            this.bmd = this.game.make.bitmapData(Math.round(this.game.height * LINE_WIDTH), Math.round(this.game.height * LINE_WIDTH), "move-line", true);
             this.bmd.ctx.fillStyle = "#fff";
-            this.bmd.ctx.fillRect(0,0,this.bmd.height,this.bmd.height);
+            this.bmd.ctx.fillRect(0, 0, this.bmd.height, this.bmd.height);
         }
     }
 }
