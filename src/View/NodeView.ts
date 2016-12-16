@@ -3,13 +3,12 @@ module GTE {
         game: Phaser.Game;
         node: Node;
 
-        circle: Phaser.Sprite;
-        square: Phaser.Sprite;
-        label: Phaser.Text;
-        //Horizontal offset: -1 for left, 1 for right;
-        labelHorizontalOffset: number;
-        tint: number;
         inputHandler: Phaser.Signal;
+        label: Phaser.Text;
+        private circle: Phaser.Sprite;
+        private square: Phaser.Sprite;
+        //Horizontal offset: -1 for left, 1 for right;
+        private labelHorizontalOffset: number;
 
         constructor(game: Phaser.Game, node: Node, x?: number, y?: number) {
             super(game, x, y, "");
@@ -29,11 +28,8 @@ module GTE {
             this.createLabel();
 
             this.inputHandler = new Phaser.Signal();
-            // this.input.enableDrag(true);
             this.game.add.existing(this);
         }
-
-
 
         private createSprites() {
             this.circle = this.game.add.sprite(this.x, this.y, this.game.cache.getBitmapData("node-circle"));
@@ -73,14 +69,30 @@ module GTE {
                 this.y - this.circle.width);
         }
 
+        setAlpha(alpha:number){
+            this.circle.alpha = alpha;
+            // this.square.alpha = alpha;
+            this.label.alpha = alpha;
+        }
+
+        setLabelOffset(){
+            //TODO: Implement this
+        }
+
         destroy() {
             this.node.destroy();
+            this.node=null;
             this.circle.destroy();
+            this.circle = null;
             this.square.destroy();
+            this.square = null;
             this.label.destroy();
+            this.label = null;
             this.tint = null;
             this.scale = null;
             this.labelHorizontalOffset = null;
+            this.inputHandler.dispose();
+            this.inputHandler = null;
             super.destroy();
         }
     }

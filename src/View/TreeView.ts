@@ -13,31 +13,24 @@ module GTE {
             this.nodes = [];
             this.moves = [];
             this.drawTree();
-            console.log("x1: "+this.nodes[0].x+" y1: "+this.nodes[0].y);
-            console.log("x2: "+this.nodes[1].x+" y2: "+this.nodes[1].y);
-            console.log("x3: "+this.nodes[2].x+" y3: "+this.nodes[2].y);
             this.centerGroupOnScreen()
         }
 
         drawTree() {
             this.drawNode(this.tree.root, 0, 0);
-            // this.group.addMultiple(this.nodes);
-            // this.group.addMultiple(this.moves);
+            this.centerGroupOnScreen();
         }
 
-        private drawNode(node, parentX: number, parentY: number) {
+
+        private drawNode(node:Node, parentX: number, parentY: number) {
             let nodeView = new NodeView(this.game, node);
             this.nodes.push(nodeView);
             let finalNodeX = 0;
             let finalNodeY = 0;
-            if (!node.parent) {
-                finalNodeX = 500;
-                finalNodeY = 1250;
-            }
-            else {
+            if (node.parent) {
                 let nodeIndex = node.getIndexFromParent();
                 let parentChildrenCount = node.parent.children.length;
-                let horizontalDistance = this.properties.initialLevelDistance / Math.pow(1.5, node.depth);
+                let horizontalDistance = this.properties.initialLevelDistance / (2*node.depth);
                 finalNodeX = parentX - (parentChildrenCount - 1) * horizontalDistance / 2 + horizontalDistance * nodeIndex;
                 finalNodeY = parentY + this.properties.levelHeight;
             }
@@ -49,6 +42,45 @@ module GTE {
             }, this);
         }
 
+        addChildToNode(nodeV:NodeView){
+            let node = nodeV.node;
+            let child = new Node();
+            this.tree.addChildToNode(node,child);
+
+            let childV = new NodeView(this.game,child);
+            if(node.children.length === 1){
+                 childV.setPosition(nodeV.x, nodeV.y+this.properties.levelHeight);
+            }
+            else {
+                let currentLevelDistance = this.properties.initialLevelDistance / (2 * child.depth);
+
+                this.nodes.forEach(n => {
+                    if (n.node.parent === nodeV.node) {
+                        n.setPosition(n.x - currentLevelDistance / 2, n.y);
+                    }
+                });
+                childV.setPosition(nodeV.x+(node.children.length-1) * currentLevelDistance / 2, nodeV.y+this.properties.levelHeight);
+
+                this.repositionMovesFromNode(nodeV);
+            }
+
+            let move = new MoveView(this.game,nodeV,childV);
+
+            this.nodes.push(childV);
+            this.moves.push(move);
+
+            this.centerGroupOnScreen();
+            return childV;
+        }
+
+        private repositionMovesFromNode(from:NodeView){
+            this.moves.forEach(m=>{
+                if(m.from===from){
+                    m.updateMovePosition();
+                }
+            })
+        }
+
         private findNodeView(node: Node) {
             for (let i = 0; i < this.nodes.length; i++) {
                 let nodeView = this.nodes[i];
@@ -57,6 +89,7 @@ module GTE {
                 }
             }
         }
+
 
         private centerGroupOnScreen() {
             let left = this.game.width * 5;
@@ -79,34 +112,18 @@ module GTE {
                 }
             });
 
-            console.log("left: " + left);
-            console.log("right: " + right);
-            console.log("top: " + top);
-            console.log("bottom: " + bottom);
-
             let width = right - left;
             let height = bottom - top;
-
-            console.log("width: " + width);
-            console.log("height: " + height);
 
             let treeCenterX = left + width / 2;
             let treeCenterY = top + height / 2;
 
-            console.log("cX: "+treeCenterX);
-            console.log("cY: "+treeCenterY);
-
             let offsetX = (this.game.width / 2 - treeCenterX);
             let offsetY = (this.game.height / 2 - treeCenterY);
-            console.log("Offx: " + offsetX);
-            console.log("Offy: " + offsetY);
+
             this.nodes.forEach(n => {
                 n.setPosition(n.x + offsetX, n.y + offsetY);
             });
-
-            console.log("KO? " + this.game.width);
-            console.log("KO?" + this.game.height);
-
         }
     }
 }

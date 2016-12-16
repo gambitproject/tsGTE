@@ -110,8 +110,9 @@ module GTE {
                     m.destroy()
                 });
             }
-
-            this.parentMove.destroy();
+            // if(this.parentMove) {
+            //     this.parentMove.destroy();
+            // }
         }
     }
 }

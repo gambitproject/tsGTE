@@ -24,9 +24,16 @@ module GTE {
             this.game.add.existing(this);
         }
 
+        updateMovePosition(){
+            this.rotation = Phaser.Point.angle(this.from.position, this.to.position) + Math.PI / 2;
+            this.height = Phaser.Point.distance(this.from.position, this.to.position);
+        }
+
         destroy() {
             this.from = null;
             this.to = null;
+            // this.label.destroy();
+            super.destroy();
         }
     }
 }
