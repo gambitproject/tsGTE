@@ -53,6 +53,8 @@ module GTE {
             this.line2.scale.set(0, 5);
             this.line1.rotation = -Math.PI * 0.25;
             this.line2.rotation = Math.PI * 0.25;
+            this.line1.tint = 0x000000;
+            this.line2.tint = 0x000000;
             this.game.add.tween(this.line1.scale).to({x: this.distance * 1.44}, INTRO_TWEEN_DURATION, Phaser.Easing.Default, true, INTRO_TWEEN_DURATION * 2 + 200);
             this.game.add.tween(this.line2.scale).to({x: this.distance * 1.44}, INTRO_TWEEN_DURATION, Phaser.Easing.Default, true, INTRO_TWEEN_DURATION * 3 + 200);
         }
@@ -93,7 +95,7 @@ module GTE {
 
         createBitmapLine() {
             this.bmd = this.game.make.bitmapData(1, 1, "line", true);
-            this.bmd.ctx.fillStyle = "#000000";
+            this.bmd.ctx.fillStyle = "#ffffff";
             this.bmd.ctx.fillRect(0, 0, 1, 1);
         }
 

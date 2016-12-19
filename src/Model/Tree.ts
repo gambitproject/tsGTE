@@ -1,3 +1,4 @@
+
 module GTE {
     export class Tree {
         root: Node;

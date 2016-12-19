@@ -11,5 +11,14 @@ module GTE {
     export const NODE_SCALE = 3;
     export const LINE_WIDTH = 0.005;
     export const LABEL_SIZE = 1.5;
+    export const HOVER_COLOR = 0x555555;
+    export const HOVER_CHILDREN_COLOR = 0xaaaaaa;
+
+    //Selection Rectangle Constants
+    export const SELECTION_INNER_COLOR = 0x0389df;
+    export const SELECTION_BORDER_COLOR = 0x000fff;
+
+
     export const OVERLAY_SCALE = 3;
+
 }

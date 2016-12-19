@@ -7,6 +7,8 @@ module GTE{
         treeProperties:TreeViewProperties;
         dummyNodes:Array<NodeView>;
         dummyMoves:Array<MoveView>;
+        selectionRectangle:SelectionRectangle;
+        selectedNodes:Array<NodeView>;
 
         constructor(game:Phaser.Game){
             this.game = game;
@@ -14,6 +16,8 @@ module GTE{
 
             this.dummyMoves = [];
             this.dummyNodes = [];
+            this.selectedNodes = [];
+            this.selectionRectangle = new SelectionRectangle(this.game);
 
             this.tree = new Tree();
             this.tree.addNode();
@@ -31,7 +35,7 @@ module GTE{
 
         setCircleBitmapData(scale: number) {
             this.bmd = this.game.make.bitmapData(this.game.height * NODE_RADIUS * scale, this.game.height * NODE_RADIUS * scale, "node-circle", true);
-            this.bmd.ctx.fillStyle = "#fff";
+            this.bmd.ctx.fillStyle = "#ffffff";
             this.bmd.ctx.beginPath();
             this.bmd.ctx.arc(this.bmd.width / 2, this.bmd.width / 2, this.bmd.width * 0.45, 0, Math.PI * 2);
             this.bmd.ctx.fill();
@@ -57,7 +61,7 @@ module GTE{
         }
 
         private handleInputOver(nodeV:NodeView){
-            nodeV.setAlpha(0.8);
+            nodeV.setColor(HOVER_COLOR);
             let horizontalDistance = this.treeProperties.initialLevelDistance/(2*(nodeV.node.depth+1));
 
             if(nodeV.node.children.length === 0){
@@ -69,13 +73,13 @@ module GTE{
 
                 nodeV1.setPosition(nodeV.x-horizontalDistance/2,nodeV.y+this.treeProperties.levelHeight/2);
                 nodeV2.setPosition(nodeV.x+horizontalDistance/2,nodeV.y+this.treeProperties.levelHeight/2);
-                nodeV1.setAlpha(0.5);
-                nodeV2.setAlpha(0.5);
+                nodeV1.setColor(HOVER_CHILDREN_COLOR);
+                nodeV2.setColor(HOVER_CHILDREN_COLOR);
 
                 move1.updateMovePosition();
                 move2.updateMovePosition();
-                move1.alpha = 0.5;
-                move2.alpha = 0.5;
+                move1.tint = HOVER_CHILDREN_COLOR;
+                move2.tint = HOVER_CHILDREN_COLOR;
 
                 this.dummyNodes.push(nodeV1);
                 this.dummyNodes.push(nodeV2);
@@ -87,17 +91,18 @@ module GTE{
                 let move1 = new MoveView(this.game,nodeV,nodeV1);
 
                 nodeV1.setPosition(nodeV.x+horizontalDistance/2,nodeV.y);
-                nodeV1.setAlpha(0.5);
+                nodeV1.setColor(HOVER_CHILDREN_COLOR);
                 move1.updateMovePosition();
-                move1.alpha = 0.5;
+                move1.tint = HOVER_CHILDREN_COLOR;
                 this.dummyNodes.push(nodeV1);
                 this.dummyMoves.push(move1);
             }
         }
 
         private handleInputOut(nodeV?:NodeView){
+            nodeV.resetColor();
             if (nodeV) {
-                nodeV.setAlpha(1);
+                nodeV.resetColor();
             }
             this.dummyNodes.forEach(n=>{
                 n.destroy();

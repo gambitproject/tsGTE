@@ -22,6 +22,7 @@ module GTE {
             //TODO: Add label
 
             this.game.add.existing(this);
+            this.game.world.sendToBack(this);
         }
 
         updateMovePosition(){

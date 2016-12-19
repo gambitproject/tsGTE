@@ -9,9 +9,11 @@ module GTE {
         private square: Phaser.Sprite;
         //Horizontal offset: -1 for left, 1 for right;
         private labelHorizontalOffset: number;
+        private isSelected:boolean;
 
         constructor(game: Phaser.Game, node: Node, x?: number, y?: number) {
             super(game, x, y, "");
+            this.isSelected = false;
             this.anchor.set(0.5, 0.5);
             this.scale.set(OVERLAY_SCALE, OVERLAY_SCALE);
             this.inputEnabled = true;
@@ -22,8 +24,8 @@ module GTE {
             else {
                 this.tint = Phaser.Color.hexToRGB("#000");
             }
-            this.labelHorizontalOffset = 1;
 
+            this.labelHorizontalOffset = 1;
             this.createSprites();
             this.createLabel();
 
@@ -69,10 +71,13 @@ module GTE {
                 this.y - this.circle.width);
         }
 
-        setAlpha(alpha:number){
-            this.circle.alpha = alpha;
+        setColor(tint:number){
+            this.circle.tint = tint;
             // this.square.alpha = alpha;
-            this.label.alpha = alpha;
+        }
+
+        resetColor(){
+            this.circle.tint = 0x0000000;
         }
 
         setLabelOffset(){

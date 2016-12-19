@@ -4,31 +4,22 @@ module GTE {
 
         create() {
            this.treeController = new TreeController(this.game);
+           this.game.time.advancedTiming = true;
 
-            // let move = new MoveView(this.game, <NodeView>treeView.group.children[0], <NodeView>treeView.group.children[1]);
+        }
 
-            // this.testNode1 = new NodeView(this.game, tree.nodes[0], 200, 200);
-            // this.testNode2 = new NodeView(this.game, tree.nodes[1], 1000, 800);
-            // this.move = new MoveView(this.game, this.testNode1, this.testNode2)
-            // this.testNode2.label.text = "B";
-            // this.testNode1.inputHandler.add(function () {
-            //     this.lastEventText = "Node " + <NodeView>arguments[0].label.text + " \nOperation: " + arguments[1]
-            //     let node = <NodeView>arguments[0];
-            //     this.setCircleBitmapData(3);
-            //     node.circle.loadTexture(this.game.cache.getBitmapData("node-circle"));
-            // }, this);
-            // this.testNode2.inputHandler.add(function () {
-            //     this.lastEventText = "Node " + <NodeView>arguments[0].label.text + " \nOperation: " + arguments[1]
-            // }, this);
+        update(){
+            if(this.game.input.activePointer.isDown){
+                this.treeController.treeView.nodes.forEach((n:NodeView)=>{
+                    if(this.treeController.selectionRectangle.overlap(n)){
+                        n.setColor(0xff0000);
+                    }
+                });
+            }
         }
 
         render() {
-            // if(this.testNode1 && this.testNode2) {
-            //     this.game.debug.text("Event: " + this.lastEventText, 20, 20, "#000", "26px Arial");
-            // }
-            // if(this.move){
-            //     this.game.debug.spriteBounds(this.move);
-            // }
+            this.game.debug.text(this.game.time.fps.toString(), 20,20, "#000000", "26px Arial");
         }
     }
 }

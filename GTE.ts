@@ -1,4 +1,4 @@
-/// <reference path = "Lib/phaser.d.ts"/>
+/// <reference path = "lib/phaser.d.ts"/>
 module GTE {
 
     class GTE extends Phaser.Game {
