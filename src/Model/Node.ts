@@ -60,11 +60,13 @@ module GTE {
         }
 
         convertToLabeled(player: Player) {
-            this.type = NodeType.OWNED;
-            this.payoff = null;
-            this.owner = player;
+            if (this.children.length>0) {
+                this.type = NodeType.OWNED;
+                this.payoff = null;
+                this.owner = player;
 
-            this.childrenMoves.forEach(c => c.convertToLabeled());
+                this.childrenMoves.forEach(c => c.convertToLabeled());
+            }
         }
 
         convertToLeaf(payoff: Payoff) {

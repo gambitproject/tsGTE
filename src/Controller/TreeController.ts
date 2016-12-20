@@ -32,6 +32,8 @@ module GTE{
             this.tree.addNode();
             this.tree.addChildToNode(this.tree.nodes[0]);
             this.tree.addChildToNode(this.tree.nodes[0]);
+            this.tree.addPlayer(new Player(1,"1",0xff0000));
+            this.tree.addPlayer(new Player(2,"2",0x00ff00));
             this.treeProperties = new TreeViewProperties(250,1000);
 
             this.treeView = new TreeView(this.game,this.tree,this.treeProperties);
@@ -130,7 +132,6 @@ module GTE{
         }
 
         private handleInputOut(nodeV?:NodeView){
-            // nodeV.resetColor();
             if (nodeV) {
                 nodeV.resetColor();
             }

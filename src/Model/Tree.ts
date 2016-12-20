@@ -26,6 +26,14 @@ module GTE {
             }
         }
 
+        findPlayerById(id:number){
+            for (var i = 0; i < this.players.length; i++) {
+                if(this.players[i].id===id){
+                    return this.players[i];
+                }
+            }
+            console.log("Player not found! ");
+        }
         removePlayer(player:Player){
             if(this.players.indexOf(player)!==-1){
                 this.players.splice(this.players.indexOf(player),1);

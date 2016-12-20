@@ -8,7 +8,7 @@ module GTE {
 
         inputHandler: Phaser.Signal;
         label: Phaser.Text;
-        isSelected:boolean;
+        isSelected: boolean;
         private circle: Phaser.Sprite;
         private square: Phaser.Sprite;
         //Horizontal offset: -1 for left, 1 for right;
@@ -22,10 +22,10 @@ module GTE {
             this.inputEnabled = true;
             this.node = node;
             if (this.node.owner) {
-                this.tint = Phaser.Color.hexToRGB(node.owner.color);
+                this.tint = node.owner.color;
             }
             else {
-                this.tint = Phaser.Color.hexToRGB("#000");
+                this.tint = 0x000000;
             }
 
             this.labelHorizontalOffset = 1;
@@ -56,45 +56,57 @@ module GTE {
         private createLabel() {
             this.label = this.game.add.text(this.x + this.labelHorizontalOffset * this.circle.width,
                 this.y - this.circle.width, "", null);
+
             if (this.node.owner) {
                 this.label.text = this.node.owner.label;
             }
             else {
-                this.label.text = "A";
+                this.label.text = "";
             }
+
             // this.label.position = this.position.add(this.labelHorizontalOffset*this.circle.width,this.y-this.circle.width);
             this.label.fontSize = this.circle.width * LABEL_SIZE;
             this.label.fill = this.tint;
             this.label.anchor.set(0.5, 0.5);
         }
 
-        setPosition(x:number,y:number){
-            this.position.set(x,y);
+        setPosition(x: number, y: number) {
+            this.position.set(x, y);
             this.label.position.set(this.x + this.labelHorizontalOffset * this.circle.width,
                 this.y - this.circle.width);
         }
 
-        setColor(tint:number){
+        setColor(tint: number) {
             this.circle.tint = tint;
             // this.square.alpha = alpha;
         }
 
-        resetColor(){
-            if(this.isSelected){
+        resetColor() {
+            if (this.isSelected && !this.node.owner) {
                 this.circle.tint = NODE_SELECTED_COLOR;
             }
-            else{
-                this.circle.tint = 0x0000000;
+            else if (this.node.owner) {
+                this.circle.tint = this.node.owner.color;
+            }
+            else {
+                this.circle.tint = 0x000000;
             }
         }
 
-        setLabelOffset(){
+        setLabelText() {
+            if (this.node.owner) {
+                this.label.text = this.node.owner.label;
+                this.label.fill = "#"+this.node.owner.color.toString(16);
+            }
+        }
+
+        setLabelOffset() {
             //TODO: Implement this
         }
 
         destroy() {
             this.node.destroy();
-            this.node=null;
+            this.node = null;
             this.circle.destroy();
             this.circle = null;
             this.square.destroy();
