@@ -1,3 +1,4 @@
+///<reference path="Player.ts"/>
 module GTE{
     export class Payoff{
 

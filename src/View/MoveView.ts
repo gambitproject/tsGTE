@@ -1,10 +1,12 @@
+/// <reference path = "../../lib/phaser.d.ts"/>
+///<reference path="NodeView.ts"/>
 module GTE {
     export class MoveView extends Phaser.Sprite {
         game: Phaser.Game;
         from: NodeView;
         to: NodeView;
         label:Phaser.Text;
-        labelHorizontalOffset;
+        labelHorizontalOffset:number;
 
         constructor(game: Phaser.Game, from: NodeView, to: NodeView) {
             super(game, from.x, from.y, game.cache.getBitmapData("move-line"));

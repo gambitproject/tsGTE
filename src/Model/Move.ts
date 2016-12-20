@@ -1,3 +1,4 @@
+///<reference path="MoveType.ts"/>
 module GTE {
     export class Move {
         type:MoveType;

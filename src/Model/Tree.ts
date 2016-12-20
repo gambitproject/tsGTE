@@ -1,3 +1,8 @@
+///<reference path="Node.ts"/>
+///<reference path="Move.ts"/>
+///<reference path="ISet.ts"/>
+///<reference path="Player.ts"/>
+///<reference path="StrategicForm.ts"/>
 
 module GTE {
     export class Tree {

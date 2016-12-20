@@ -1,4 +1,6 @@
 /// <reference path = "lib/phaser.d.ts"/>
+///<reference path="src/Controller/Boot.ts"/>
+///<reference path="src/Controller/MainScene.ts"/>
 module GTE {
 
     class GTE extends Phaser.Game {

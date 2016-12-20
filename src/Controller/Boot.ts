@@ -1,3 +1,5 @@
+/// <reference path = "../../lib/phaser.d.ts"/>
+
 module GTE {
     export class Boot extends Phaser.State {
         bmd: Phaser.BitmapData;

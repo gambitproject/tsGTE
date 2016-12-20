@@ -1,3 +1,8 @@
+///<reference path="NodeType.ts"/>
+///<reference path="Move.ts"/>
+///<reference path="ISet.ts"/>
+///<reference path="Player.ts"/>
+///<reference path="Payoff.ts"/>
 module GTE {
     export class Node {
         type: NodeType;

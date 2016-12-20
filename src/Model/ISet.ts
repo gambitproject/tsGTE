@@ -1,3 +1,6 @@
+/// <reference path = "../../lib/phaser.d.ts"/>
+///<reference path="Player.ts"/>
+///<reference path="Node.ts"/>
 module GTE{
     export class ISet{
         player: Player;
@@ -49,7 +52,5 @@ module GTE{
             this.player = null;
             this.nodes.forEach(n=>n.destroy());
         }
-
-
     }
 }

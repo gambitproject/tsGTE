@@ -1,3 +1,10 @@
+/// <reference path = "../../lib/phaser.d.ts"/>
+///<reference path="../Model/Tree.ts"/>
+///<reference path="TreeViewProperties.ts"/>
+///<reference path="NodeView.ts"/>
+///<reference path="MoveView.ts"/>
+///<reference path="../Model/Node.ts"/>
+
 module GTE {
     export class TreeView {
         game: Phaser.Game;

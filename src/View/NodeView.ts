@@ -1,3 +1,6 @@
+/// <reference path = "../../lib/phaser.d.ts"/>
+///<reference path="../Model/Node.ts"/>
+
 module GTE {
     export class NodeView extends Phaser.Sprite {
         game: Phaser.Game;
@@ -5,11 +8,11 @@ module GTE {
 
         inputHandler: Phaser.Signal;
         label: Phaser.Text;
+        isSelected:boolean;
         private circle: Phaser.Sprite;
         private square: Phaser.Sprite;
         //Horizontal offset: -1 for left, 1 for right;
         private labelHorizontalOffset: number;
-        private isSelected:boolean;
 
         constructor(game: Phaser.Game, node: Node, x?: number, y?: number) {
             super(game, x, y, "");
@@ -77,7 +80,12 @@ module GTE {
         }
 
         resetColor(){
-            this.circle.tint = 0x0000000;
+            if(this.isSelected){
+                this.circle.tint = NODE_SELECTED_COLOR;
+            }
+            else{
+                this.circle.tint = 0x0000000;
+            }
         }
 
         setLabelOffset(){
