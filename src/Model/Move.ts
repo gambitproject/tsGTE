@@ -1,5 +1,7 @@
-///<reference path="MoveType.ts"/>
+///<reference path="Node.ts"/>
 module GTE {
+    export enum MoveType{DEFAULT=1, CHANCE, LABELED}
+
     export class Move {
         type:MoveType;
         from:Node;

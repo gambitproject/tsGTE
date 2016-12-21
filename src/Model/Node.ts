@@ -1,9 +1,11 @@
-///<reference path="NodeType.ts"/>
 ///<reference path="Move.ts"/>
 ///<reference path="ISet.ts"/>
 ///<reference path="Player.ts"/>
 ///<reference path="Payoff.ts"/>
 module GTE {
+
+    export enum NodeType {DEFAULT=1, CHANCE, OWNED, LEAF}
+
     export class Node {
         type: NodeType;
         parent: Node;

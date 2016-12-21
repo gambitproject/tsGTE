@@ -1,4 +1,5 @@
 /// <reference path = "../../lib/phaser.d.ts"/>
+///<reference path="../Utils/Constants.ts"/>
 
 module GTE {
     export class Boot extends Phaser.State {
