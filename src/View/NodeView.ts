@@ -58,7 +58,7 @@ module GTE {
                 this.y - this.circle.width, "", null);
 
             if (this.node.owner) {
-                this.label.text = this.node.owner.label;
+                this.label.setText(this.node.owner.getLabel(),true);
             }
             else {
                 this.label.text = "";
@@ -82,7 +82,7 @@ module GTE {
         }
 
         resetColor() {
-            if (this.isSelected && !this.node.owner) {
+            if (this.isSelected) {
                 this.circle.tint = NODE_SELECTED_COLOR;
             }
             else if (this.node.owner) {
@@ -95,8 +95,9 @@ module GTE {
 
         setLabelText() {
             if (this.node.owner) {
-                this.label.text = this.node.owner.label;
-                this.label.fill = "#"+this.node.owner.color.toString(16);
+                this.label.setText(this.node.owner.getLabel(), true);
+                let colorRGB = Phaser.Color.getRGB(this.node.owner.color);
+                this.label.fill = Phaser.Color.RGBtoString(colorRGB.r,colorRGB.g,colorRGB.b);
             }
         }
 

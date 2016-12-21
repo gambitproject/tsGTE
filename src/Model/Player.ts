@@ -10,6 +10,10 @@ module GTE{
             this.color = color || 0x000000;
         }
 
+        getLabel(){
+            return this.label;
+        }
+
         destroy(){
             this.label = null;
             this.id = null;
