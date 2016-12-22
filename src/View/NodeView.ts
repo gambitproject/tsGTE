@@ -38,15 +38,16 @@ module GTE {
 
         private createSprites() {
             this.circle = this.game.add.sprite(this.x, this.y, this.game.cache.getBitmapData("node-circle"));
-            this.square = this.game.add.sprite(this.x, this.y, this.game.cache.getBitmapData("node-square"));
+            this.square = this.game.add.sprite(this.x, this.y, this.game.cache.getBitmapData("line"));
             this.circle.position = this.position;
             this.square.position = this.position;
             this.circle.tint = this.tint;
-            this.square.tint = this.tint;
+            this.square.tint = 0x000000;
+            this.square.width = this.circle.width;
+            this.square.height = this.circle.height;
             this.square.alpha = 0;
             this.circle.anchor.set(0.5, 0.5);
             this.square.anchor.set(0.5, 0.5);
-            this.circle.smoothed = true;
 
             this.events.onInputOver.add(() => this.inputHandler.dispatch(this, "inputOver"));
             this.events.onInputOut.add(() => this.inputHandler.dispatch(this, "inputOut"));
@@ -81,23 +82,49 @@ module GTE {
             // this.square.alpha = alpha;
         }
 
-        resetColor() {
-            if (this.isSelected) {
+        resetNodeDrawing() {
+            this.setLabelText();
+            //Selected and not Chance
+            if (this.isSelected && this.node.type!==NodeType.CHANCE) {
+                this.circle.alpha = 1;
                 this.circle.tint = NODE_SELECTED_COLOR;
+                this.square.alpha = 0;
             }
-            else if (this.node.owner) {
+            // Selected and Chance
+            else if(this.isSelected && this.node.type===NodeType.CHANCE){
+                this.circle.alpha = 0;
+                this.square.alpha = 1;
+                this.square.tint = NODE_SELECTED_COLOR;
+            }
+            // Not Selected, owned and not Chance
+            else if (this.node.owner && this.node.type!==NodeType.CHANCE) {
                 this.circle.tint = this.node.owner.color;
+                this.circle.alpha = 1;
+                this.square.alpha = 0;
             }
+            // Not selected, owned and chance
+            else if(this.node.owner && this.node.type===NodeType.CHANCE){
+                this.square.tint = 0x000000;
+                this.square.alpha = 1;
+                this.circle.alpha = 0;
+            }
+            // All other cases
             else {
                 this.circle.tint = 0x000000;
+                this.square.alpha = 0;
+                this.circle.alpha = 1;
             }
         }
 
         setLabelText() {
-            if (this.node.owner) {
+            if (this.node.owner && this.node.type!==NodeType.CHANCE) {
+                this.label.alpha = 1;
                 this.label.setText(this.node.owner.getLabel(), true);
                 let colorRGB = Phaser.Color.getRGB(this.node.owner.color);
                 this.label.fill = Phaser.Color.RGBtoString(colorRGB.r,colorRGB.g,colorRGB.b);
+            }
+            else{
+                this.label.alpha = 0;
             }
         }
 

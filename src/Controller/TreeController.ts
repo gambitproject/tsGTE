@@ -32,6 +32,7 @@ module GTE{
             this.tree.addNode();
             this.tree.addChildToNode(this.tree.nodes[0]);
             this.tree.addChildToNode(this.tree.nodes[0]);
+            this.tree.addPlayer(new Player(0,"0",0x000000));
             this.tree.addPlayer(new Player(1,"1",PLAYER_COLORS[0]));
             this.tree.addPlayer(new Player(2,"2",PLAYER_COLORS[1]));
             this.treeProperties = new TreeViewProperties(250,1000);
@@ -56,7 +57,7 @@ module GTE{
                         !this.game.input.keyboard.isDown(Phaser.Keyboard.SHIFT)){
 
                         n.isSelected = false;
-                        n.resetColor();
+                        n.resetNodeDrawing();
                         this.selectedNodes.splice(this.selectedNodes.indexOf(n),1);
                     }
                 });
@@ -133,7 +134,7 @@ module GTE{
 
         private handleInputOut(nodeV?:NodeView){
             if (nodeV) {
-                nodeV.resetColor();
+                nodeV.resetNodeDrawing();
             }
             this.dummyNodes.forEach(n=>{
                 n.destroy();

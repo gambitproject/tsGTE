@@ -40,7 +40,7 @@ module GTE {
         }
 
         removeChild(node: Node) {
-            if (this.children.indexOf(node) != -1) {
+            if (this.children.indexOf(node) !== -1) {
                 this.children.splice(this.children.indexOf(node), 1);
                 node.destroy();
             }
@@ -80,10 +80,16 @@ module GTE {
             }
         }
 
-        convertToChance(probabilities?: Array<number>) {
+        convertToChance(chancePlayer:Player, probabilities?: Array<number>, ) {
             this.type = NodeType.CHANCE;
             this.payoff = null;
-            this.owner = null;
+
+            if(chancePlayer.id===0) {
+                this.owner = chancePlayer;
+            }
+            else{
+                throw new Error("Given player is not a chance player");
+            }
 
             if (this.iSet) {
                 this.iSet.removeNode(this);
