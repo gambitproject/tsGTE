@@ -132,6 +132,7 @@ module GTE{
             }
         }
 
+        // when hovering out
         private handleInputOut(nodeV?:NodeView){
             if (nodeV) {
                 nodeV.resetNodeDrawing();
@@ -149,6 +150,7 @@ module GTE{
             this.dummyMoves = [];
         }
 
+        // when clicking
         private handleInputDown(nodeV:NodeView){
             this.handleInputOut();
             if(nodeV.node.children.length===0){
