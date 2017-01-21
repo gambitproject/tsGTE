@@ -1,5 +1,6 @@
 module GTE{
-    //All properties are given a fractions of the game width or height!
+    /** A class that stores the level height and initial width of whe tree
+     * All properties are given a fractions of the game width and height!*/
     export class TreeViewProperties{
         levelHeight:number;
         initialLevelDistance:number;

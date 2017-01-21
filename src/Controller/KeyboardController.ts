@@ -2,8 +2,10 @@
 ///<reference path="../Model/Node.ts"/>
 ///<reference path="TreeController.ts"/>
 module GTE {
+    /** A class for controlling the input of the application*/
     export class KeyboardController {
         game: Phaser.Game;
+        // There is a reference to the tree controller, so that whenever a key is pressed we can call the corresponding method
         treeController: TreeController;
         shiftKey: Phaser.Key;
         nKey: Phaser.Key;
@@ -24,6 +26,7 @@ module GTE {
             this.testButtonHandler();
         }
 
+        /**Assigning all keys to the corresponding properties in the class*/
         addKeys() {
             this.shiftKey = this.game.input.keyboard.addKey(Phaser.Keyboard.SHIFT);
             this.nKey = this.game.input.keyboard.addKey(Phaser.Keyboard.N);
@@ -36,6 +39,8 @@ module GTE {
             });
         }
 
+        /**A method for deselecting nodes. This method should not be here and will be moved to a new class.*/
+        //TODO: Move to a new class (maybe a more abstract InputController which will have mouse and keyboard handlers?)
         deselectNodesHandler() {
             this.game.input.onDown.add(() => {
                 if (!this.shiftKey.isDown && this.treeController.selectedNodes.length > 0) {
@@ -48,6 +53,7 @@ module GTE {
             });
         }
 
+        /**A method for adding children to selected nodes, when the N key is pressed*/
         addNodesHandler() {
             this.nKey.onDown.add(() => {
                 if (this.treeController.selectedNodes.length > 0) {
@@ -58,6 +64,7 @@ module GTE {
             });
         }
 
+        /**A method for assigning players to nodes when one of the keys 1,2,3 or 4 is pressed*/
         assignPlayerToNodeHandler() {
             this.numberKeys.forEach((k) => {
                 let playerID = this.numberKeys.indexOf(k) + 1;
@@ -75,6 +82,7 @@ module GTE {
             });
         }
 
+        /**A method for assigning chance player to a node*/
         assignChancePlayerToNodeHandler(){
             this.zeroKey.onDown.add(()=>{
                if(this.treeController.selectedNodes.length>0){
@@ -86,6 +94,7 @@ module GTE {
             });
         }
 
+        /**Spacebar is for testing purposes only for now*/
         testButtonHandler() {
             this.testButton.onDown.add(() => {
                 let node = this.treeController.selectedNodes[0];

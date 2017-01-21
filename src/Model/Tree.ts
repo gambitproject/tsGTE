@@ -5,6 +5,7 @@
 ///<reference path="StrategicForm.ts"/>
 
 module GTE {
+    /**The class which stores all the needed information for the tree - lists of nodes, moves, isets, players and the root */
     export class Tree {
         root: Node;
         nodes: Array<Node>;
@@ -19,21 +20,13 @@ module GTE {
             this.iSets = [];
             this.players = [];
         }
-
+        /** Adds a player to the list of players*/
         addPlayer(player:Player){
             if(this.players.indexOf(player)===-1){
                 this.players.push(player);
             }
         }
-
-        findPlayerById(id:number){
-            for (var i = 0; i < this.players.length; i++) {
-                if(this.players[i].id===id){
-                    return this.players[i];
-                }
-            }
-            console.log("Player not found! ");
-        }
+        /** Removes a given player from the list, also removes all instances of the player from nodes and isets. */
         removePlayer(player:Player){
             if(this.players.indexOf(player)!==-1){
                 this.players.splice(this.players.indexOf(player),1);
@@ -50,11 +43,22 @@ module GTE {
             }
         }
 
+        /** Finds and returns the player by ID*/
+        findPlayerById(id:number){
+            for (let i = 0; i < this.players.length; i++) {
+                if(this.players[i].id===id){
+                    return this.players[i];
+                }
+            }
+            console.log("Player not found! ");
+        }
+
+        /** Adds an iSet to the list of isets */
         addISet(player:Player, nodes?:Array<Node>){
             let iSet = new ISet(player,nodes);
             this.iSets.push(iSet);
         }
-
+        /** Removes an iSet from the list of isets*/
         removeISet(iSet:ISet){
             if(this.iSets.indexOf(iSet)!==-1){
                 this.iSets.splice(this.iSets.indexOf(iSet),1);
@@ -62,12 +66,14 @@ module GTE {
             }
         }
 
+        /** Adds a given node to a given iset */
         addNodeToISet(iSet:ISet, node:Node){
             if(this.iSets.indexOf(iSet)!==-1){
                 iSet.addNode(node);
             }
         }
 
+        /** Adds node to the tree and checks if it should be the root*/
         addNode(node?:Node) {
             node = node || new Node();
             if (this.nodes.length == 0) {
@@ -77,7 +83,7 @@ module GTE {
 
             this.nodes.push(node);
         }
-
+        /** Adds a child to a given node*/
         addChildToNode(node: Node, child?: Node) {
 
             if(this.nodes.indexOf(node)===-1){

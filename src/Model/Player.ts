@@ -1,4 +1,5 @@
 module GTE{
+    /**The class Player that stores the id, label and colour of the player */
     export class Player{
         id:number;
         label: string;

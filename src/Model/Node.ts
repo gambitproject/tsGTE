@@ -3,9 +3,10 @@
 ///<reference path="Player.ts"/>
 ///<reference path="Payoff.ts"/>
 module GTE {
-
+    /**The types of Node */
     export enum NodeType {DEFAULT=1, CHANCE, OWNED, LEAF}
 
+    /**The class Node. Each Node has a type, parent, parentMove, children, childrenMoves, iSet, owner, depth and payoff */
     export class Node {
         type: NodeType;
         parent: Node;
@@ -25,7 +26,7 @@ module GTE {
             this.childrenMoves = [];
             this.owner = null;
         }
-
+        /**The method adds a child to the current Node. */
         addChild(node?: Node) {
             let child = node || new Node();
 
@@ -38,18 +39,18 @@ module GTE {
             child.parentMove = move;
             this.childrenMoves.push(move);
         }
-
+        /**The method removes a given child from the Node */
         removeChild(node: Node) {
             if (this.children.indexOf(node) !== -1) {
                 this.children.splice(this.children.indexOf(node), 1);
                 node.destroy();
             }
         }
-
+        /**The method gets the index of the node, from the children of the parent */
         getIndexFromParent(){
             return this.parent.children.indexOf(this);
         }
-
+        /**Converts the current Node to a default Node */
         convertToDefault() {
             this.type = NodeType.DEFAULT;
             this.owner = null;
@@ -60,7 +61,7 @@ module GTE {
 
             this.childrenMoves.forEach(c => c.convertToDefault());
         }
-
+        /**Converts the current Node to a labeled, by setting an owner */
         convertToLabeled(player: Player) {
             if (this.children.length>0) {
                 this.type = NodeType.OWNED;
@@ -70,7 +71,7 @@ module GTE {
                 this.childrenMoves.forEach(c => c.convertToLabeled());
             }
         }
-
+        /**Converts the current Node to a leaf node, by setting payoffs */
         convertToLeaf(payoff: Payoff) {
             this.type = NodeType.LEAF;
             this.payoff = payoff;
@@ -79,7 +80,7 @@ module GTE {
                 this.iSet.removeNode(this);
             }
         }
-
+        /**Converts the current Node to a chance Node, setting the owner to the chancePlayer and assigning probabilities to children moves*/
         convertToChance(chancePlayer:Player, probabilities?: Array<number>, ) {
             this.type = NodeType.CHANCE;
             this.payoff = null;
@@ -106,7 +107,7 @@ module GTE {
                 this.childrenMoves.forEach(c => c.convertToChance(1 / this.childrenMoves.length));
             }
         }
-
+        /**Destroy ensures that there are no memory-leaks. */
         destroy() {
             this.type = null;
             this.depth = null;

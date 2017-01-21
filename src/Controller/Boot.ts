@@ -2,6 +2,8 @@
 ///<reference path="../Utils/Constants.ts"/>
 
 module GTE {
+    /** A class for the initial animation of the GTE software
+     * This class shows a very simple usage of the Phaser Engine - sprites, colours, bitmaps, repositioning and tweens*/
     export class Boot extends Phaser.State {
         bmd: Phaser.BitmapData;
         logoGroup: Phaser.Group;

@@ -1,5 +1,6 @@
 ///<reference path="Player.ts"/>
 module GTE{
+    /**The class Payoff which is a simple set of probabilities for each move. */
     export class Payoff{
 
         playerPayoffPairs: Array<{player:Player, payoff:number}>;
@@ -11,7 +12,7 @@ module GTE{
                 throw new SyntaxError("Payoff number should be the same as the number of players.");
             }
 
-            for (var i = 0; i < players.length; i++) {
+            for (let i = 0; i < players.length; i++) {
                 if(payoffs && payoffs[i]){
                     this.playerPayoffPairs.push({player:players[i],payoff:payoffs[i]});
                 } else{

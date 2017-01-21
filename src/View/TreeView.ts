@@ -6,9 +6,12 @@
 ///<reference path="../Model/Node.ts"/>
 
 module GTE {
+    /** A class for the graphical representation of the tree. The main algorithm for drawing and repositioning
+     * the tree is in this class*/
     export class TreeView {
         game: Phaser.Game;
         tree: Tree;
+        //The properties field determines the horizontal and vertical offsets between each level.
         properties: TreeViewProperties;
         nodes: Array<NodeView>;
         moves: Array<MoveView>;
@@ -23,12 +26,13 @@ module GTE {
             this.centerGroupOnScreen()
         }
 
+        /**This method draws the tree by recursively calling the drawNode method*/
         drawTree() {
             this.drawNode(this.tree.root, 0, 0);
             this.centerGroupOnScreen();
         }
 
-
+        /** This method recursively draws the nodes depending on the structure of the tree*/
         private drawNode(node:Node, parentX: number, parentY: number) {
             let nodeView = new NodeView(this.game, node);
             this.nodes.push(nodeView);
@@ -49,6 +53,7 @@ module GTE {
             }, this);
         }
 
+        /** Adds a child to a specified node*/
         addChildToNode(nodeV:NodeView){
             let node = nodeV.node;
             let child = new Node();
@@ -80,6 +85,7 @@ module GTE {
             return childV;
         }
 
+        /**A method for repositioning the moves when changing nodes positions*/
         private repositionMovesFromNode(from:NodeView){
             this.moves.forEach(m=>{
                 if(m.from===from){
@@ -88,6 +94,7 @@ module GTE {
             })
         }
 
+        /** A helper method for finding the nodeView, given a Node*/
         private findNodeView(node: Node) {
             for (let i = 0; i < this.nodes.length; i++) {
                 let nodeView = this.nodes[i];
@@ -97,7 +104,7 @@ module GTE {
             }
         }
 
-
+        /**Re-centers the tree on the screen*/
         private centerGroupOnScreen() {
             let left = this.game.width * 5;
             let right = -this.game.width * 5;

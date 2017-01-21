@@ -2,6 +2,7 @@
 ///<reference path="Player.ts"/>
 ///<reference path="Node.ts"/>
 module GTE{
+    /**The class that represents the ISet. The ISet has owner, array storing all nodes, and a label */
     export class ISet{
         player: Player;
         nodes: Array<Node>;
@@ -48,6 +49,7 @@ module GTE{
             this.label = "";
         }
 
+        /**The destroy method ensures that there are no memory-leaks */
         destroy(){
             this.player = null;
             this.nodes.forEach(n=>n.destroy());
