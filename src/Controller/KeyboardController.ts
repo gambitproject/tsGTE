@@ -11,7 +11,9 @@ module GTE {
         nKey: Phaser.Key;
         numberKeys: Array<Phaser.Key>;
         zeroKey: Phaser.Key;
+        deleteKey: Phaser.Key;
         testButton: Phaser.Key;
+
 
         constructor(game: Phaser.Game, treeController: TreeController) {
             this.game = game;
@@ -21,6 +23,7 @@ module GTE {
             this.addKeys();
             this.deselectNodesHandler();
             this.addNodesHandler();
+            this.deleteNodeHandler();
             this.assignPlayerToNodeHandler();
             this.assignChancePlayerToNodeHandler();
             this.testButtonHandler();
@@ -31,6 +34,7 @@ module GTE {
             this.shiftKey = this.game.input.keyboard.addKey(Phaser.Keyboard.SHIFT);
             this.nKey = this.game.input.keyboard.addKey(Phaser.Keyboard.N);
             this.zeroKey = this.game.input.keyboard.addKey(Phaser.Keyboard.ZERO);
+            this.deleteKey = this.game.input.keyboard.addKey(Phaser.Keyboard.DELETE);
             this.testButton = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
 
             let keys = [Phaser.Keyboard.ONE, Phaser.Keyboard.TWO, Phaser.Keyboard.THREE, Phaser.Keyboard.FOUR];
@@ -64,6 +68,17 @@ module GTE {
             });
         }
 
+        /** A method for deleting nodes, when DELETE key is pressed*/
+        deleteNodeHandler(){
+            this.deleteKey.onDown.add(()=>{
+                if(this.treeController.selectedNodes.length>0){
+                    this.treeController.selectedNodes.forEach(n=>{
+                        this.treeController.deleteNode(n);
+                    })
+                }
+            });
+        }
+
         /**A method for assigning players to nodes when one of the keys 1,2,3 or 4 is pressed*/
         assignPlayerToNodeHandler() {
             this.numberKeys.forEach((k) => {
@@ -71,11 +86,7 @@ module GTE {
                 k.onDown.add(() => {
                     if (this.treeController.selectedNodes.length > 0) {
                         this.treeController.selectedNodes.forEach((n) => {
-                            if (playerID > this.treeController.tree.players.length-1) {
-                                this.treeController.tree.addPlayer(new Player(playerID, playerID.toString(), PLAYER_COLORS[playerID - 1]));
-                            }
-                            n.node.convertToLabeled(this.treeController.tree.findPlayerById(playerID));
-                            n.resetNodeDrawing();
+                           this.treeController.assignPlayerToNode(playerID,n);
                         });
                     }
                 });
@@ -83,14 +94,14 @@ module GTE {
         }
 
         /**A method for assigning chance player to a node*/
-        assignChancePlayerToNodeHandler(){
-            this.zeroKey.onDown.add(()=>{
-               if(this.treeController.selectedNodes.length>0){
-                   this.treeController.selectedNodes.forEach((n)=>{
-                       n.node.convertToChance(this.treeController.tree.players[0]);
-                       n.resetNodeDrawing();
-                   });
-               }
+        assignChancePlayerToNodeHandler() {
+            this.zeroKey.onDown.add(() => {
+                if (this.treeController.selectedNodes.length > 0) {
+                    this.treeController.selectedNodes.forEach((n) => {
+                        n.node.convertToChance(this.treeController.tree.players[0]);
+                        n.resetNodeDrawing();
+                    });
+                }
             });
         }
 

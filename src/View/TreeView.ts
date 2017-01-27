@@ -22,76 +22,97 @@ module GTE {
             this.properties = properties;
             this.nodes = [];
             this.moves = [];
-            this.drawTree();
+            this.drawInitialTree();
             this.centerGroupOnScreen()
+        }
+
+        private drawInitialTree() {
+            this.tree.nodes.forEach(n => {
+                let nodeView = new NodeView(this.game, n);
+
+                this.nodes.push(nodeView);
+                if (n !== this.tree.root) {
+                    let parent = this.findNodeView(n.parent);
+                    this.moves.push(new MoveView(this.game, parent, nodeView));
+                }
+            });
+
+            this.drawTree();
         }
 
         /**This method draws the tree by recursively calling the drawNode method*/
         drawTree() {
             this.drawNode(this.tree.root, 0, 0);
+            this.moves.forEach(m => {
+                m.updateMovePosition();
+            });
             this.centerGroupOnScreen();
         }
 
         /** This method recursively draws the nodes depending on the structure of the tree*/
-        private drawNode(node:Node, parentX: number, parentY: number) {
-            let nodeView = new NodeView(this.game, node);
-            this.nodes.push(nodeView);
+        private drawNode(node: Node, parentX: number, parentY: number) {
+            let nodeView = this.findNodeView(node);
+
             let finalNodeX = 0;
             let finalNodeY = 0;
             if (node.parent) {
                 let nodeIndex = node.getIndexFromParent();
                 let parentChildrenCount = node.parent.children.length;
-                let horizontalDistance = this.properties.initialLevelDistance / (2*node.depth);
+                let horizontalDistance = this.properties.initialLevelDistance / (2 * node.depth);
                 finalNodeX = parentX - (parentChildrenCount - 1) * horizontalDistance / 2 + horizontalDistance * nodeIndex;
                 finalNodeY = parentY + this.properties.levelHeight;
             }
             nodeView.setPosition(finalNodeX, finalNodeY);
-
             node.children.forEach(n => {
                 this.drawNode(n, finalNodeX, finalNodeY);
-                this.moves.push(new MoveView(this.game, nodeView, this.findNodeView(n)));
             }, this);
         }
 
         /** Adds a child to a specified node*/
-        addChildToNode(nodeV:NodeView){
+        addChildToNode(nodeV: NodeView) {
             let node = nodeV.node;
             let child = new Node();
-            this.tree.addChildToNode(node,child);
+            this.tree.addChildToNode(node, child);
 
-            let childV = new NodeView(this.game,child);
-            if(node.children.length === 1){
-                 childV.setPosition(nodeV.x, nodeV.y+this.properties.levelHeight);
-            }
-            else {
-                let currentLevelDistance = this.properties.initialLevelDistance / (2 * child.depth);
-
-                this.nodes.forEach(n => {
-                    if (n.node.parent === nodeV.node) {
-                        n.setPosition(n.x - currentLevelDistance / 2, n.y);
-                    }
-                });
-                childV.setPosition(nodeV.x+(node.children.length-1) * currentLevelDistance / 2, nodeV.y+this.properties.levelHeight);
-
-                this.repositionMovesFromNode(nodeV);
-            }
-
-            let move = new MoveView(this.game,nodeV,childV);
+            let childV = new NodeView(this.game, child);
+            let move = new MoveView(this.game, nodeV, childV);
 
             this.nodes.push(childV);
             this.moves.push(move);
-
-            this.centerGroupOnScreen();
+            this.drawTree();
             return childV;
         }
 
-        /**A method for repositioning the moves when changing nodes positions*/
-        private repositionMovesFromNode(from:NodeView){
-            this.moves.forEach(m=>{
-                if(m.from===from){
-                    m.updateMovePosition();
+        /**Clears NodeViews with deleted null Nodes*/
+        clearNodes(){
+            let nodesToDelete = [];
+            this.nodes.forEach(n=>{
+                if(n.node===null){
+                    nodesToDelete.push(n);
                 }
-            })
+            });
+
+            nodesToDelete.forEach(n=>{
+                n.destroy();
+            });
+
+            nodesToDelete = null;
+        }
+
+        /**Clears NodeViews with deleted null Nodes*/
+        clearMoves(){
+            let movesToDelete = [];
+            this.moves.forEach(m=>{
+                if(m.from===null || m.to===null){
+                    movesToDelete.push(m);
+                }
+            });
+
+            movesToDelete.forEach(m=>{
+                m.destroy();
+            });
+
+            movesToDelete = null;
         }
 
         /** A helper method for finding the nodeView, given a Node*/

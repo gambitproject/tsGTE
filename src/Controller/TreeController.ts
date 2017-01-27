@@ -178,5 +178,27 @@ module GTE{
                 this.attachHandlersToNode(child1);
             }
         }
+
+        /** A method for assigning a player to a given node.*/
+        assignPlayerToNode(playerID:number, n:NodeView){
+            if (playerID > this.tree.players.length - 1) {
+                this.tree.addPlayer(new Player(playerID, playerID.toString(), PLAYER_COLORS[playerID - 1]));
+            }
+            n.node.convertToLabeled(this.tree.findPlayerById(playerID));
+            n.resetNodeDrawing();
+        }
+        /**A method for deleting a node.*/
+        deleteNode(n:NodeView){
+            if(n.node.children.length===0){
+                this.tree.removeNode(n.node);
+            }
+            else{
+                n.node.children.forEach(c=>this.tree.removeNode(c));
+            }
+
+            this.treeView.clearNodes();
+            this.treeView.clearMoves();
+            this.treeView.drawTree();
+        }
     }
 }
