@@ -19,7 +19,9 @@ module GTE {
     //Selection Rectangle Constants
     export const SELECTION_INNER_COLOR = 0x0389df;
     export const SELECTION_BORDER_COLOR = 0x000fff;
-
+    export const PREVIEW_CIRCLE_COLOR = 0xff0000;
     export const OVERLAY_SCALE = 3;
+
+
 
 }
