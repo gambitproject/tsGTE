@@ -15,6 +15,7 @@ module GTE {
         isSelected: boolean;
         private circle: Phaser.Sprite;
         private square: Phaser.Sprite;
+        private previewSelected:Phaser.Sprite;
         //Horizontal offset: -1 for left, 1 for right;
         private labelHorizontalOffset: number;
 
@@ -44,16 +45,24 @@ module GTE {
         /** A method which creates the circle and square sprites*/
         private createSprites() {
             this.circle = this.game.add.sprite(this.x, this.y, this.game.cache.getBitmapData("node-circle"));
-            this.square = this.game.add.sprite(this.x, this.y, this.game.cache.getBitmapData("line"));
+            this.circle.anchor.set(0.5, 0.5);
             this.circle.position = this.position;
-            this.square.position = this.position;
             this.circle.tint = this.tint;
+
+            this.square = this.game.add.sprite(this.x, this.y, this.game.cache.getBitmapData("line"));
+            this.square.position = this.position;
             this.square.tint = 0x000000;
             this.square.width = this.circle.width;
             this.square.height = this.circle.height;
             this.square.alpha = 0;
-            this.circle.anchor.set(0.5, 0.5);
             this.square.anchor.set(0.5, 0.5);
+
+            this.previewSelected = this.game.add.sprite(this.x,this.y, this.game.cache.getBitmapData("node-circle"));
+            this.previewSelected.scale.set(1.8,1.8);
+            this.previewSelected.tint = SELECTION_INNER_COLOR;
+            this.previewSelected.position = this.position;
+            this.previewSelected.alpha = 0;
+            this.previewSelected.anchor.set(0.5,0.5);
         }
 
         /** A method which attaches signals when a specific input is triggered over a node
@@ -104,18 +113,21 @@ module GTE {
                 this.circle.alpha = 1;
                 this.circle.tint = NODE_SELECTED_COLOR;
                 this.square.alpha = 0;
+                this.previewSelected.alpha = 0.3;
             }
             // Selected and Chance
             else if(this.isSelected && this.node.type===NodeType.CHANCE){
                 this.circle.alpha = 0;
                 this.square.alpha = 1;
                 this.square.tint = NODE_SELECTED_COLOR;
+                this.previewSelected.alpha = 0.3
             }
             // Not Selected, owned and not Chance
             else if (this.node.owner && this.node.type!==NodeType.CHANCE) {
                 this.circle.tint = this.node.owner.color;
                 this.circle.alpha = 1;
                 this.square.alpha = 0;
+                this.previewSelected.alpha = 0;
             }
             // Not selected, owned and chance
             else if(this.node.owner && this.node.type===NodeType.CHANCE){
@@ -128,6 +140,7 @@ module GTE {
                 this.circle.tint = 0x000000;
                 this.square.alpha = 0;
                 this.circle.alpha = 1;
+                this.previewSelected.alpha = 0;
             }
         }
 
@@ -156,6 +169,8 @@ module GTE {
             this.circle = null;
             this.square.destroy();
             this.square = null;
+            this.previewSelected.destroy();
+            this.previewSelected = null;
             this.label.destroy();
             this.label = null;
             this.tint = null;

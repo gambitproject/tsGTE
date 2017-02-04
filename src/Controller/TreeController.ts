@@ -60,8 +60,9 @@ module GTE {
             if (this.game.input.activePointer.isDown) {
                 this.treeView.nodes.forEach((n: NodeView) => {
                     if (this.selectionRectangle.overlap(n) && this.selectedNodes.indexOf(n) === -1) {
-                        n.setColor(NODE_SELECTED_COLOR);
+                        // n.setColor(NODE_SELECTED_COLOR);
                         n.isSelected = true;
+                        n.resetNodeDrawing();
                         this.selectedNodes.push(n);
                     }
                     if (!this.selectionRectangle.overlap(n) && this.selectedNodes.indexOf(n) !== -1 && !this.game.input.keyboard.isDown(Phaser.Keyboard.SHIFT)) {
