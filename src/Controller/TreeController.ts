@@ -6,28 +6,30 @@
 ///<reference path="../View/MoveView.ts"/>
 ///<reference path="../Utils/SelectionRectangle.ts"/>
 ///<reference path="../Utils/Constants.ts"/>
-module GTE{
+module GTE {
     /**A method which connects the TreeView and the Tree Model.
      * Depending on the level of abstraction, some properties can be moved to different classes*/
-    export class TreeController{
-        game:Phaser.Game;
-        bmd:Phaser.BitmapData;
-        tree:Tree;
-        treeView:TreeView;
-        treeProperties:TreeViewProperties;
+    export class TreeController {
+        game: Phaser.Game;
+        bmd: Phaser.BitmapData;
+        tree: Tree;
+        treeView: TreeView;
+        treeProperties: TreeViewProperties;
         // Preview Nodes and Moves are used when hovering
-        previewNodes:Array<NodeView>;
-        previewMoves:Array<MoveView>;
+        private previewNodes: Array<NodeView>;
+        private previewMoves: Array<MoveView>;
+        // An array used to list all nodes that need to be deleted
+        private nodesToDelete:Array<Node>;
+        selectionRectangle: SelectionRectangle;
+        selectedNodes: Array<NodeView>;
 
-        selectionRectangle:SelectionRectangle;
-        selectedNodes:Array<NodeView>;
-
-        constructor(game:Phaser.Game){
+        constructor(game: Phaser.Game) {
             this.game = game;
             this.setCircleBitmapData(1);
 
             this.previewMoves = [];
             this.previewNodes = [];
+            this.nodesToDelete = [];
             this.selectedNodes = [];
             this.selectionRectangle = new SelectionRectangle(this.game);
 
@@ -36,38 +38,37 @@ module GTE{
         }
 
         /**A method which creates the initial 3-node tree in the scene*/
-        createInitialTree(){
+        createInitialTree() {
             this.tree = new Tree();
             this.tree.addNode();
             this.tree.addChildToNode(this.tree.nodes[0]);
             this.tree.addChildToNode(this.tree.nodes[0]);
-            this.tree.addPlayer(new Player(0,"0",0x000000));
-            this.tree.addPlayer(new Player(1,"1",PLAYER_COLORS[0]));
-            this.tree.addPlayer(new Player(2,"2",PLAYER_COLORS[1]));
+            this.tree.addPlayer(new Player(0, "0", 0x000000));
+            this.tree.addPlayer(new Player(1, "1", PLAYER_COLORS[0]));
+            this.tree.addPlayer(new Player(2, "2", PLAYER_COLORS[1]));
 
-            this.treeProperties = new TreeViewProperties(250,1000);
-            this.treeView = new TreeView(this.game,this.tree,this.treeProperties);
-            this.treeView.nodes[0].label.text="A";
-            this.treeView.nodes[1].label.text="B";
-            this.treeView.nodes[2].label.text="C";
+            this.treeProperties = new TreeViewProperties(250, 1000);
+            this.treeView = new TreeView(this.game, this.tree, this.treeProperties);
+            this.treeView.nodes[0].label.text = "A";
+            this.treeView.nodes[1].label.text = "B";
+            this.treeView.nodes[2].label.text = "C";
         }
 
         /**The update method is built-into Phaser and is called 60 times a second.
          * It handles the selection of nodes, while holding the mouse button*/
-        update(){
-            if(this.game.input.activePointer.isDown){
-                this.treeView.nodes.forEach((n:NodeView)=>{
-                    if(this.selectionRectangle.overlap(n) && this.selectedNodes.indexOf(n)===-1){
+        update() {
+            if (this.game.input.activePointer.isDown) {
+                this.treeView.nodes.forEach((n: NodeView) => {
+                    if (this.selectionRectangle.overlap(n) && this.selectedNodes.indexOf(n) === -1) {
                         n.setColor(NODE_SELECTED_COLOR);
                         n.isSelected = true;
                         this.selectedNodes.push(n);
                     }
-                    if(!this.selectionRectangle.overlap(n) && this.selectedNodes.indexOf(n)!==-1 &&
-                        !this.game.input.keyboard.isDown(Phaser.Keyboard.SHIFT)){
+                    if (!this.selectionRectangle.overlap(n) && this.selectedNodes.indexOf(n) !== -1 && !this.game.input.keyboard.isDown(Phaser.Keyboard.SHIFT)) {
 
                         n.isSelected = false;
                         n.resetNodeDrawing();
-                        this.selectedNodes.splice(this.selectedNodes.indexOf(n),1);
+                        this.selectedNodes.splice(this.selectedNodes.indexOf(n), 1);
                     }
                 });
             }
@@ -91,21 +92,28 @@ module GTE{
         }
 
         /** The node specific method for attaching handlers*/
-        private attachHandlersToNode(n:NodeView){
+        private attachHandlersToNode(n: NodeView) {
             n.inputHandler.add(function () {
                 let node = <NodeView>arguments[0];
                 let handlerText = arguments[1];
-                switch(handlerText){
-                    case "inputOver":this.handleInputOver(node);break;
-                    case "inputOut":this.handleInputOut(node);break;
-                    case "inputDown":this.handleInputDown(node);break;
-                    default:break;
+                switch (handlerText) {
+                    case "inputOver":
+                        this.handleInputOver(node);
+                        break;
+                    case "inputOut":
+                        this.handleInputOut(node);
+                        break;
+                    case "inputDown":
+                        this.handleInputDown(node);
+                        break;
+                    default:
+                        break;
                 }
-            },this)
+            }, this)
         }
 
         /**Handler for the signal HOVER*/
-        private handleInputOver(nodeV:NodeView){
+        private handleInputOver(nodeV: NodeView) {
             if (!this.game.input.activePointer.isDown) {
                 nodeV.setColor(HOVER_COLOR);
                 let horizontalDistance = this.treeProperties.initialLevelDistance / (2 * (nodeV.node.depth + 1));
@@ -147,58 +155,92 @@ module GTE{
         }
 
         /**Handler for the signal HOVER_OUT*/
-        private handleInputOut(nodeV?:NodeView){
+        private handleInputOut(nodeV?: NodeView) {
             if (nodeV) {
                 nodeV.resetNodeDrawing();
             }
-            this.previewNodes.forEach(n=>{
+            this.previewNodes.forEach(n => {
                 n.destroy();
-                n=null;
+                n = null;
             });
             this.previewNodes = [];
 
-            this.previewMoves.forEach(m=>{
+            this.previewMoves.forEach(m => {
                 m.destroy();
-                m=null;
+                m = null;
             });
             this.previewMoves = [];
         }
 
         /**Handler for the signal CLICK*/
-        private handleInputDown(nodeV:NodeView){
+        private handleInputDown(nodeV: NodeView) {
             this.handleInputOut();
-            if(nodeV.node.children.length===0){
+            if (nodeV.node.children.length === 0) {
                 let child1 = this.treeView.addChildToNode(nodeV);
                 let child2 = this.treeView.addChildToNode(nodeV);
                 this.attachHandlersToNode(child1);
                 this.attachHandlersToNode(child2);
             }
-            else{
+            else {
                 let child1 = this.treeView.addChildToNode(nodeV);
                 this.attachHandlersToNode(child1);
             }
         }
 
         /** A method for assigning a player to a given node.*/
-        assignPlayerToNode(playerID:number, n:NodeView){
+        assignPlayerToNode(playerID: number, n: NodeView) {
             if (playerID > this.tree.players.length - 1) {
                 this.tree.addPlayer(new Player(playerID, playerID.toString(), PLAYER_COLORS[playerID - 1]));
             }
             n.node.convertToLabeled(this.tree.findPlayerById(playerID));
             n.resetNodeDrawing();
         }
-        /**A method for deleting a node.*/
-        deleteNode(n:NodeView){
-            if(n.node.children.length===0){
-                this.tree.removeNode(n.node);
+
+        /**A method for deleting a node - 2 step deletion.*/
+        deleteNodeHandler(node:Node) {
+            if(this.tree.nodes.indexOf(node)===-1){
+                return;
+            }
+            if(node.children.length===0 && node!==this.tree.root){
+                this.deleteNode(node);
             }
             else{
-                n.node.children.forEach(c=>this.tree.removeNode(c));
+                this.nodesToDelete = [];
+                this.getAllBranchChildren(node);
+                this.nodesToDelete.pop();
+                this.nodesToDelete.forEach(n=>{
+                    this.deleteNode(n);
+                });
+                this.nodesToDelete = [];
             }
+        }
 
-            this.treeView.clearNodes();
-            this.treeView.clearMoves();
-            this.treeView.drawTree();
+
+        private getAllBranchChildren(node:Node){
+            node.children.forEach(c=>{
+                this.getAllBranchChildren(c);
+            });
+            this.nodesToDelete.push(node);
+        }
+        private deleteNode(node:Node){
+            let nodeV = this.treeView.findNodeView(node);
+            //Delete the associated moveView from the TreeView
+            this.treeView.moves.forEach(m=>{
+                if(m.to === nodeV){
+                    this.treeView.moves.splice(this.treeView.moves.indexOf(m),1);
+                    m.destroy();
+                }
+            });
+            //Delete the associated NodeView from TreeView
+            this.treeView.nodes.splice(this.treeView.nodes.indexOf(nodeV),1);
+
+            //Delete the associated Move from the Tree
+            this.tree.moves.splice(this.tree.moves.indexOf(node.parentMove),1);
+            node.parentMove.destroy();
+            // Remove the associated Node from the Tree
+            this.tree.nodes.splice(this.tree.nodes.indexOf(node),1);
+            nodeV.inputHandler.dispatch(nodeV,"inputOut");
+            nodeV.destroy();
         }
     }
 }

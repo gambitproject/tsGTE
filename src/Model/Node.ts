@@ -3,7 +3,7 @@
 ///<reference path="Player.ts"/>
 ///<reference path="Payoff.ts"/>
 module GTE {
-    /**The types of Node */
+    /**The types of Node. If a node does not have type, it can be deleted */
     export enum NodeType {DEFAULT=1, CHANCE, OWNED, LEAF}
 
     /**The class Node. Each Node has a type, parent, parentMove, children, childrenMoves, iSet, owner, depth and payoff */
@@ -107,11 +107,15 @@ module GTE {
                 this.childrenMoves.forEach(c => c.convertToChance(1 / this.childrenMoves.length));
             }
         }
+
         /**Destroy ensures that there are no memory-leaks. */
         destroy() {
             this.type = null;
             this.depth = null;
             this.owner = null;
+            if(this.parent){
+                this.parent.children.splice(this.parent.children.indexOf(this),1);
+            }
             if (this.iSet) {
                 this.iSet.removeNode(this);
             }

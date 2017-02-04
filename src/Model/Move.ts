@@ -35,6 +35,7 @@ module GTE {
         }
         /**Destroy method ensures there are no memory-leaks */
         destroy(){
+            this.from.childrenMoves.splice(this.from.childrenMoves.indexOf(this),1)
             this.type = null;
             this.label = null;
             this.probability = null;

@@ -84,14 +84,6 @@ module GTE {
             this.nodes.push(node);
         }
 
-        /**Removes a node*/
-        removeNode(node:Node){
-            if(this.nodes.indexOf(node)!==-1){
-                this.nodes.splice(this.nodes.indexOf(node),1);
-                node.children.forEach(c=>this.removeNode(c));
-                node.destroy();
-            }
-        }
         /** Adds a child to a given node*/
         addChildToNode(node: Node, child?: Node) {
 

@@ -83,40 +83,8 @@ module GTE {
             return childV;
         }
 
-        /**Clears NodeViews with deleted null Nodes*/
-        clearNodes(){
-            let nodesToDelete = [];
-            this.nodes.forEach(n=>{
-                if(n.node===null){
-                    nodesToDelete.push(n);
-                }
-            });
-
-            nodesToDelete.forEach(n=>{
-                n.destroy();
-            });
-
-            nodesToDelete = null;
-        }
-
-        /**Clears NodeViews with deleted null Nodes*/
-        clearMoves(){
-            let movesToDelete = [];
-            this.moves.forEach(m=>{
-                if(m.from===null || m.to===null){
-                    movesToDelete.push(m);
-                }
-            });
-
-            movesToDelete.forEach(m=>{
-                m.destroy();
-            });
-
-            movesToDelete = null;
-        }
-
         /** A helper method for finding the nodeView, given a Node*/
-        private findNodeView(node: Node) {
+        findNodeView(node: Node) {
             for (let i = 0; i < this.nodes.length; i++) {
                 let nodeView = this.nodes[i];
                 if (nodeView.node === node) {

@@ -73,9 +73,22 @@ module GTE {
             this.deleteKey.onDown.add(()=>{
                 if(this.treeController.selectedNodes.length>0){
                     this.treeController.selectedNodes.forEach(n=>{
-                        this.treeController.deleteNode(n);
-                    })
+                        this.treeController.deleteNodeHandler(n.node);
+                    });
+                    this.treeController.treeView.drawTree();
                 }
+                let deletedNodes = [];
+                if(this.treeController.selectedNodes.length>0){
+                    this.treeController.selectedNodes.forEach(n=>{
+                       if(n.node===null){
+                           deletedNodes.push(n);
+                       }
+                    });
+                }
+
+                deletedNodes.forEach(n=>{
+                    this.treeController.selectedNodes.splice(this.treeController.selectedNodes.indexOf(n),1);
+                });
             });
         }
 
@@ -107,11 +120,7 @@ module GTE {
 
         /**Spacebar is for testing purposes only for now*/
         testButtonHandler() {
-            this.testButton.onDown.add(() => {
-                let node = this.treeController.selectedNodes[0];
-                console.log("label fill: " + node.label.fill);
-                console.log("Player Color: " + node.node.owner.color);
-            });
+
         }
     }
 }
