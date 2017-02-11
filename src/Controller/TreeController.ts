@@ -7,7 +7,7 @@
 ///<reference path="../Utils/SelectionRectangle.ts"/>
 ///<reference path="../Utils/Constants.ts"/>
 module GTE {
-    /**A method which connects the TreeView and the Tree Model.
+    /**A class which connects the TreeView and the Tree Model.
      * Depending on the level of abstraction, some properties can be moved to different classes*/
     export class TreeController {
         game: Phaser.Game;
