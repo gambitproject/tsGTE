@@ -13,6 +13,7 @@ module GTE {
         iSets: Array<ISet>;
         players: Array<Player>;
         strategicForm: StrategicForm;
+        private leaves;
 
         constructor() {
             this.nodes = [];
@@ -20,23 +21,25 @@ module GTE {
             this.iSets = [];
             this.players = [];
         }
+
         /** Adds a player to the list of players*/
-        addPlayer(player:Player){
-            if(this.players.indexOf(player)===-1){
+        addPlayer(player: Player) {
+            if (this.players.indexOf(player) === -1) {
                 this.players.push(player);
             }
         }
+
         /** Removes a given player from the list, also removes all instances of the player from nodes and isets. */
-        removePlayer(player:Player){
-            if(this.players.indexOf(player)!==-1){
-                this.players.splice(this.players.indexOf(player),1);
-                this.nodes.forEach(n=>{
-                   if(n.owner === player){
-                       n.convertToDefault();
-                   }
+        removePlayer(player: Player) {
+            if (this.players.indexOf(player) !== -1) {
+                this.players.splice(this.players.indexOf(player), 1);
+                this.nodes.forEach(n => {
+                    if (n.owner === player) {
+                        n.convertToDefault();
+                    }
                 });
-                this.iSets.forEach(iSet=>{
-                    if(iSet.player === player){
+                this.iSets.forEach(iSet => {
+                    if (iSet.player === player) {
                         iSet.emptyISet();
                     }
                 });
@@ -44,9 +47,9 @@ module GTE {
         }
 
         /** Finds and returns the player by ID*/
-        findPlayerById(id:number){
+        findPlayerById(id: number) {
             for (let i = 0; i < this.players.length; i++) {
-                if(this.players[i].id===id){
+                if (this.players[i].id === id) {
                     return this.players[i];
                 }
             }
@@ -54,27 +57,28 @@ module GTE {
         }
 
         /** Adds an iSet to the list of isets */
-        addISet(player:Player, nodes?:Array<Node>){
-            let iSet = new ISet(player,nodes);
+        addISet(player: Player, nodes?: Array<Node>) {
+            let iSet = new ISet(player, nodes);
             this.iSets.push(iSet);
         }
+
         /** Removes an iSet from the list of isets*/
-        removeISet(iSet:ISet){
-            if(this.iSets.indexOf(iSet)!==-1){
-                this.iSets.splice(this.iSets.indexOf(iSet),1);
+        removeISet(iSet: ISet) {
+            if (this.iSets.indexOf(iSet) !== -1) {
+                this.iSets.splice(this.iSets.indexOf(iSet), 1);
                 iSet.emptyISet();
             }
         }
 
         /** Adds a given node to a given iset */
-        addNodeToISet(iSet:ISet, node:Node){
-            if(this.iSets.indexOf(iSet)!==-1){
+        addNodeToISet(iSet: ISet, node: Node) {
+            if (this.iSets.indexOf(iSet) !== -1) {
                 iSet.addNode(node);
             }
         }
 
         /** Adds node to the tree and checks if it should be the root*/
-        addNode(node?:Node) {
+        addNode(node?: Node) {
             node = node || new Node();
             if (this.nodes.length == 0) {
                 node.depth = 0;
@@ -87,7 +91,7 @@ module GTE {
         /** Adds a child to a given node*/
         addChildToNode(node: Node, child?: Node) {
 
-            if(this.nodes.indexOf(node)===-1){
+            if (this.nodes.indexOf(node) === -1) {
                 throw new Error("Node not found in tree");
             }
 
@@ -95,6 +99,23 @@ module GTE {
             node.addChild(child);
             this.nodes.push(child);
             this.moves.push(child.parentMove);
+        }
+
+        /**Returns the number of leaves in the tree.*/
+        getLeaves() {
+            this.leaves = [];
+            this.leavesDFS(this.root);
+            return this.leaves;
+        }
+
+        /**Recursive call to determine the number of leaves in the tree*/
+        private leavesDFS(node:Node){
+            if(node.children.length!==0){
+                node.children.forEach(n=>this.leavesDFS(n));
+            }
+            else{
+                this.leaves.push(node);
+            }
         }
     }
 }

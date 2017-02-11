@@ -217,6 +217,7 @@ module GTE {
         }
 
 
+        /**Get all children to a given node*/
         private getAllBranchChildren(node:Node){
             node.children.forEach(c=>{
                 this.getAllBranchChildren(c);

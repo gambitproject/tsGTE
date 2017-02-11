@@ -42,30 +42,50 @@ module GTE {
 
         /**This method draws the tree by recursively calling the drawNode method*/
         drawTree() {
-            this.drawNode(this.tree.root, 0, 0);
+            this.setYCoordinates(this.tree.root);
+            this.updateLeavesPositions();
+            this.centerParents(this.tree.root);
             this.moves.forEach(m => {
                 m.updateMovePosition();
             });
             this.centerGroupOnScreen();
         }
 
-        /** This method recursively draws the nodes depending on the structure of the tree*/
-        private drawNode(node: Node, parentX: number, parentY: number) {
+        /**Sets the Y-coordinates for the tree nodes*/
+        private setYCoordinates(node: Node) {
+            node.children.forEach(n => this.setYCoordinates(n));
             let nodeView = this.findNodeView(node);
+            nodeView.y = node.depth * this.properties.levelHeight;
+        }
 
-            let finalNodeX = 0;
-            let finalNodeY = 0;
-            if (node.parent) {
-                let nodeIndex = node.getIndexFromParent();
-                let parentChildrenCount = node.parent.children.length;
-                let horizontalDistance = this.properties.initialLevelDistance / (2 * node.depth);
-                finalNodeX = parentX - (parentChildrenCount - 1) * horizontalDistance / 2 + horizontalDistance * nodeIndex;
-                finalNodeY = parentY + this.properties.levelHeight;
+        /**Update the leaves' x coordinate first*/
+        private updateLeavesPositions() {
+            let leaves = this.tree.getLeaves();
+            let widthPerNode = this.game.width * 0.7 / leaves.length;
+            let offset = (this.game.width - widthPerNode * leaves.length) / 2;
+
+            for (let i = 0; i < leaves.length; i++) {
+                let nodeView = this.findNodeView(leaves[i]);
+                nodeView.x = (widthPerNode * i) + (widthPerNode / 2) - nodeView.width / 2 + offset;
             }
-            nodeView.setPosition(finalNodeX, finalNodeY);
-            node.children.forEach(n => {
-                this.drawNode(n, finalNodeX, finalNodeY);
-            }, this);
+        }
+
+        /**Update the parents' x coordinate*/
+        private centerParents(node: Node) {
+            if (node.children.length !== 0) {
+                node.children.forEach(n => this.centerParents(n));
+                let depthDifferenceToLeft = node.children[0].depth - node.depth;
+                let depthDifferenceToRight = node.children[node.children.length - 1].depth - node.depth;
+                let total = depthDifferenceToLeft + depthDifferenceToRight;
+
+                let leftChildNodeView = this.findNodeView(node.children[0]);
+                let rightChildNodeView = this.findNodeView(node.children[node.children.length - 1]);
+
+                let horizontalDistanceToLeft = depthDifferenceToLeft * (rightChildNodeView.x - leftChildNodeView.x) / total;
+
+                let currentNodeView = this.findNodeView(node);
+                currentNodeView.x = leftChildNodeView.x + horizontalDistanceToLeft;
+            }
         }
 
         /** Adds a child to a specified node*/
@@ -117,6 +137,11 @@ module GTE {
 
             let width = right - left;
             let height = bottom - top;
+
+            if (height > this.game.height * 0.9) {
+                this.properties.levelHeight = this.properties.levelHeight * 0.8;
+                this.drawTree();
+            }
 
             let treeCenterX = left + width / 2;
             let treeCenterY = top + height / 2;
