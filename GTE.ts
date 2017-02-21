@@ -14,9 +14,18 @@ module GTE {
             this.game.state.add("MainScene", MainScene, false);
             this.game.state.start("Boot");
         }
+
     }
 
+
+
     window.onload = () => {
-        new GTE(window.innerWidth, window.innerHeight);
+            var width = window.innerWidth;
+            var height = window.innerHeight;
+            if (height > 1080) {
+                height = 1080;
+                width = 1920;
+            }
+        new GTE(width, height);
     }
 }

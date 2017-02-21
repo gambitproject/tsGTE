@@ -27,7 +27,8 @@ module GTE {
         render() {
             this.game.debug.text(this.game.time.fps.toString(), 20,20, "#000000", "26px Arial");
             if(this.treeController) {
-                this.game.debug.text("Selected: "+this.treeController.selectedNodes.length.toString(),20,40,"#000000","26px Arial");
+                this.game.debug.text("UndoRedoElements: "+this.treeController.undoRedoController.treesList.length.toString(),20,50,"#000000","26px Arial");
+                this.game.debug.text("UndoRedoIndex: "+this.treeController.undoRedoController.currentTreeIndex.toString(),20,80,"#000000","26px Arial");
             }
         }
     }

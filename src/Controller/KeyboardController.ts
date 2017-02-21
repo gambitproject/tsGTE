@@ -8,11 +8,13 @@ module GTE {
         // There is a reference to the tree controller, so that whenever a key is pressed we can call the corresponding method
         treeController: TreeController;
         shiftKey: Phaser.Key;
+        controlKey:Phaser.Key;
         nKey: Phaser.Key;
         numberKeys: Array<Phaser.Key>;
         zeroKey: Phaser.Key;
         deleteKey: Phaser.Key;
         testButton: Phaser.Key;
+        undoRedoButton:Phaser.Key;
 
 
         constructor(game: Phaser.Game, treeController: TreeController) {
@@ -26,17 +28,19 @@ module GTE {
             this.deleteNodeHandler();
             this.assignPlayerToNodeHandler();
             this.assignChancePlayerToNodeHandler();
+            this.undoRedoHandler();
             this.testButtonHandler();
         }
 
         /**Assigning all keys to the corresponding properties in the class*/
         addKeys() {
             this.shiftKey = this.game.input.keyboard.addKey(Phaser.Keyboard.SHIFT);
+            this.controlKey = this.game.input.keyboard.addKey(Phaser.Keyboard.CONTROL);
             this.nKey = this.game.input.keyboard.addKey(Phaser.Keyboard.N);
             this.zeroKey = this.game.input.keyboard.addKey(Phaser.Keyboard.ZERO);
             this.deleteKey = this.game.input.keyboard.addKey(Phaser.Keyboard.DELETE);
             this.testButton = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
-
+            this.undoRedoButton = this.game.input.keyboard.addKey(Phaser.Keyboard.Z);
             let keys = [Phaser.Keyboard.ONE, Phaser.Keyboard.TWO, Phaser.Keyboard.THREE, Phaser.Keyboard.FOUR];
             keys.forEach(k => {
                 this.numberKeys.push(this.game.input.keyboard.addKey(k));
@@ -100,6 +104,7 @@ module GTE {
                     if (this.treeController.selectedNodes.length > 0) {
                         this.treeController.selectedNodes.forEach((n) => {
                            this.treeController.assignPlayerToNode(playerID,n);
+                            this.treeController.undoRedoController.saveNewTree();
                         });
                     }
                 });
@@ -114,6 +119,17 @@ module GTE {
                         n.node.convertToChance(this.treeController.tree.players[0]);
                         n.resetNodeDrawing();
                     });
+                }
+            });
+        }
+
+        undoRedoHandler(){
+            this.undoRedoButton.onDown.add(()=>{
+                if(this.controlKey.isDown && !this.shiftKey.isDown){
+                    this.treeController.undoRedoController.changeTreeInController(true);
+                }
+                if(this.controlKey.isDown && this.shiftKey.isDown){
+                    this.treeController.undoRedoController.changeTreeInController(false);
                 }
             });
         }

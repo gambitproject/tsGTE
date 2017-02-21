@@ -6,6 +6,7 @@
 ///<reference path="../View/MoveView.ts"/>
 ///<reference path="../Utils/SelectionRectangle.ts"/>
 ///<reference path="../Utils/Constants.ts"/>
+///<reference path="UndoRedoController.ts"/>
 module GTE {
     /**A class which connects the TreeView and the Tree Model.
      * Depending on the level of abstraction, some properties can be moved to different classes*/
@@ -22,6 +23,7 @@ module GTE {
         private nodesToDelete:Array<Node>;
         selectionRectangle: SelectionRectangle;
         selectedNodes: Array<NodeView>;
+        undoRedoController:UndoRedoController;
 
         constructor(game: Phaser.Game) {
             this.game = game;
@@ -32,9 +34,9 @@ module GTE {
             this.nodesToDelete = [];
             this.selectedNodes = [];
             this.selectionRectangle = new SelectionRectangle(this.game);
-
             this.createInitialTree();
             this.attachHandlersToNodes();
+            this.undoRedoController = new UndoRedoController(this);
         }
 
         /**A method which creates the initial 3-node tree in the scene*/
@@ -45,12 +47,13 @@ module GTE {
             this.tree.addChildToNode(this.tree.nodes[0]);
             this.tree.addPlayer(new Player(0, "0", 0x000000));
             this.tree.addPlayer(new Player(1, "1", PLAYER_COLORS[0]));
-            this.tree.addPlayer(new Player(2, "2", PLAYER_COLORS[1]));
 
+            this.tree.addPlayer(new Player(2, "2", PLAYER_COLORS[1]));
             this.treeProperties = new TreeViewProperties(250, 1000);
             this.treeView = new TreeView(this.game, this.tree, this.treeProperties);
             this.treeView.nodes[0].label.text = "A";
             this.treeView.nodes[1].label.text = "B";
+
             this.treeView.nodes[2].label.text = "C";
         }
 
@@ -86,7 +89,7 @@ module GTE {
         }
 
         /**Attaching listeners, that will listen for specific actions from the user*/
-        private attachHandlersToNodes() {
+        attachHandlersToNodes() {
             this.treeView.nodes.forEach(n => {
                 this.attachHandlersToNode(n);
             });
@@ -186,12 +189,14 @@ module GTE {
                 let child1 = this.treeView.addChildToNode(nodeV);
                 this.attachHandlersToNode(child1);
             }
+            this.undoRedoController.saveNewTree();
         }
 
         /** A method for assigning a player to a given node.*/
         assignPlayerToNode(playerID: number, n: NodeView) {
             if (playerID > this.tree.players.length - 1) {
                 this.tree.addPlayer(new Player(playerID, playerID.toString(), PLAYER_COLORS[playerID - 1]));
+
             }
             n.node.convertToLabeled(this.tree.findPlayerById(playerID));
             n.resetNodeDrawing();

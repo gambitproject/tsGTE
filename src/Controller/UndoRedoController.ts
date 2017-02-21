@@ -1,5 +1,6 @@
 ///<reference path="TreeController.ts"/>
 ///<reference path="../Model/Tree.ts"/>
+///<reference path="../View/TreeView.ts"/>
 module GTE {
 
     /**A class for handling the Undo/Redo functionality */
@@ -11,10 +12,11 @@ module GTE {
         constructor(treeController: TreeController) {
             this.treeController = treeController;
             this.treesList = [];
-            this.treesList.push(treeController.tree);
             this.currentTreeIndex = 0;
+            this.treesList.push(treeController.tree.clone());
         }
 
+        /**Undo-Redo method */
         changeTreeInController(undo: boolean) {
             if (undo && this.currentTreeIndex - 1 >= 0) {
                 this.currentTreeIndex--;
@@ -27,13 +29,25 @@ module GTE {
             }
 
             //1. Delete the current Tree in tree controller
+            this.treeController.deleteNodeHandler(this.treeController.tree.root);
+            this.treeController.treeView.nodes[0].destroy();
+
             //2. Change it with the corresponding one in treelist
-            //3. Redraw
+            this.treeController.tree = this.treesList[this.currentTreeIndex].clone();
+            this.treeController.treeView = new TreeView(this.treeController.game,this.treeController.tree,this.treeController.treeProperties);
+            this.treeController.selectedNodes = [];
+            this.treeController.treeView.nodes.forEach(n=>{
+               n.resetNodeDrawing();
+            });
+            this.treeController.attachHandlersToNodes();
         }
 
         saveNewTree() {
-            //1. Clone the current tree from the controller into the class.
-            // TODO: Implement clone logic in tree,node,move etc...
+            this.treesList.splice(this.currentTreeIndex+1, this.treesList.length);
+            this.treesList.push(this.treeController.tree.clone());
+            this.currentTreeIndex++;
+
+            console.log(this.treesList.length);
         }
     }
 }

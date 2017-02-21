@@ -3,6 +3,7 @@
 ///<reference path="ISet.ts"/>
 ///<reference path="Player.ts"/>
 ///<reference path="StrategicForm.ts"/>
+///<reference path="../Utils/ObjectCloner.ts"/>
 
 module GTE {
     /**The class which stores all the needed information for the tree - lists of nodes, moves, isets, players and the root */
@@ -109,13 +110,18 @@ module GTE {
         }
 
         /**Recursive call to determine the number of leaves in the tree*/
-        private leavesDFS(node:Node){
-            if(node.children.length!==0){
-                node.children.forEach(n=>this.leavesDFS(n));
+        private leavesDFS(node: Node) {
+            if (node.children.length !== 0) {
+                node.children.forEach(n => this.leavesDFS(n));
             }
-            else{
+            else {
                 this.leaves.push(node);
             }
+        }
+        /**Clones the tree using an external library - given in utils */
+        clone() {
+            let objectCloner = new ObjectCloner();
+            return objectCloner.clone(this,true);
         }
     }
 }
