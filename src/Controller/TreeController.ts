@@ -7,6 +7,7 @@
 ///<reference path="../Utils/SelectionRectangle.ts"/>
 ///<reference path="../Utils/Constants.ts"/>
 ///<reference path="UndoRedoController.ts"/>
+///<reference path="../Utils/ErrorPopUp.ts"/>
 module GTE {
     /**A class which connects the TreeView and the Tree Model.
      * Depending on the level of abstraction, some properties can be moved to different classes*/
@@ -16,14 +17,16 @@ module GTE {
         tree: Tree;
         treeView: TreeView;
         treeProperties: TreeViewProperties;
+        undoRedoController:UndoRedoController;
+        selectionRectangle: SelectionRectangle;
+        errorPopUp:ErrorPopUp;
         // Preview Nodes and Moves are used when hovering
         private previewNodes: Array<NodeView>;
         private previewMoves: Array<MoveView>;
         // An array used to list all nodes that need to be deleted
         private nodesToDelete:Array<Node>;
-        selectionRectangle: SelectionRectangle;
         selectedNodes: Array<NodeView>;
-        undoRedoController:UndoRedoController;
+
 
         constructor(game: Phaser.Game) {
             this.game = game;
@@ -37,6 +40,7 @@ module GTE {
             this.createInitialTree();
             this.attachHandlersToNodes();
             this.undoRedoController = new UndoRedoController(this);
+            this.errorPopUp = new ErrorPopUp(this.game);
         }
 
         /**A method which creates the initial 3-node tree in the scene*/
@@ -221,8 +225,22 @@ module GTE {
             }
         }
 
+        /**Creates an iSet with the corresponding checks*/
+        createISet(){
+            let nodes = [];
+            this.selectedNodes.forEach(n=>{
+                nodes.push(n.node);
+            });
+            try{
+                this.tree.canCreateISet(nodes);
+            }
+            catch(err){
+                this.errorPopUp.show(err.message);
+                console.log(err.message);
+            }
+        }
 
-        /**Get all children to a given node*/
+        /**Get all children of a given node*/
         private getAllBranchChildren(node:Node){
             node.children.forEach(c=>{
                 this.getAllBranchChildren(c);

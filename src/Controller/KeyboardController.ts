@@ -9,18 +9,18 @@ module GTE {
         treeController: TreeController;
         shiftKey: Phaser.Key;
         controlKey:Phaser.Key;
-        nKey: Phaser.Key;
-        numberKeys: Array<Phaser.Key>;
-        zeroKey: Phaser.Key;
-        deleteKey: Phaser.Key;
+        addNodesKey: Phaser.Key;
+        playersKeys: Array<Phaser.Key>;
+        assignChancePlayerKey: Phaser.Key;
+        removeNodesKey: Phaser.Key;
         testButton: Phaser.Key;
         undoRedoButton:Phaser.Key;
-
+        iSetKey:Phaser.Key;
 
         constructor(game: Phaser.Game, treeController: TreeController) {
             this.game = game;
             this.treeController = treeController;
-            this.numberKeys = [];
+            this.playersKeys = [];
 
             this.addKeys();
             this.deselectNodesHandler();
@@ -28,6 +28,7 @@ module GTE {
             this.deleteNodeHandler();
             this.assignPlayerToNodeHandler();
             this.assignChancePlayerToNodeHandler();
+            this.createISetHandler();
             this.undoRedoHandler();
             this.testButtonHandler();
         }
@@ -36,14 +37,16 @@ module GTE {
         addKeys() {
             this.shiftKey = this.game.input.keyboard.addKey(Phaser.Keyboard.SHIFT);
             this.controlKey = this.game.input.keyboard.addKey(Phaser.Keyboard.CONTROL);
-            this.nKey = this.game.input.keyboard.addKey(Phaser.Keyboard.N);
-            this.zeroKey = this.game.input.keyboard.addKey(Phaser.Keyboard.ZERO);
-            this.deleteKey = this.game.input.keyboard.addKey(Phaser.Keyboard.DELETE);
+            this.addNodesKey = this.game.input.keyboard.addKey(Phaser.Keyboard.N);
+            this.assignChancePlayerKey = this.game.input.keyboard.addKey(Phaser.Keyboard.ZERO);
+            this.removeNodesKey = this.game.input.keyboard.addKey(Phaser.Keyboard.DELETE);
+            this.iSetKey = this.game.input.keyboard.addKey(Phaser.Keyboard.I);
             this.testButton = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
             this.undoRedoButton = this.game.input.keyboard.addKey(Phaser.Keyboard.Z);
+
             let keys = [Phaser.Keyboard.ONE, Phaser.Keyboard.TWO, Phaser.Keyboard.THREE, Phaser.Keyboard.FOUR];
             keys.forEach(k => {
-                this.numberKeys.push(this.game.input.keyboard.addKey(k));
+                this.playersKeys.push(this.game.input.keyboard.addKey(k));
             });
         }
 
@@ -63,7 +66,7 @@ module GTE {
 
         /**A method for adding children to selected nodes, when the N key is pressed*/
         addNodesHandler() {
-            this.nKey.onDown.add(() => {
+            this.addNodesKey.onDown.add(() => {
                 if (this.treeController.selectedNodes.length > 0) {
                     this.treeController.selectedNodes.forEach(n => {
                         n.inputHandler.dispatch(n, "inputDown");
@@ -74,7 +77,7 @@ module GTE {
 
         /** A method for deleting nodes, when DELETE key is pressed*/
         deleteNodeHandler(){
-            this.deleteKey.onDown.add(()=>{
+            this.removeNodesKey.onDown.add(()=>{
                 if(this.treeController.selectedNodes.length>0){
                     this.treeController.selectedNodes.forEach(n=>{
                         this.treeController.deleteNodeHandler(n.node);
@@ -98,8 +101,8 @@ module GTE {
 
         /**A method for assigning players to nodes when one of the keys 1,2,3 or 4 is pressed*/
         assignPlayerToNodeHandler() {
-            this.numberKeys.forEach((k) => {
-                let playerID = this.numberKeys.indexOf(k) + 1;
+            this.playersKeys.forEach((k) => {
+                let playerID = this.playersKeys.indexOf(k) + 1;
                 k.onDown.add(() => {
                     if (this.treeController.selectedNodes.length > 0) {
                         this.treeController.selectedNodes.forEach((n) => {
@@ -113,7 +116,7 @@ module GTE {
 
         /**A method for assigning chance player to a node*/
         assignChancePlayerToNodeHandler() {
-            this.zeroKey.onDown.add(() => {
+            this.assignChancePlayerKey.onDown.add(() => {
                 if (this.treeController.selectedNodes.length > 0) {
                     this.treeController.selectedNodes.forEach((n) => {
                         n.node.convertToChance(this.treeController.tree.players[0]);
@@ -123,6 +126,16 @@ module GTE {
             });
         }
 
+        /**A method for creating an iSet*/
+        createISetHandler(){
+            this.iSetKey.onDown.add(()=>{
+               if(this.treeController.selectedNodes.length>0){
+                   this.treeController.createISet();
+               }
+            });
+        }
+
+        /**A method for assigning undo/redo functionality*/
         undoRedoHandler(){
             this.undoRedoButton.onDown.add(()=>{
                 if(this.controlKey.isDown && !this.shiftKey.isDown){

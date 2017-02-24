@@ -108,6 +108,17 @@ module GTE {
             }
         }
 
+        /**A method which returns the path from a given node to the root*/
+        getPathToRoot(){
+            let path = [];
+            let node = <Node>this;
+            while(node.parent!==null){
+                path.push(node.parent);
+                node=node.parent;
+            }
+            return path;
+        }
+
         /**Destroy ensures that there are no memory-leaks. */
         destroy() {
             this.type = null;

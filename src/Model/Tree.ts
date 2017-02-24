@@ -4,6 +4,7 @@
 ///<reference path="Player.ts"/>
 ///<reference path="StrategicForm.ts"/>
 ///<reference path="../Utils/ObjectCloner.ts"/>
+///<reference path="../Utils/Constants.ts"/>
 
 module GTE {
     /**The class which stores all the needed information for the tree - lists of nodes, moves, isets, players and the root */
@@ -118,6 +119,76 @@ module GTE {
                 this.leaves.push(node);
             }
         }
+
+        /**A method which checks whether an information set can be created from a list of nodes.
+         * If not, throws errors which are handled in the controller. Uses 4 helper methods.*/
+        canCreateISet(nodes:Array<Node>){
+            if(!this.checkIfNodesHavePlayers(nodes)){
+                throw new Error(NODES_MISSING_PLAYERS_ERROR_TEXT);
+            }
+
+            if(!this.checkNumberOfChildren(nodes)){
+                throw new Error(NODES_NUMBER_OF_CHILDREN_ERROR_TEXT);
+            }
+
+            if(!this.checkIfNodesHaveTheSamePlayer(nodes)){
+                throw new Error(NODES_DIFFERENT_PLAYERS_ERROR_TEXT);
+            }
+
+            if(this.checkIfNodesSharePathToRoot(nodes)) {
+                throw new Error(SAME_PATH_ON_ROOT_ERROR_TEXT);
+            }
+        }
+
+
+        private checkNumberOfChildren(nodes:Array<Node>):boolean{
+            for (let i = 0; i < nodes.length-1; i++) {
+                if(nodes[i].children.length!==nodes[i+1].children.length){
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        /**Checks if selected nodes have the same player assigned*/
+        private checkIfNodesHaveTheSamePlayer(nodes:Array<Node>):boolean{
+            let players = [];
+            for (let i = 0; i < nodes.length; i++) {
+                let node = nodes[i];
+                if(players.indexOf(node.owner)===-1){
+                    players.push(node.owner);
+                }
+            }
+            return players.length===1;
+        }
+
+        /**Checks if selected nodes have assigned players*/
+        private checkIfNodesHavePlayers(nodes:Array<Node>):boolean{
+            for (let i = 0; i < nodes.length; i++) {
+                let node = <Node>nodes[i];
+                if(node.owner===null){
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        /**Checks whether any 2 nodes of an array share a path to the root.*/
+        private checkIfNodesSharePathToRoot(nodes:Array<Node>):boolean{
+            for (let i = 0; i < nodes.length; i++) {
+                let n1 = nodes[i];
+                let path1 = n1.getPathToRoot();
+                for (let j = i+1; j < nodes.length; j++) {
+                    let n2 = nodes[j];
+                    let path2 = n2.getPathToRoot();
+                    if(path1.indexOf(n2)!==-1 || path2.indexOf(n1)!==-1){
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
         /**Clones the tree using an external library - given in utils */
         clone() {
             let objectCloner = new ObjectCloner();
