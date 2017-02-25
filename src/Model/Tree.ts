@@ -90,8 +90,16 @@ module GTE {
             this.nodes.push(node);
         }
 
+        /**Removes a given node from the tree.*/
         removeNode(node:Node){
-            
+            if(this.nodes.indexOf(node)!==-1){
+                //Remove the parent move from the tree
+                if(this.moves.indexOf(node.parentMove)!==-1) {
+                    this.moves.splice(this.moves.indexOf(node.parentMove), 1);
+                    node.parentMove.destroy();
+                }
+                this.nodes.splice(this.nodes.indexOf(node), 1);
+            }
         }
 
         /** Adds a child to a given node*/

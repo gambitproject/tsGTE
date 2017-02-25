@@ -24,6 +24,7 @@ module GTE {
             this.properties = properties;
             this.nodes = [];
             this.moves = [];
+            this.iSets = [];
             this.drawInitialTree();
             this.centerGroupOnScreen()
         }
@@ -51,6 +52,7 @@ module GTE {
                 m.updateMovePosition();
             });
             this.centerGroupOnScreen();
+            this.drawISets();
         }
 
         /**Sets the Y-coordinates for the tree nodes*/
@@ -90,6 +92,21 @@ module GTE {
             }
         }
 
+        /**TEST METHOD*/
+        private drawISets(){
+            for (let i = 0; i < this.iSets.length; i++) {
+                this.removeISetView(this.iSets[i]);
+                i--;
+            }
+            this.tree.iSets.forEach((iSet)=>{
+                let iSetNodes = [];
+                iSet.nodes.forEach(node=>{
+                    iSetNodes.push(this.findNodeView(node));
+                });
+                this.iSets.push(new ISetView(this.game,iSet,iSetNodes));
+            });
+        }
+
         /** Adds a child to a specified node*/
         addChildToNode(nodeV: NodeView) {
             let node = nodeV.node;
@@ -115,6 +132,23 @@ module GTE {
             }
         }
 
+        /**A method which removes the given nodeView from the treeView*/
+        removeNodeView(nodeV:NodeView){
+            if (this.nodes.indexOf(nodeV)!==-1) {
+                //Delete the associated moves.
+                this.moves.forEach(m => {
+                    if (m.to === nodeV) {
+                        this.moves.splice(this.moves.indexOf(m), 1);
+                        m.destroy();
+                    }
+                });
+                //Remove the nodeView from the treeView and destroy it
+                this.nodes.splice(this.nodes.indexOf(nodeV), 1);
+                nodeV.inputHandler.dispatch(nodeV, "inputOut");
+                nodeV.destroy();
+            }
+        }
+
         /**A helper method for finding the iSetView, given iSet*/
         findISetView(iSet:ISet){
             for (let i = 0; i < this.iSets.length; i++) {
@@ -125,6 +159,7 @@ module GTE {
             }
         }
 
+        /**A method which removes the given iSetView from the treeView*/
         removeISetView(iSetView:ISetView){
             if(this.iSets.indexOf(iSetView)!==-1) {
                 this.iSets.splice(this.iSets.indexOf(iSetView), 1);

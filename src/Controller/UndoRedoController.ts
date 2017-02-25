@@ -46,8 +46,6 @@ module GTE {
             this.treesList.splice(this.currentTreeIndex+1, this.treesList.length);
             this.treesList.push(this.treeController.tree.clone());
             this.currentTreeIndex++;
-
-            console.log(this.treesList.length);
         }
     }
 }

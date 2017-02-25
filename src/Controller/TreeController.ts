@@ -8,6 +8,7 @@
 ///<reference path="../Utils/Constants.ts"/>
 ///<reference path="UndoRedoController.ts"/>
 ///<reference path="../Utils/ErrorPopUp.ts"/>
+///<reference path="../View/ISetView.ts"/>
 module GTE {
     /**A class which connects the TreeView and the Tree Model.
      * Depending on the level of abstraction, some properties can be moved to different classes*/
@@ -248,7 +249,7 @@ module GTE {
                     });
                     let iSetView = this.treeView.findISetView(n.node.iSet);
                     this.tree.removeISet(n.node.iSet);
-                    this.treeView.removeISetView(this.treeView.findISetView(n.node.iSet));
+                    this.treeView.removeISetView(iSetView);
                 }
                 else{
                     iSetNodes.push(n.node);
@@ -256,6 +257,8 @@ module GTE {
             });
 
             this.tree.addISet(iSetNodes[0].owner,iSetNodes);
+            this.treeView.drawTree();
+            // this.treeView.createISet();
             console.log(this.tree.iSets[0]);
         }
 
@@ -267,25 +270,10 @@ module GTE {
             this.nodesToDelete.push(node);
         }
 
+        /**A method for deleting the node from the treeView and tree*/
         private deleteNode(node: Node) {
-            let nodeV = this.treeView.findNodeView(node);
-            //Delete the associated moveView from the TreeView
-            this.treeView.moves.forEach(m => {
-                if (m.to === nodeV) {
-                    this.treeView.moves.splice(this.treeView.moves.indexOf(m), 1);
-                    m.destroy();
-                }
-            });
-            //Delete the associated NodeView from TreeView
-            this.treeView.nodes.splice(this.treeView.nodes.indexOf(nodeV), 1);
-
-            //Delete the associated Move from the Tree
-            this.tree.moves.splice(this.tree.moves.indexOf(node.parentMove), 1);
-            node.parentMove.destroy();
-            // Remove the associated Node from the Tree
-            this.tree.nodes.splice(this.tree.nodes.indexOf(node), 1);
-            nodeV.inputHandler.dispatch(nodeV, "inputOut");
-            nodeV.destroy();
+            this.treeView.removeNodeView(this.treeView.findNodeView(node));
+            this.tree.removeNode(node);
         }
     }
 }
