@@ -4,6 +4,7 @@
 ///<reference path="NodeView.ts"/>
 ///<reference path="MoveView.ts"/>
 ///<reference path="../Model/Node.ts"/>
+///<reference path="ISetView.ts"/>
 
 module GTE {
     /** A class for the graphical representation of the tree. The main algorithm for drawing and repositioning
@@ -15,6 +16,7 @@ module GTE {
         properties: TreeViewProperties;
         nodes: Array<NodeView>;
         moves: Array<MoveView>;
+        iSets:Array<ISetView>;
 
         constructor(game: Phaser.Game, tree: Tree, properties: TreeViewProperties) {
             this.game = game;
@@ -110,6 +112,23 @@ module GTE {
                 if (nodeView.node === node) {
                     return nodeView;
                 }
+            }
+        }
+
+        /**A helper method for finding the iSetView, given iSet*/
+        findISetView(iSet:ISet){
+            for (let i = 0; i < this.iSets.length; i++) {
+                let iSetView = this.iSets[i];
+                if (iSetView.iSet === iSet) {
+                    return iSetView;
+                }
+            }
+        }
+
+        removeISetView(iSetView:ISetView){
+            if(this.iSets.indexOf(iSetView)!==-1) {
+                this.iSets.splice(this.iSets.indexOf(iSetView), 1);
+                iSetView.destroy();
             }
         }
 

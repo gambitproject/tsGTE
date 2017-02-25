@@ -42,7 +42,7 @@ module GTE {
                 });
                 this.iSets.forEach(iSet => {
                     if (iSet.player === player) {
-                        iSet.emptyISet();
+                        iSet.destroy();
                     }
                 });
             }
@@ -68,7 +68,7 @@ module GTE {
         removeISet(iSet: ISet) {
             if (this.iSets.indexOf(iSet) !== -1) {
                 this.iSets.splice(this.iSets.indexOf(iSet), 1);
-                iSet.emptyISet();
+                iSet.destroy();
             }
         }
 
@@ -88,6 +88,10 @@ module GTE {
             }
 
             this.nodes.push(node);
+        }
+
+        removeNode(node:Node){
+            
         }
 
         /** Adds a child to a given node*/

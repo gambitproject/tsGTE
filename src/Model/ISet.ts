@@ -34,12 +34,6 @@ module GTE{
             }
         }
 
-        emptyISet(){
-            this.nodes.forEach(n=>{
-                this.removeNode(n);
-                n.iSet =null;
-            });
-        }
 
         addLabel(label:string){
             this.label = label;
@@ -52,7 +46,9 @@ module GTE{
         /**The destroy method ensures that there are no memory-leaks */
         destroy(){
             this.player = null;
-            this.nodes.forEach(n=>n.destroy());
+            this.nodes.forEach(n=>{n.iSet=null;});
+            this.nodes=[];
+            this.nodes=null;
         }
     }
 }

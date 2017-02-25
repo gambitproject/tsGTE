@@ -129,7 +129,7 @@ module GTE {
         /**A method for creating an iSet*/
         createISetHandler(){
             this.iSetKey.onDown.add(()=>{
-               if(this.treeController.selectedNodes.length>0){
+               if(this.treeController.selectedNodes.length>1){
                    this.treeController.createISet();
                }
             });

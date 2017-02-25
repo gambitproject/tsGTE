@@ -24,7 +24,8 @@ module GTE{
                 return n1.x<=n2.x?-1:1;
             });
         }
+        destroy(){
 
-
+        }
     }
 }

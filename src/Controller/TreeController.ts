@@ -17,14 +17,14 @@ module GTE {
         tree: Tree;
         treeView: TreeView;
         treeProperties: TreeViewProperties;
-        undoRedoController:UndoRedoController;
+        undoRedoController: UndoRedoController;
         selectionRectangle: SelectionRectangle;
-        errorPopUp:ErrorPopUp;
+        errorPopUp: ErrorPopUp;
         // Preview Nodes and Moves are used when hovering
         private previewNodes: Array<NodeView>;
         private previewMoves: Array<MoveView>;
         // An array used to list all nodes that need to be deleted
-        private nodesToDelete:Array<Node>;
+        private nodesToDelete: Array<Node>;
         selectedNodes: Array<NodeView>;
 
 
@@ -207,18 +207,18 @@ module GTE {
         }
 
         /**A method for deleting a node - 2 step deletion.*/
-        deleteNodeHandler(node:Node) {
-            if(this.tree.nodes.indexOf(node)===-1){
+        deleteNodeHandler(node: Node) {
+            if (this.tree.nodes.indexOf(node) === -1) {
                 return;
             }
-            if(node.children.length===0 && node!==this.tree.root){
+            if (node.children.length === 0 && node !== this.tree.root) {
                 this.deleteNode(node);
             }
-            else{
+            else {
                 this.nodesToDelete = [];
                 this.getAllBranchChildren(node);
                 this.nodesToDelete.pop();
-                this.nodesToDelete.forEach(n=>{
+                this.nodesToDelete.forEach(n => {
                     this.deleteNode(n);
                 });
                 this.nodesToDelete = [];
@@ -226,45 +226,65 @@ module GTE {
         }
 
         /**Creates an iSet with the corresponding checks*/
-        createISet(){
+        createISet() {
             let nodes = [];
-            this.selectedNodes.forEach(n=>{
+            this.selectedNodes.forEach(n => {
                 nodes.push(n.node);
             });
-            try{
+            //Check for errors
+            try {
                 this.tree.canCreateISet(nodes);
             }
-            catch(err){
+            catch (err) {
                 this.errorPopUp.show(err.message);
-                console.log(err.message);
+                return;
             }
+            // Create a list of nodes to put into an iSet - create the union of all iSets
+            let iSetNodes = [];
+            this.selectedNodes.forEach((n) => {
+                if (n.node.iSet) {
+                    n.node.iSet.nodes.forEach(iNode => {
+                        iSetNodes.push(iNode);
+                    });
+                    let iSetView = this.treeView.findISetView(n.node.iSet);
+                    this.tree.removeISet(n.node.iSet);
+                    this.treeView.removeISetView(this.treeView.findISetView(n.node.iSet));
+                }
+                else{
+                    iSetNodes.push(n.node);
+                }
+            });
+
+            this.tree.addISet(iSetNodes[0].owner,iSetNodes);
+            console.log(this.tree.iSets[0]);
         }
 
         /**Get all children of a given node*/
-        private getAllBranchChildren(node:Node){
-            node.children.forEach(c=>{
+        private getAllBranchChildren(node: Node) {
+            node.children.forEach(c => {
                 this.getAllBranchChildren(c);
             });
             this.nodesToDelete.push(node);
         }
-        private deleteNode(node:Node){
+
+        private deleteNode(node: Node) {
             let nodeV = this.treeView.findNodeView(node);
             //Delete the associated moveView from the TreeView
-            this.treeView.moves.forEach(m=>{
-                if(m.to === nodeV){
-                    this.treeView.moves.splice(this.treeView.moves.indexOf(m),1);
+            this.treeView.moves.forEach(m => {
+                if (m.to === nodeV) {
+                    this.treeView.moves.splice(this.treeView.moves.indexOf(m), 1);
                     m.destroy();
                 }
             });
             //Delete the associated NodeView from TreeView
-            this.treeView.nodes.splice(this.treeView.nodes.indexOf(nodeV),1);
+            this.treeView.nodes.splice(this.treeView.nodes.indexOf(nodeV), 1);
 
             //Delete the associated Move from the Tree
-            this.tree.moves.splice(this.tree.moves.indexOf(node.parentMove),1);
+            this.tree.moves.splice(this.tree.moves.indexOf(node.parentMove), 1);
             node.parentMove.destroy();
             // Remove the associated Node from the Tree
-            this.tree.nodes.splice(this.tree.nodes.indexOf(node),1);
-            nodeV.inputHandler.dispatch(nodeV,"inputOut");
+            this.tree.nodes.splice(this.tree.nodes.indexOf(node), 1);
+            nodeV.inputHandler.dispatch(nodeV, "inputOut");
             nodeV.destroy();
         }
     }
