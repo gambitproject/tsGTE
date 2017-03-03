@@ -27,18 +27,23 @@ module GTE{
 
             this.errorRectangle = this.game.add.sprite(this.game.width/2,this.game.height/2,this.game.cache.getBitmapData("line"));
             this.errorRectangle.anchor.set(0.5,0.5);
-            this.errorRectangle.width = ERROR_MESSAGE_WIDTH*this.game.width;
-            this.errorRectangle.height = this.errorRectangle.width*0.4;
+
             this.errorRectangle.tint = ERROR_MESSAGE_COLOR;
             this.errorRectangle.alpha = 0;
 
             this.errorMessage = this.game.add.text(this.errorRectangle.x,this.errorRectangle.y,"",{font: "bold 14pt Arial",align:"center"});
             this.errorMessage.anchor.set(0.5,0.5);
             this.errorMessage.alpha = 0;
+
+
+
         }
 
         show(text:string){
             this.errorMessage.text = text;
+
+            this.errorRectangle.width = this.errorMessage.width*1.2;
+            this.errorRectangle.height = this.errorMessage.height + 0.2*this.errorMessage.width;
 
             this.fullScreenTween = this.game.add.tween(this.fullScreenSprite).to({alpha:0.6},200,Phaser.Easing.Default,true,0);
             this.errorRectangleTween = this.game.add.tween(this.errorRectangle).to({alpha:1},300,Phaser.Easing.Default,true,200);

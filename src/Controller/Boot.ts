@@ -17,6 +17,7 @@ module GTE {
         radius: number;
 
         create() {
+            this.game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
             this.createTextures();
             this.radius = this.game.height * INTRO_RADIUS;
             this.distance = this.game.height * INTRO_DISTANCE;

@@ -17,7 +17,6 @@ module GTE {
             this.game = game;
             this.iSet = iSet;
             this.nodes = nodes;
-
             this.sortNodesLeftToRight();
             this.createSimpleISet();
 

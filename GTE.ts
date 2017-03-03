@@ -9,6 +9,7 @@ module GTE {
         constructor(width?: number, height?: number) {
 
             super(width, height, Phaser.CANVAS, 'phaser-div', null, false, true);
+
             this.game = this;
             this.game.state.add("Boot", Boot, false);
             this.game.state.add("MainScene", MainScene, false);
@@ -17,14 +18,12 @@ module GTE {
 
     }
 
-
-
     window.onload = () => {
             var width = window.innerWidth;
             var height = window.innerHeight;
-            if (height > 1080) {
-                height = 1080;
+            if (width>1920) {
                 width = 1920;
+                height = 1920/window.innerWidth * window.innerHeight;
             }
         new GTE(width, height);
     }

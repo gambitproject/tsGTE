@@ -29,7 +29,6 @@ module GTE {
     export const NODES_NUMBER_OF_CHILDREN_ERROR_TEXT = "Cannot create information set for \n nodes which have different number of children.";
 
     //Misc
-    export const ERROR_MESSAGE_WIDTH = 0.3;
     export const ERROR_MESSAGE_COLOR = 0xff4545;
 
 }

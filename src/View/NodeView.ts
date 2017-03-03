@@ -19,6 +19,7 @@ module GTE {
         //Horizontal offset: -1 for left, 1 for right;
         private labelHorizontalOffset: number;
 
+
         constructor(game: Phaser.Game, node: Node, x?: number, y?: number) {
             super(game, x, y, "");
             this.isSelected = false;
@@ -163,6 +164,7 @@ module GTE {
 
         /** The destroy method of the node which prevents memory-leaks*/
         destroy() {
+
             this.node.destroy();
             this.node = null;
             this.circle.destroy();
