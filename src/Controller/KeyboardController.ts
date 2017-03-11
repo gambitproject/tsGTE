@@ -96,6 +96,7 @@ module GTE {
                 deletedNodes.forEach(n=>{
                     this.treeController.selectedNodes.splice(this.treeController.selectedNodes.indexOf(n),1);
                 });
+                this.treeController.treeView.drawTree();
             });
         }
 

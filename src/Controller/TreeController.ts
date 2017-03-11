@@ -183,7 +183,7 @@ module GTE {
 
         /**Handler for the signal CLICK*/
         private handleInputDown(nodeV: NodeView) {
-            this.handleInputOut();
+            this.handleInputOut(nodeV);
             if (nodeV.node.children.length === 0) {
                 let child1 = this.treeView.addChildToNode(nodeV);
                 let child2 = this.treeView.addChildToNode(nodeV);
@@ -195,6 +195,9 @@ module GTE {
                 this.attachHandlersToNode(child1);
             }
             this.undoRedoController.saveNewTree();
+            // if(!Phaser.Rectangle.contains( nodeV.body, this.game.input.x, this.game.input.y) ){
+            //     this.handleInputOut(nodeV);
+            // }
         }
 
         /** A method for assigning a player to a given node.*/

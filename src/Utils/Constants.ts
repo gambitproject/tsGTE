@@ -27,8 +27,10 @@ module GTE {
     export const NODES_MISSING_PLAYERS_ERROR_TEXT = "Cannot create information set for \n nodes which do not have player assigned.";
     export const NODES_DIFFERENT_PLAYERS_ERROR_TEXT = "Cannot create information set for \n nodes which have different players.";
     export const NODES_NUMBER_OF_CHILDREN_ERROR_TEXT = "Cannot create information set for \n nodes which have different number of children.";
+    export const ISET_LINE_WIDTH = 0.05;
 
     //Misc
     export const ERROR_MESSAGE_COLOR = 0xff4545;
+    export const TREE_TWEEN_DURATION = 600;
 
 }

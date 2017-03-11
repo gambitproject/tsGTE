@@ -5,6 +5,7 @@
 ///<reference path="MoveView.ts"/>
 ///<reference path="../Model/Node.ts"/>
 ///<reference path="ISetView.ts"/>
+///<reference path="../Utils/TreeTweenManager.ts"/>
 
 module GTE {
     /** A class for the graphical representation of the tree. The main algorithm for drawing and repositioning
@@ -16,10 +17,13 @@ module GTE {
         properties: TreeViewProperties;
         nodes: Array<NodeView>;
         moves: Array<MoveView>;
-        iSets:Array<ISetView>;
+        iSets: Array<ISetView>;
+        //TESTING!
+        treeTweenManager: TreeTweenManager;
 
         constructor(game: Phaser.Game, tree: Tree, properties: TreeViewProperties) {
-            this.game = game;
+            this.game = game;;
+            this.treeTweenManager = new TreeTweenManager(this.game);
             this.tree = tree;
             this.properties = properties;
             this.nodes = [];
@@ -39,27 +43,42 @@ module GTE {
                     this.moves.push(new MoveView(this.game, parent, nodeView));
                 }
             });
-
             this.drawTree();
+            // NOTE: Move positions are only updated on initial drawing
+            this.moves.forEach(m => {
+                m.updateMovePosition();
+            });
         }
 
         /**This method draws the tree by recursively calling the drawNode method*/
         drawTree() {
+
+            this.treeTweenManager.oldCoordinates = this.getOldCoordinates();
+
             this.setYCoordinates(this.tree.root);
             this.updateLeavesPositions();
             this.centerParents(this.tree.root);
-            this.moves.forEach(m => {
-                m.updateMovePosition();
-            });
             this.centerGroupOnScreen();
             this.drawISets();
+
+            this.treeTweenManager.startTweens(this.nodes, this.moves, this.iSets);
+            // NOTE: All other moves will be updated from the tween manager.
+            this.moves[this.moves.length-1].updateMovePosition();
+        }
+
+        private getOldCoordinates() {
+            let oldCoordinates = [];
+            this.nodes.forEach(n => {
+                oldCoordinates.push({x: n.x, y: n.y});
+            });
+            return oldCoordinates;
         }
 
         /**Sets the Y-coordinates for the tree nodes*/
         private setYCoordinates(node: Node) {
             node.children.forEach(n => this.setYCoordinates(n));
             let nodeView = this.findNodeView(node);
-            nodeView.y = node.depth * this.properties.levelHeight;
+            nodeView.y = nodeView.level * this.properties.levelHeight;
         }
 
         /**Update the leaves' x coordinate first*/
@@ -78,8 +97,11 @@ module GTE {
         private centerParents(node: Node) {
             if (node.children.length !== 0) {
                 node.children.forEach(n => this.centerParents(n));
-                let depthDifferenceToLeft = node.children[0].depth - node.depth;
-                let depthDifferenceToRight = node.children[node.children.length - 1].depth - node.depth;
+                // let depthDifferenceToLeft = node.children[0].depth - node.depth;
+                let depthDifferenceToLeft = this.findNodeView(node.children[0]).level - this.findNodeView(node).level;
+                // let depthDifferenceToRight = node.children[node.children.length - 1].depth - node.depth;
+                let depthDifferenceToRight = this.findNodeView(node.children[node.children.length - 1]).level - this.findNodeView(node).level;
+
                 let total = depthDifferenceToLeft + depthDifferenceToRight;
 
                 let leftChildNodeView = this.findNodeView(node.children[0]);
@@ -93,17 +115,18 @@ module GTE {
         }
 
         /**TEST METHOD*/
-        private drawISets(){
+        private drawISets() {
             for (let i = 0; i < this.iSets.length; i++) {
+                // this.iSets[i].destroy();
                 this.removeISetView(this.iSets[i]);
                 i--;
             }
-            this.tree.iSets.forEach((iSet)=>{
+            this.tree.iSets.forEach((iSet) => {
                 let iSetNodes = [];
-                iSet.nodes.forEach(node=>{
+                iSet.nodes.forEach(node => {
                     iSetNodes.push(this.findNodeView(node));
                 });
-                this.iSets.push(new ISetView(this.game,iSet,iSetNodes));
+                this.iSets.push(new ISetView(this.game, iSet, iSetNodes));
             });
         }
 
@@ -133,8 +156,8 @@ module GTE {
         }
 
         /**A method which removes the given nodeView from the treeView*/
-        removeNodeView(nodeV:NodeView){
-            if (this.nodes.indexOf(nodeV)!==-1) {
+        removeNodeView(nodeV: NodeView) {
+            if (this.nodes.indexOf(nodeV) !== -1) {
                 //Delete the associated moves.
                 this.moves.forEach(m => {
                     if (m.to === nodeV) {
@@ -150,7 +173,7 @@ module GTE {
         }
 
         /**A helper method for finding the iSetView, given iSet*/
-        findISetView(iSet:ISet){
+        findISetView(iSet: ISet) {
             for (let i = 0; i < this.iSets.length; i++) {
                 let iSetView = this.iSets[i];
                 if (iSetView.iSet === iSet) {
@@ -160,8 +183,8 @@ module GTE {
         }
 
         /**A method which removes the given iSetView from the treeView*/
-        removeISetView(iSetView:ISetView){
-            if(this.iSets.indexOf(iSetView)!==-1) {
+        removeISetView(iSetView: ISetView) {
+            if (this.iSets.indexOf(iSetView) !== -1) {
                 this.iSets.splice(this.iSets.indexOf(iSetView), 1);
                 iSetView.destroy();
             }

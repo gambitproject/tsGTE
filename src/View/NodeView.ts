@@ -13,6 +13,7 @@ module GTE {
         inputHandler: Phaser.Signal;
         label: Phaser.Text;
         isSelected: boolean;
+        level:number;
         private circle: Phaser.Sprite;
         private square: Phaser.Sprite;
         private previewSelected:Phaser.Sprite;
@@ -27,6 +28,7 @@ module GTE {
             this.scale.set(OVERLAY_SCALE, OVERLAY_SCALE);
             this.inputEnabled = true;
             this.node = node;
+            this.level = this.node.depth;
             if (this.node.owner) {
                 this.tint = node.owner.color;
             }
@@ -96,6 +98,10 @@ module GTE {
         /** A method which sets the position of the node to a specific x and y coordinate*/
         setPosition(x: number, y: number) {
             this.position.set(x, y);
+            // this.updateLabelPosition();
+        }
+
+        updateLabelPosition() {
             this.label.position.set(this.x + this.labelHorizontalOffset * this.circle.width,
                 this.y - this.circle.width);
         }
