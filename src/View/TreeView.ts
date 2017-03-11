@@ -66,6 +66,7 @@ module GTE {
             this.moves[this.moves.length-1].updateMovePosition();
         }
 
+
         private getOldCoordinates() {
             let oldCoordinates = [];
             this.nodes.forEach(n => {

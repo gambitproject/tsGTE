@@ -102,6 +102,12 @@ module GTE {
         }
 
         updateLabelPosition() {
+            if(this.node.parent && this.node.parent.children.indexOf(this.node)<this.node.parent.children.length/2){
+                this.labelHorizontalOffset=-1;
+            }
+            else{
+                this.labelHorizontalOffset=1;
+            }
             this.label.position.set(this.x + this.labelHorizontalOffset * this.circle.width,
                 this.y - this.circle.width);
         }
