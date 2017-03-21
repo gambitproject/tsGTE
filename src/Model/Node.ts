@@ -4,7 +4,7 @@
 ///<reference path="Payoff.ts"/>
 module GTE {
     /**The types of Node. If a node does not have type, it can be deleted */
-    export enum NodeType {DEFAULT=1, CHANCE, OWNED, LEAF}
+    export enum NodeType {DEFAULT = 1, CHANCE, OWNED, LEAF}
 
     /**The class Node. Each Node has a type, parent, parentMove, children, childrenMoves, iSet, owner, depth and payoff */
     export class Node {
@@ -25,7 +25,9 @@ module GTE {
             this.children = [];
             this.childrenMoves = [];
             this.owner = null;
+            this.iSet = null;
         }
+
         /**The method adds a child to the current Node. */
         addChild(node?: Node) {
             let child = node || new Node();
@@ -39,6 +41,7 @@ module GTE {
             child.parentMove = move;
             this.childrenMoves.push(move);
         }
+
         /**The method removes a given child from the Node */
         removeChild(node: Node) {
             if (this.children.indexOf(node) !== -1) {
@@ -46,10 +49,12 @@ module GTE {
                 node.destroy();
             }
         }
+
         /**The method gets the index of the node, from the children of the parent */
-        getIndexFromParent(){
+        getIndexFromParent() {
             return this.parent.children.indexOf(this);
         }
+
         /**Converts the current Node to a default Node */
         convertToDefault() {
             this.type = NodeType.DEFAULT;
@@ -61,9 +66,10 @@ module GTE {
 
             this.childrenMoves.forEach(c => c.convertToDefault());
         }
+
         /**Converts the current Node to a labeled, by setting an owner */
         convertToLabeled(player: Player) {
-            if (this.children.length>0) {
+            if (this.children.length > 0) {
                 this.type = NodeType.OWNED;
                 this.payoff = null;
                 this.owner = player;
@@ -71,6 +77,7 @@ module GTE {
                 this.childrenMoves.forEach(c => c.convertToLabeled());
             }
         }
+
         /**Converts the current Node to a leaf node, by setting payoffs */
         convertToLeaf(payoff: Payoff) {
             this.type = NodeType.LEAF;
@@ -80,15 +87,16 @@ module GTE {
                 this.iSet.removeNode(this);
             }
         }
+
         /**Converts the current Node to a chance Node, setting the owner to the chancePlayer and assigning probabilities to children moves*/
-        convertToChance(chancePlayer:Player, probabilities?: Array<number>, ) {
+        convertToChance(chancePlayer: Player, probabilities?: Array<number>,) {
             this.type = NodeType.CHANCE;
             this.payoff = null;
 
-            if(chancePlayer.id===0) {
+            if (chancePlayer.id === 0) {
                 this.owner = chancePlayer;
             }
-            else{
+            else {
                 throw new Error("Given player is not a chance player");
             }
 
@@ -109,12 +117,12 @@ module GTE {
         }
 
         /**A method which returns the path from a given node to the root*/
-        getPathToRoot(){
+        getPathToRoot() {
             let path = [];
             let node = <Node>this;
-            while(node.parent!==null){
+            while (node.parent !== null) {
                 path.push(node.parent);
-                node=node.parent;
+                node = node.parent;
             }
             return path;
         }
@@ -124,8 +132,8 @@ module GTE {
             this.type = null;
             this.depth = null;
             this.owner = null;
-            if(this.parent){
-                this.parent.children.splice(this.parent.children.indexOf(this),1);
+            if (this.parent) {
+                this.parent.children.splice(this.parent.children.indexOf(this), 1);
             }
             if (this.iSet) {
                 this.iSet.removeNode(this);

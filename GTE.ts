@@ -8,7 +8,7 @@ module GTE {
 
         constructor(width?: number, height?: number) {
 
-            super(width, height, Phaser.CANVAS, 'phaser-div', null, false, true);
+            super(width, height, Phaser.AUTO, 'phaser-div', null, false, true);
 
             this.game = this;
             this.game.state.add("Boot", Boot, false);

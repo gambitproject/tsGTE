@@ -28,9 +28,12 @@ module GTE {
                 return;
             }
 
-            //1. Delete the current Tree in tree controller
+            //1. Delete the current Tree and ISets in tree controller
             this.treeController.deleteNodeHandler(this.treeController.tree.root);
             this.treeController.treeView.nodes[0].destroy();
+            this.treeController.treeView.iSets.forEach((iSet:ISetView)=>{
+                iSet.destroy();
+            });
 
             //2. Change it with the corresponding one in treelist
             this.treeController.tree = this.treesList[this.currentTreeIndex].clone();

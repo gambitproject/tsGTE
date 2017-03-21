@@ -2,17 +2,23 @@
 ///<reference path="TreeController.ts"/>
 ///<reference path="../View/NodeView.ts"/>
 ///<reference path="KeyboardController.ts"/>
+///<reference path="UserActionController.ts"/>
 module GTE {
     /**A class for the main part of the software. This is the starting point of the core software*/
     export class MainScene extends Phaser.State {
         // The Tree Controller handles everything related to the tree
        treeController:TreeController;
-       // The Keyboard Controller handles input and sends signals and executes methods from the treeController
-       keyboardController:KeyboardController;
+        // User Action Controller handles actions from the user. These actions will be called whenever a keyboard key
+        // or a button is pressed. Abstracts the logic of user actions and removes unnecessary code repetition.
+        userActionController:UserActionController;
+        // The Keyboard Controller handles input and sends signals and executes methods from the treeController
+        keyboardController:KeyboardController;
 
         create() {
            this.treeController = new TreeController(this.game);
-           this.keyboardController = new KeyboardController(this.game, this.treeController);
+           this.userActionController = new UserActionController(this.game,this.treeController)
+
+           this.keyboardController = new KeyboardController(this.game, this.userActionController);
            // The line below is used for fps testing purposes
            this.game.time.advancedTiming = true;
 

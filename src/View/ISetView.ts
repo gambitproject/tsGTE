@@ -18,7 +18,24 @@ module GTE {
             this.nodes = nodes;
             this.sortNodesLeftToRight();
             this.createSimpleISet();
-
+            this.iSetSprite.inputEnabled = true;
+            this.iSetSprite.input.pixelPerfectClick=true;
+            this.iSetSprite.input.pixelPerfectOver = true;
+            this.iSetSprite.events.onInputDown.add(()=>{
+               this.nodes.forEach((n:NodeView)=>{
+                   n.inputHandler.dispatch(n,"inputDown");
+               })
+            });
+            this.iSetSprite.events.onInputOver.add(()=>{
+                this.nodes.forEach((n:NodeView)=>{
+                   n.inputHandler.dispatch(n,"inputOver");
+                });
+            });
+            this.iSetSprite.events.onInputOut.add(()=>{
+                this.nodes.forEach((n:NodeView)=>{
+                    n.inputHandler.dispatch(n,"inputOut");
+                });
+            });
         }
 
         /**Sorts the nodes left to right before drawing*/

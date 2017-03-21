@@ -176,8 +176,7 @@ module GTE {
 
         /** The destroy method of the node which prevents memory-leaks*/
         destroy() {
-
-            this.node.destroy();
+            // this.node.destroy();
             this.node = null;
             this.circle.destroy();
             this.circle = null;

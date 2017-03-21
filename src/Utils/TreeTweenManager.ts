@@ -22,7 +22,7 @@ module GTE {
                 if (newNode && clonedCoords && this.oldCoordinates.length > 3 && clonedCoords.x !== 0 && clonedCoords.y != 0) {
                     this.game.add.tween(newNode).from({x: clonedCoords.x,y: clonedCoords.y}, TREE_TWEEN_DURATION, Phaser.Easing.Cubic.Out, true).onUpdateCallback(() => {
                         nodes.forEach(n => {
-                            n.updateLabelPosition();
+                                n.updateLabelPosition();
                         });
                         moves.forEach(m => {
                             m.updateMovePosition();
@@ -39,7 +39,10 @@ module GTE {
             }
             this.game.time.events.add(601, () => {
                 nodes.forEach(n => {
-                    n.updateLabelPosition();
+                    // This if is a bug fixer if you click undo too quickly.
+                    if(n && n.node) {
+                        n.updateLabelPosition();
+                    }
                 });
                 moves.forEach(m => {
                     m.updateMovePosition();

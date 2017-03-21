@@ -44,7 +44,7 @@ module GTE {
                 }
             });
             this.drawTree();
-            // NOTE: Move positions are only updated on initial drawing
+            // NOTE: Moves positions are only updated on initial drawing
             this.moves.forEach(m => {
                 m.updateMovePosition();
             });
@@ -124,10 +124,16 @@ module GTE {
             }
             this.tree.iSets.forEach((iSet) => {
                 let iSetNodes = [];
+                let maxDepth = 0;
                 iSet.nodes.forEach(node => {
+                    if(node.depth>maxDepth){
+                        maxDepth=node.depth;
+                    }
                     iSetNodes.push(this.findNodeView(node));
                 });
+
                 this.iSets.push(new ISetView(this.game, iSet, iSetNodes));
+                //DFS branch children and increase by maxDepth - parentDepth
             });
         }
 

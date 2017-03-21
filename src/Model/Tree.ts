@@ -99,6 +99,14 @@ module GTE {
                     node.parentMove.destroy();
                 }
                 this.nodes.splice(this.nodes.indexOf(node), 1);
+
+                if(node.parent && node.parent.iSet){
+                    if(node.parent.iSet.nodes.length<=2){
+                        this.iSets.splice(this.iSets.indexOf(node.iSet),1);
+                    }
+                    node.parent.iSet.removeNode(node.parent);
+                }
+                node.destroy();
             }
         }
 
