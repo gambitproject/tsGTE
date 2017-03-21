@@ -61,7 +61,12 @@ module GTE {
             this.bmd.ctx.stroke();
 
             this.iSetSprite = this.game.add.sprite(0,0,this.bmd);
-            this.iSetSprite.tint = this.iSet.player.color;
+            if(this.iSet.player) {
+                this.iSetSprite.tint = this.iSet.player.color;
+            }
+            else{
+                this.iSetSprite.tint = 0x000000;
+            }
             this.iSetSprite.alpha = 0.15;
         }
 

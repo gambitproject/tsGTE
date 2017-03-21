@@ -8,7 +8,7 @@ module GTE{
         nodes: Array<Node>;
         label:string;
 
-        constructor(player:Player, nodes?:Array<Node>){
+        constructor(player?:Player, nodes?:Array<Node>){
             this.player = player;
             this.nodes = [];
             this.label = "";
@@ -18,8 +18,11 @@ module GTE{
         }
 
         addNode(node:Node){
-            if(node.owner !== this.player){
+            if(this.player && node.owner && node.owner !== this.player){
                 throw new Error("ISet player is different from node owner!");
+            }
+            if(this.player && !node.owner){
+                node.owner = this.player;
             }
             if(this.nodes.indexOf(node)===-1){
                 this.nodes.push(node);
@@ -34,6 +37,13 @@ module GTE{
             }
         }
 
+
+        changePlayer(player:Player){
+            this.player = player;
+            this.nodes.forEach(n=>{
+                n.convertToLabeled(player);
+            })
+        }
 
         addLabel(label:string){
             this.label = label;

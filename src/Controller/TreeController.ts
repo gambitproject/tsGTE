@@ -194,10 +194,8 @@ module GTE {
                 let child1 = this.treeView.addChildToNode(nodeV);
                 this.attachHandlersToNode(child1);
             }
+
             this.undoRedoController.saveNewTree();
-            // if(!Phaser.Rectangle.contains( nodeV.body, this.game.input.x, this.game.input.y) ){
-            //     this.handleInputOut(nodeV);
-            // }
         }
 
         /** A method for assigning a player to a given node.*/
@@ -207,6 +205,15 @@ module GTE {
 
             }
             n.node.convertToLabeled(this.tree.findPlayerById(playerID));
+            // If the node is in an iset, change the owner of the iSet to the new player
+            if(n.node.iSet && n.node.iSet.nodes.length>1){
+                n.node.iSet.changePlayer(n.node.owner);
+                let iSetView = this.treeView.findISetView(n.node.iSet);
+                iSetView.nodes.forEach(nv=>{
+                    nv.resetNodeDrawing();
+                });
+                iSetView.iSetSprite.tint = iSetView.iSet.player.color;
+            }
             n.resetNodeDrawing();
         }
 
@@ -245,6 +252,7 @@ module GTE {
             }
             // Create a list of nodes to put into an iSet - create the union of all iSets
             let iSetNodes = [];
+            let player = null;
             this.selectedNodes.forEach((n) => {
                 if (n.node.iSet) {
                     n.node.iSet.nodes.forEach(iNode => {
@@ -257,12 +265,17 @@ module GTE {
                 else{
                     iSetNodes.push(n.node);
                 }
+
+                if(n.node.owner){
+                    player = n.node.owner;
+                }
             });
 
-            this.tree.addISet(iSetNodes[0].owner,iSetNodes);
+            this.tree.addISet(player,iSetNodes);
             this.treeView.drawTree();
+            this.undoRedoController.saveNewTree();
             // this.treeView.createISet();
-            console.log(this.tree.iSets[0]);
+            // console.log(this.tree.iSets[0]);
         }
 
         /**Get all children of a given node*/

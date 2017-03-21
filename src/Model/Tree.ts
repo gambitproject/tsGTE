@@ -143,14 +143,17 @@ module GTE {
         /**A method which checks whether an information set can be created from a list of nodes.
          * If not, throws errors which are handled in the controller. Uses 4 helper methods.*/
         canCreateISet(nodes:Array<Node>){
-            if(!this.checkIfNodesHavePlayers(nodes)){
-                throw new Error(NODES_MISSING_PLAYERS_ERROR_TEXT);
-            }
+            // NOTE: Marked as not needed - iSets can be created without players
+            // if(!this.checkIfNodesHavePlayers(nodes)){
+            //     throw new Error(NODES_MISSING_PLAYERS_ERROR_TEXT);
+            // }
 
             if(!this.checkNumberOfChildren(nodes)){
                 throw new Error(NODES_NUMBER_OF_CHILDREN_ERROR_TEXT);
             }
 
+            // The below method will throw an error when there are 2 different players among the nodes
+            // but will not throw an error if there is 1 player and some nodes without a player
             if(!this.checkIfNodesHaveTheSamePlayer(nodes)){
                 throw new Error(NODES_DIFFERENT_PLAYERS_ERROR_TEXT);
             }
@@ -160,7 +163,7 @@ module GTE {
             }
         }
 
-
+        /**Checks if all nodes have the required number of children*/
         private checkNumberOfChildren(nodes:Array<Node>):boolean{
             for (let i = 0; i < nodes.length-1; i++) {
                 if(nodes[i].children.length!==nodes[i+1].children.length){
@@ -175,14 +178,15 @@ module GTE {
             let players = [];
             for (let i = 0; i < nodes.length; i++) {
                 let node = nodes[i];
-                if(players.indexOf(node.owner)===-1){
+                if(node.owner && players.indexOf(node.owner)===-1){
                     players.push(node.owner);
                 }
             }
-            return players.length===1;
+            return players.length<=1;
         }
 
         /**Checks if selected nodes have assigned players*/
+        //NOTE: This method is not used anymore due to additional functionality
         private checkIfNodesHavePlayers(nodes:Array<Node>):boolean{
             for (let i = 0; i < nodes.length; i++) {
                 let node = <Node>nodes[i];
