@@ -19,8 +19,8 @@ module GTE {
     }
 
     window.onload = () => {
-            var width = window.innerWidth;
-            var height = window.innerHeight;
+            let width = window.innerWidth;
+            let height = window.innerHeight;
             if (width>1920) {
                 width = 1920;
                 height = 1920/window.innerWidth * window.innerHeight;

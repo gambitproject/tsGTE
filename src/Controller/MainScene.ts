@@ -31,11 +31,13 @@ module GTE {
 
         /** This is used for testing purposes - displays a text 60 times a second in the app*/
         render() {
-            this.game.debug.text(this.game.time.fps.toString(), 20,20, "#000000", "26px Arial");
+            this.game.debug.text(this.game.time.fps.toString(), 20,20, "#000000", "20px Arial");
             if(this.treeController) {
-                this.game.debug.text("iSetsInView: "+this.treeController.treeView.iSets.length.toString(),20,50,"#000000","26px Arial");
-                this.game.debug.text("iSetsInModel: "+this.treeController.tree.iSets.length.toString(),20,80,"#000000","26px Arial");
+                this.game.debug.text("iSetsInView: "+this.treeController.treeView.iSets.length.toString(),20,40,"#000000","20px Arial");
+                this.game.debug.text("iSetsInModel: "+this.treeController.tree.iSets.length.toString(),20,60,"#000000","20px Arial");
             }
+            this.game.debug.text("w: "+this.game.width + " h: "+this.game.height, 20,80, "#000000", "20px Arial");
+
         }
     }
 }
