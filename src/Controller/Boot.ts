@@ -3,7 +3,8 @@
 
 module GTE {
     /** A class for the initial animation of the GTE software
-     * This class shows a very simple usage of the Phaser Engine - sprites, colours, bitmaps, repositioning and tweens*/
+     * This class shows a very simple usage of the Phaser Engine - sprites, colours, bitmaps, repositioning and tweens
+     * Here we also preload all sprites that will be used*/
     export class Boot extends Phaser.State {
         bmd: Phaser.BitmapData;
         logoGroup: Phaser.Group;
@@ -15,6 +16,15 @@ module GTE {
         text: Phaser.Text;
         distance: number;
         radius: number;
+
+        preload(){
+            this.game.load.image("link","src/Assets/Images/Link.png");
+            this.game.load.image("minus","src/Assets/Images/Minus.png");
+            this.game.load.image("player","src/Assets/Images/Player.png");
+            this.game.load.image("plus","src/Assets/Images/Plus.png");
+            this.game.load.image("scissors","src/Assets/Images/Scissors.png");
+            this.game.load.image("unlink","src/Assets/Images/Unlink.png");
+        }
 
         create() {
             this.game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
@@ -32,6 +42,7 @@ module GTE {
             this.createPoints();
             this.createLines();
             this.createText();
+            this.createHoverCircle();
 
             this.game.time.events.add(1000, () => {
                 this.game.state.start("MainScene");
@@ -113,6 +124,13 @@ module GTE {
             this.bmd = this.game.make.bitmapData(Math.round(this.game.height * LINE_WIDTH), Math.round(this.game.height * LINE_WIDTH), "move-line", true);
             this.bmd.ctx.fillStyle = "#fff";
             this.bmd.ctx.fillRect(0, 0, this.bmd.height, this.bmd.height);
+        }
+
+        createHoverCircle(){
+            this.bmd = this.game.make.bitmapData(300,300, "hover-circle", true);
+            this.bmd.ctx.fillStyle = "#ffffff";
+            this.bmd.ctx.arc(this.bmd.width / 2, this.bmd.height / 2, 150, 0, Math.PI * 2);
+            this.bmd.ctx.fill();
         }
     }
 }

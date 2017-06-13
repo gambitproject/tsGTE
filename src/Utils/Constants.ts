@@ -29,6 +29,14 @@ module GTE {
     export const NODES_NUMBER_OF_CHILDREN_ERROR_TEXT = "Cannot create information set for \n nodes which have different number of children.";
     export const ISET_LINE_WIDTH = 0.05;
 
+    //Hover Button Colors
+    export const PLUS_BUTTON_COLOR = 0x00ff00;
+    export const MINUS_BUTTON_COLOR = 0xff0000;
+    export const LINK_BUTTON_COLOR = 0x0000ff;
+    export const UNLINK_BUTTON_COLOR =0xff9f00;
+    export const CUT_BUTTON_COLOR = 0x07c986;
+    export const PLAYER_BUTTON_COLOR =0xdddddd;
+
     //Misc
     export const ERROR_MESSAGE_COLOR = 0xff4545;
     export const TREE_TWEEN_DURATION = 600;

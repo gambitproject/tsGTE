@@ -4,34 +4,34 @@
 ///<reference path="../Utils/Constants.ts"/>
 module GTE {
     /**A class for drawing the iSet */
-    export class ISetView {
+    export class ISetView extends Phaser.Sprite{
         game: Phaser.Game;
         bmd: Phaser.BitmapData;
         iSet: ISet;
-        iSetSprite: Phaser.Sprite;
         nodes: Array<NodeView>;
         lineWidth: number;
 
         constructor(game: Phaser.Game, iSet: ISet, nodes: Array<NodeView>) {
+            super(game,0,0,"");
             this.game = game;
             this.iSet = iSet;
             this.nodes = nodes;
             this.sortNodesLeftToRight();
             this.createSimpleISet();
-            this.iSetSprite.inputEnabled = true;
-            this.iSetSprite.input.pixelPerfectClick=true;
-            this.iSetSprite.input.pixelPerfectOver = true;
-            this.iSetSprite.events.onInputDown.add(()=>{
+            this.inputEnabled = true;
+            this.input.pixelPerfectClick=true;
+            this.input.pixelPerfectOver = true;
+            this.events.onInputDown.add(()=>{
                this.nodes.forEach((n:NodeView)=>{
                    n.inputHandler.dispatch(n,"inputDown");
                })
             });
-            this.iSetSprite.events.onInputOver.add(()=>{
+            this.events.onInputOver.add(()=>{
                 this.nodes.forEach((n:NodeView)=>{
                    n.inputHandler.dispatch(n,"inputOver");
                 });
             });
-            this.iSetSprite.events.onInputOut.add(()=>{
+            this.events.onInputOut.add(()=>{
                 this.nodes.forEach((n:NodeView)=>{
                     n.inputHandler.dispatch(n,"inputOut");
                 });
@@ -60,22 +60,26 @@ module GTE {
 
             this.bmd.ctx.stroke();
 
-            this.iSetSprite = this.game.add.sprite(0,0,this.bmd);
+            this.loadTexture(this.bmd);
+
+            this.game.add.existing(this);
             if(this.iSet.player) {
-                this.iSetSprite.tint = this.iSet.player.color;
+                this.tint = this.iSet.player.color;
             }
             else{
-                this.iSetSprite.tint = 0x000000;
+                this.tint = 0x000000;
             }
-            this.iSetSprite.alpha = 0.15;
+            this.alpha = 0.15;
+            console.log("createdSprite");
         }
 
 
         destroy() {
             this.bmd.destroy();
             this.bmd = null;
-            this.iSetSprite.destroy();
-            this.iSetSprite = null;
+            this.nodes = [];
+            this.nodes = null;
+            super.destroy(true);
         }
     }
 

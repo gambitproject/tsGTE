@@ -3,6 +3,7 @@
 ///<reference path="../View/NodeView.ts"/>
 ///<reference path="KeyboardController.ts"/>
 ///<reference path="UserActionController.ts"/>
+///<reference path="../Utils/HoverMenuManager.ts"/>
 module GTE {
     /**A class for the main part of the software. This is the starting point of the core software*/
     export class MainScene extends Phaser.State {
@@ -13,12 +14,15 @@ module GTE {
         userActionController:UserActionController;
         // The Keyboard Controller handles input and sends signals and executes methods from the treeController
         keyboardController:KeyboardController;
+        //The Hover Menu Manager handles the buttons and signals when hovering on a node or iset.
+        hoverManager:HoverMenuManager;
 
         create() {
            this.treeController = new TreeController(this.game);
-           this.userActionController = new UserActionController(this.game,this.treeController)
-
+           this.userActionController = new UserActionController(this.game,this.treeController);
            this.keyboardController = new KeyboardController(this.game, this.userActionController);
+           this.hoverManager = new HoverMenuManager(this.game, this.userActionController);
+
            // The line below is used for fps testing purposes
            this.game.time.advancedTiming = true;
 
@@ -37,7 +41,6 @@ module GTE {
                 this.game.debug.text("iSetsInModel: "+this.treeController.tree.iSets.length.toString(),20,60,"#000000","20px Arial");
             }
             this.game.debug.text("w: "+this.game.width + " h: "+this.game.height, 20,80, "#000000", "20px Arial");
-
         }
     }
 }

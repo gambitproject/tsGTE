@@ -9,6 +9,7 @@
 ///<reference path="UndoRedoController.ts"/>
 ///<reference path="../Utils/ErrorPopUp.ts"/>
 ///<reference path="../View/ISetView.ts"/>
+///<reference path="../Utils/HoverMenuManager.ts"/>
 module GTE {
     /**A class which connects the TreeView and the Tree Model.
      * Depending on the level of abstraction, some properties can be moved to different classes*/
@@ -18,23 +19,27 @@ module GTE {
         tree: Tree;
         treeView: TreeView;
         treeProperties: TreeViewProperties;
+
         undoRedoController: UndoRedoController;
+
         selectionRectangle: SelectionRectangle;
         errorPopUp: ErrorPopUp;
+
         // Preview Nodes and Moves are used when hovering
-        private previewNodes: Array<NodeView>;
-        private previewMoves: Array<MoveView>;
+        // private previewNodes: Array<NodeView>;
+        // private previewMoves: Array<MoveView>;
+
         // An array used to list all nodes that need to be deleted
         private nodesToDelete: Array<Node>;
         selectedNodes: Array<NodeView>;
-
+        hoverSignal:Phaser.Signal;
 
         constructor(game: Phaser.Game) {
             this.game = game;
             this.setCircleBitmapData(1);
 
-            this.previewMoves = [];
-            this.previewNodes = [];
+            // this.previewMoves = [];
+            // this.previewNodes = [];
             this.nodesToDelete = [];
             this.selectedNodes = [];
             this.selectionRectangle = new SelectionRectangle(this.game);
@@ -42,6 +47,7 @@ module GTE {
             this.attachHandlersToNodes();
             this.undoRedoController = new UndoRedoController(this);
             this.errorPopUp = new ErrorPopUp(this.game);
+            this.hoverSignal = new Phaser.Signal();
         }
 
         /**A method which creates the initial 3-node tree in the scene*/
@@ -107,13 +113,13 @@ module GTE {
                 let handlerText = arguments[1];
                 switch (handlerText) {
                     case "inputOver":
-                        this.handleInputOver(node);
+                        this.handleInputOverNode(node);
                         break;
                     case "inputOut":
-                        this.handleInputOut(node);
+                        this.handleInputOutNode(node);
                         break;
                     case "inputDown":
-                        this.handleInputDown(node);
+                        this.handleInputDownNode(node);
                         break;
                     default:
                         break;
@@ -122,68 +128,33 @@ module GTE {
         }
 
         /**Handler for the signal HOVER*/
-        private handleInputOver(nodeV: NodeView) {
+        private handleInputOverNode(nodeV: NodeView) {
             if (!this.game.input.activePointer.isDown) {
-                nodeV.setColor(HOVER_COLOR);
-                let horizontalDistance = this.treeProperties.initialLevelDistance / (2 * (nodeV.node.depth + 1));
-
-                if (nodeV.node.children.length === 0) {
-                    let nodeV1 = new NodeView(this.game, new Node());
-                    let nodeV2 = new NodeView(this.game, new Node());
-                    let move1 = new MoveView(this.game, nodeV, nodeV1);
-
-                    let move2 = new MoveView(this.game, nodeV, nodeV2);
-
-                    nodeV1.setPosition(nodeV.x - horizontalDistance / 2, nodeV.y + this.treeProperties.levelHeight / 2);
-                    nodeV2.setPosition(nodeV.x + horizontalDistance / 2, nodeV.y + this.treeProperties.levelHeight / 2);
-                    nodeV1.setColor(HOVER_CHILDREN_COLOR);
-                    nodeV2.setColor(HOVER_CHILDREN_COLOR);
-
-                    move1.updateMovePosition();
-                    move2.updateMovePosition();
-                    move1.tint = HOVER_CHILDREN_COLOR;
-                    move2.tint = HOVER_CHILDREN_COLOR;
-
-                    this.previewNodes.push(nodeV1);
-                    this.previewNodes.push(nodeV2);
-                    this.previewMoves.push(move1);
-                    this.previewMoves.push(move2);
-                }
-                else {
-                    let nodeV1 = new NodeView(this.game, new Node());
-                    let move1 = new MoveView(this.game, nodeV, nodeV1);
-
-                    nodeV1.setPosition(nodeV.x + horizontalDistance / 2, nodeV.y);
-                    nodeV1.setColor(HOVER_CHILDREN_COLOR);
-                    move1.updateMovePosition();
-                    move1.tint = HOVER_CHILDREN_COLOR;
-                    this.previewNodes.push(nodeV1);
-                    this.previewMoves.push(move1);
-                }
+                this.hoverSignal.dispatch(this.selectedNodes,nodeV.x,nodeV.y);
             }
         }
 
         /**Handler for the signal HOVER_OUT*/
-        private handleInputOut(nodeV?: NodeView) {
-            if (nodeV) {
-                nodeV.resetNodeDrawing();
-            }
-            this.previewNodes.forEach(n => {
-                n.destroy();
-                n = null;
-            });
-            this.previewNodes = [];
-
-            this.previewMoves.forEach(m => {
-                m.destroy();
-                m = null;
-            });
-            this.previewMoves = [];
+        private handleInputOutNode(nodeV?: NodeView) {
+            // if (nodeV) {
+            //     nodeV.resetNodeDrawing();
+            // }
+            // this.previewNodes.forEach(n => {
+            //     n.destroy();
+            //     n = null;
+            // });
+            // this.previewNodes = [];
+            //
+            // this.previewMoves.forEach(m => {
+            //     m.destroy();
+            //     m = null;
+            // });
+            // this.previewMoves = [];
         }
 
         /**Handler for the signal CLICK*/
-        private handleInputDown(nodeV: NodeView) {
-            this.handleInputOut(nodeV);
+        private handleInputDownNode(nodeV: NodeView) {
+            this.handleInputOutNode(nodeV);
             if (nodeV.node.children.length === 0) {
                 let child1 = this.treeView.addChildToNode(nodeV);
                 let child2 = this.treeView.addChildToNode(nodeV);
@@ -212,7 +183,7 @@ module GTE {
                 iSetView.nodes.forEach(nv=>{
                     nv.resetNodeDrawing();
                 });
-                iSetView.iSetSprite.tint = iSetView.iSet.player.color;
+                iSetView.tint = iSetView.iSet.player.color;
             }
             n.resetNodeDrawing();
         }

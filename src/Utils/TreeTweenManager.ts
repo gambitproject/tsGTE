@@ -31,8 +31,8 @@ module GTE {
                 }
                 // Add tween to iSets in a clever way
                 iSets.forEach(iSet => {
-                    iSet.iSetSprite.alpha = 0;
-                    this.game.add.tween(iSet.iSetSprite).to({alpha:0.15}, TREE_TWEEN_DURATION, Phaser.Easing.Cubic.Out, true);
+                    iSet.alpha = 0;
+                    this.game.add.tween(iSet).to({alpha:0.15}, TREE_TWEEN_DURATION, Phaser.Easing.Cubic.Out, true);
                 });
 
 
