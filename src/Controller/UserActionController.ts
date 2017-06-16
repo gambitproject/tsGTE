@@ -3,34 +3,49 @@ module GTE {
     export class UserActionController {
         game: Phaser.Game;
         treeController: TreeController;
+        backgroundInputSprite:Phaser.Sprite;
 
         constructor(game: Phaser.Game, treeController: TreeController) {
             this.game = game;
             this.treeController = treeController;
+            this.backgroundInputSprite = this.game.add.sprite(0,0,"");
+            this.backgroundInputSprite.width = this.game.width;
+            this.backgroundInputSprite.height = this.game.height;
+            this.backgroundInputSprite.inputEnabled = true;
+            this.backgroundInputSprite.sendToBack();
+            this.backgroundInputSprite.events.onInputDown.add(()=>{
+                this.deselectNodesHandler();
+            });
         }
 
-        /**A method for deselecting nodes. This method should not be here and will be moved to a new class.*/
-        //TODO: Move to a new class (maybe a more abstract InputController which will have mouse and keyboard
+        /**A method for deselecting nodes.*/
         deselectNodesHandler() {
             if (this.treeController.selectedNodes.length>0) {
                 this.treeController.selectedNodes.forEach(n => {
                     n.isSelected = false;
                     n.resetNodeDrawing();
                 });
-                this.treeController.selectedNodes = [];
+                this.treeController.emptySelectedNodes();
             }
         }
         /**A method for adding children to selected nodes (keyboard N).*/
-        addNodesHandler() {
-            if (this.treeController.selectedNodes.length > 0) {
+        addNodesHandler(nodeV?:NodeView) {
+            if(nodeV){
+                this.treeController.addNodeHandler(nodeV);
+            }
+            else if (this.treeController.selectedNodes.length > 0) {
                 this.treeController.selectedNodes.forEach(n => {
-                    n.inputHandler.dispatch(n, "inputDown");
+                    this.treeController.addNodeHandler(n);
                 })
             }
         }
         /** A method for deleting nodes (keyboard DELETE).*/
-        deleteNodeHandler() {
-            if (this.treeController.selectedNodes.length > 0) {
+        deleteNodeHandler(nodeV?:NodeView) {
+
+            if(nodeV){
+                this.treeController.deleteNodeHandler(nodeV.node);
+            }
+            else if (this.treeController.selectedNodes.length > 0) {
                 this.treeController.selectedNodes.forEach(n => {
                     this.treeController.deleteNodeHandler(n.node);
                 });
@@ -51,8 +66,12 @@ module GTE {
             this.treeController.treeView.drawTree();
         }
         /**A method for assigning players to nodes (keyboard 1,2,3,4)*/
-        assignPlayerToNodeHandler(playerID: number) {
-            if (this.treeController.selectedNodes.length > 0) {
+        assignPlayerToNodeHandler(playerID: number, nodeV?:NodeView) {
+            if(nodeV){
+                this.treeController.assignPlayerToNode(playerID,nodeV);
+                this.treeController.undoRedoController.saveNewTree();
+            }
+            else if (this.treeController.selectedNodes.length > 0) {
                 this.treeController.selectedNodes.forEach((n) => {
                     this.treeController.assignPlayerToNode(playerID, n);
                     this.treeController.undoRedoController.saveNewTree();

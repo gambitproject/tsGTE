@@ -70,7 +70,6 @@ module GTE {
                 this.tint = 0x000000;
             }
             this.alpha = 0.15;
-            console.log("createdSprite");
         }
 
 

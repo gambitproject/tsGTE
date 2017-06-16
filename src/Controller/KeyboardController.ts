@@ -26,7 +26,7 @@ module GTE {
 
             this.addKeys();
             this.attachHandlersToKeys();
-            this.deselectNodesHandler();
+            // this.deselectNodesHandler();
         }
 
         /**Assigning all keys to the corresponding properties in the class*/
@@ -80,16 +80,6 @@ module GTE {
                 }
             });
 
-        }
-
-        /**A method for deselecting nodes. This method should not be here and will be moved to a new class.*/
-        //TODO: Move to a new class (maybe a more abstract InputController which will have mouse and keyboard handlers?)
-        deselectNodesHandler() {
-            this.game.input.onDown.add(() => {
-                if (!this.shiftKey.isDown) {
-                    this.userActionController.deselectNodesHandler();
-                }
-            });
         }
     }
 }

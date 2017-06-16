@@ -20,7 +20,6 @@ module GTE {
         //Horizontal offset: -1 for left, 1 for right;
         private labelHorizontalOffset: number;
 
-
         constructor(game: Phaser.Game, node: Node, x?: number, y?: number) {
             super(game, x, y, "");
             this.isSelected = false;

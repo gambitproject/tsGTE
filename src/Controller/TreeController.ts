@@ -105,6 +105,12 @@ module GTE {
                 this.attachHandlersToNode(n);
             });
         }
+        /** Empties the selected nodes in a better way*/
+        emptySelectedNodes(){
+            while(this.selectedNodes.length!==0){
+                this.selectedNodes.pop();
+            }
+        }
 
         /** The node specific method for attaching handlers*/
         private attachHandlersToNode(n: NodeView) {
@@ -130,7 +136,7 @@ module GTE {
         /**Handler for the signal HOVER*/
         private handleInputOverNode(nodeV: NodeView) {
             if (!this.game.input.activePointer.isDown) {
-                this.hoverSignal.dispatch(this.selectedNodes,nodeV.x,nodeV.y);
+                this.hoverSignal.dispatch(nodeV);
             }
         }
 
@@ -154,6 +160,12 @@ module GTE {
 
         /**Handler for the signal CLICK*/
         private handleInputDownNode(nodeV: NodeView) {
+            if (!this.game.input.activePointer.isDown) {
+                this.hoverSignal.dispatch(nodeV);
+            }
+        }
+
+        addNodeHandler(nodeV:NodeView){
             this.handleInputOutNode(nodeV);
             if (nodeV.node.children.length === 0) {
                 let child1 = this.treeView.addChildToNode(nodeV);
@@ -257,10 +269,12 @@ module GTE {
             this.nodesToDelete.push(node);
         }
 
-        /**A method for deleting the node from the treeView and tree*/
+        /**A method for deleting a single! node from the treeView and tree*/
         private deleteNode(node: Node) {
             this.treeView.removeNodeView(this.treeView.findNodeView(node));
             this.tree.removeNode(node);
         }
+
+
     }
 }

@@ -38,7 +38,7 @@ module GTE {
             //2. Change it with the corresponding one in treelist
             this.treeController.tree = this.treesList[this.currentTreeIndex].clone();
             this.treeController.treeView = new TreeView(this.treeController.game,this.treeController.tree,this.treeController.treeProperties);
-            this.treeController.selectedNodes = [];
+            this.treeController.emptySelectedNodes();
             this.treeController.treeView.nodes.forEach(n=>{
                n.resetNodeDrawing();
             });
