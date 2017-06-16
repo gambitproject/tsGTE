@@ -22,7 +22,7 @@ module GTE {
         treeTweenManager: TreeTweenManager;
 
         constructor(game: Phaser.Game, tree: Tree, properties: TreeViewProperties) {
-            this.game = game;;
+            this.game = game;
             this.treeTweenManager = new TreeTweenManager(this.game);
             this.tree = tree;
             this.properties = properties;
@@ -60,6 +60,7 @@ module GTE {
             this.centerParents(this.tree.root);
             this.centerGroupOnScreen();
             this.drawISets();
+            this.drawLabels();
 
             this.treeTweenManager.startTweens(this.nodes, this.moves, this.iSets);
             // NOTE: All other moves will be updated from the tween manager.
@@ -174,7 +175,7 @@ module GTE {
                 });
                 //Remove the nodeView from the treeView and destroy it
                 this.nodes.splice(this.nodes.indexOf(nodeV), 1);
-                nodeV.inputHandler.dispatch(nodeV, "inputOut");
+                nodeV.events.onInputOut.dispatch(nodeV);
                 nodeV.destroy();
             }
         }
@@ -194,6 +195,21 @@ module GTE {
             if (this.iSets.indexOf(iSetView) !== -1) {
                 this.iSets.splice(this.iSets.indexOf(iSetView), 1);
                 iSetView.destroy();
+            }
+        }
+
+        /** A method which decides whether to show the labels or not*/
+        drawLabels(){
+            if(this.tree.checkAllNodesLabeled()){
+                this.moves.forEach(m=>{
+                    m.label.alpha=1;
+                    m.updateLabel();
+                });
+            }
+            else{
+                this.moves.forEach(m=>{
+                    m.label.alpha = 0;
+                })
             }
         }
 

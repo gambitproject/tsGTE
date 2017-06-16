@@ -163,6 +163,15 @@ module GTE {
             }
         }
 
+        checkAllNodesLabeled(){
+            for (let i = 0; i < this.nodes.length; i++) {
+                if(this.nodes[i].children.length !==0 && this.nodes[i].type !== NodeType.CHANCE && this.nodes[i].type !== NodeType.OWNED ){
+                    return false;
+                }
+            }
+            return true;
+        }
+
         /**Checks if all nodes have the required number of children*/
         private checkNumberOfChildren(nodes:Array<Node>):boolean{
             for (let i = 0; i < nodes.length-1; i++) {
@@ -183,18 +192,6 @@ module GTE {
                 }
             }
             return players.length<=1;
-        }
-
-        /**Checks if selected nodes have assigned players*/
-        //NOTE: This method is not used anymore due to additional functionality
-        private checkIfNodesHavePlayers(nodes:Array<Node>):boolean{
-            for (let i = 0; i < nodes.length; i++) {
-                let node = <Node>nodes[i];
-                if(node.owner===null){
-                    return false;
-                }
-            }
-            return true;
         }
 
         /**Checks whether any 2 nodes of an array share a path to the root.*/

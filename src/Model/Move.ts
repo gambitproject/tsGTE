@@ -14,6 +14,7 @@ module GTE {
             this.type = MoveType.DEFAULT;
             this.from = from;
             this.to = to;
+            this.label = "asd";
         }
         /**Converts the Move to a labeled Move */
         convertToLabeled(label?:string){

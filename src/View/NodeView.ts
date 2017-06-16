@@ -10,7 +10,6 @@ module GTE {
         node: Node;
 
         //The input handler will fire signals when the node is pressed, hovered and unhovered on
-        inputHandler: Phaser.Signal;
         label: Phaser.Text;
         isSelected: boolean;
         level:number;
@@ -40,7 +39,6 @@ module GTE {
             this.attachSignals();
             this.createLabel();
 
-            this.inputHandler = new Phaser.Signal();
             this.game.add.existing(this);
         }
 
@@ -71,9 +69,9 @@ module GTE {
          * The signal itself returns a reference to the triggered node and the specific action.
          * The TreeController class will listen for these signals and act accordingly.*/
         private attachSignals(){
-            this.events.onInputOver.add(() => this.inputHandler.dispatch(this, "inputOver"));
-            this.events.onInputOut.add(() => this.inputHandler.dispatch(this, "inputOut"));
-            this.events.onInputDown.add(() => this.inputHandler.dispatch(this, "inputDown"));
+            this.events.onInputOver.dispatch(this);
+            this.events.onInputOut.dispatch(this);
+            this.events.onInputDown.dispatch(this);
         }
 
         /** A method which creates the label for the Node*/
@@ -188,8 +186,6 @@ module GTE {
             this.tint = null;
             this.scale = null;
             this.labelHorizontalOffset = null;
-            this.inputHandler.dispose();
-            this.inputHandler = null;
             super.destroy();
         }
     }

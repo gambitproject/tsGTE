@@ -114,23 +114,36 @@ module GTE {
 
         /** The node specific method for attaching handlers*/
         private attachHandlersToNode(n: NodeView) {
-            n.inputHandler.add(function () {
+            // n.inputHandler.add(function () {
+            //     let node = <NodeView>arguments[0];
+            //     let handlerText = arguments[1];
+            //     switch (handlerText) {
+            //         // case "inputOver":
+            //         //     this.handleInputOverNode(node);
+            //         //     break;
+            //         case "inputOut":
+            //             this.handleInputOutNode(node);
+            //             break;
+            //         case "inputDown":
+            //             this.handleInputDownNode(node);
+            //             break;
+            //         default:
+            //             break;
+            //     }
+            // }, this);
+
+            n.events.onInputOver.add(function(){
                 let node = <NodeView>arguments[0];
-                let handlerText = arguments[1];
-                switch (handlerText) {
-                    case "inputOver":
-                        this.handleInputOverNode(node);
-                        break;
-                    case "inputOut":
-                        this.handleInputOutNode(node);
-                        break;
-                    case "inputDown":
-                        this.handleInputDownNode(node);
-                        break;
-                    default:
-                        break;
-                }
-            }, this)
+                this.handleInputOverNode(node);
+            },this);
+            n.events.onInputDown.add(function(){
+                let node = <NodeView>arguments[0];
+                this.handleInputDownNode(node);
+            },this);
+            n.events.onInputOut.add(function(){
+                let node = <NodeView>arguments[0];
+                this.handleInputOutNode(node);
+            },this);
         }
 
         /**Handler for the signal HOVER*/
@@ -198,6 +211,10 @@ module GTE {
                 iSetView.tint = iSetView.iSet.player.color;
             }
             n.resetNodeDrawing();
+            this.treeView.drawTree();
+            // this.treeView.moves.forEach(m=>{
+            //     m.updateLabelText();
+            // });
         }
 
         /**A method for deleting a node - 2 step deletion.*/
