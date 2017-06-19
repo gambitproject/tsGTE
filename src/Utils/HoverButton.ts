@@ -48,6 +48,9 @@ module GTE {
             this.active = false;
             this.circle.alpha = 0.2;
             this.icon.alpha = 1;
+            if(this.icon.tint!==0xffffff){
+                this.icon.alpha = 0.2;
+            }
         }
 
         setActive() {

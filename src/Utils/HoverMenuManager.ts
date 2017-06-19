@@ -43,7 +43,7 @@ module GTE {
 
             // If a node or an iSet is hovered, we start the hover menu.
             this.userActionController.treeController.hoverSignal.add(function () {
-                this.triggerMenu(arguments[0]);
+                    this.triggerMenu(arguments[0]);
             }, this);
 
             // Whenever a key on the keyobard is pressed, we remove the menu
@@ -52,8 +52,8 @@ module GTE {
             };
 
             // Remove the menu, whenever someone clicks on the background (on anything without an active input)
-            this.userActionController.backgroundInputSprite.events.onInputDown.add(()=>{
-              this.hideMenu();
+            this.userActionController.backgroundInputSprite.events.onInputDown.add(() => {
+                this.hideMenu();
             });
 
             this.selectedNodesSprites = this.userActionController.treeController.selectedNodes;
@@ -69,7 +69,7 @@ module GTE {
             this.player2Button = new HoverButton(this.game, this.buttonsGroup, "player", PLAYER_BUTTON_COLOR, PLAYER_COLORS[1]);
             this.player3Button = new HoverButton(this.game, this.buttonsGroup, "player", PLAYER_BUTTON_COLOR, PLAYER_COLORS[2]);
             this.player4Button = new HoverButton(this.game, this.buttonsGroup, "player", PLAYER_BUTTON_COLOR, PLAYER_COLORS[3]);
-            this.chancePlayerButton = new HoverButton(this.game, this.buttonsGroup, "chance", PLAYER_BUTTON_COLOR);
+            this.chancePlayerButton = new HoverButton(this.game, this.buttonsGroup, "chance", PLAYER_BUTTON_COLOR, 0x111111);
 
             this.buttonsArray = [this.plusButton, this.minusButton, this.linkButton, this.unlinkButton,
                 this.cutButton, this.player1Button, this.player2Button, this.player3Button, this.player4Button, this.chancePlayerButton];
@@ -104,7 +104,7 @@ module GTE {
                 }
                 else if (this.previouslyHoveredSprite instanceof ISetView) {
                     let nodes = (<ISetView>this.previouslyHoveredSprite).nodes;
-                    nodes.forEach(n=>{
+                    nodes.forEach(n => {
                         this.userActionController.addNodesHandler(n);
                     });
                 }
@@ -120,7 +120,7 @@ module GTE {
                 }
                 else if (this.previouslyHoveredSprite instanceof ISetView) {
                     let nodes = (<ISetView>this.previouslyHoveredSprite).nodes;
-                    nodes.forEach(n=>{
+                    nodes.forEach(n => {
                         this.userActionController.deleteNodeHandler(n);
                     });
                 }
@@ -143,8 +143,8 @@ module GTE {
                     }
                     else if (this.previouslyHoveredSprite instanceof ISetView) {
                         let nodes = (<ISetView>this.previouslyHoveredSprite).nodes;
-                        nodes.forEach(n=>{
-                            this.userActionController.assignPlayerToNodeHandler(playerButtons.indexOf(btn)+1,n);
+                        nodes.forEach(n => {
+                            this.userActionController.assignPlayerToNodeHandler(playerButtons.indexOf(btn) + 1, n);
                         });
                     }
                 });
@@ -169,8 +169,13 @@ module GTE {
                     this.userActionController.removeISetHandler((<NodeView>this.previouslyHoveredSprite).node.iSet);
                 }
                 else if (this.previouslyHoveredSprite instanceof ISetView) {
-                        this.userActionController.removeISetHandler((<ISetView>this.previouslyHoveredSprite).iSet);
+                    this.userActionController.removeISetHandler((<ISetView>this.previouslyHoveredSprite).iSet);
                 }
+            });
+
+            // Cut Sprite functionality
+            this.cutButton.events.onInputDown.add(() => {
+                this.userActionController.initiateCutSpriteHandler(<ISetView>this.previouslyHoveredSprite);
             });
 
             // Clear the menu after clicking every button.
@@ -178,7 +183,8 @@ module GTE {
                 btn.events.onInputDown.add(() => {
                     this.hideMenu();
                 });
-            })
+            });
+
         }
 
         triggerMenu(hoveredElement: Phaser.Sprite) {
@@ -254,7 +260,6 @@ module GTE {
                             break;
                         }
                     }
-                    //TODO: Add cut logic here - will be done at a later stage!
                 }
             }
             //Case 2: Hovered sprite is an information set
@@ -271,7 +276,8 @@ module GTE {
                 alpha: 1
             }, 300, Phaser.Easing.Default, true);
         }
-        private hideMenu(){
+
+        private hideMenu() {
             this.buttonsGroup.alpha = 0;
             this.previouslyHoveredSprite = null;
             this.buttonsArray.forEach((btn: HoverButton) => {

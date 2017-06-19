@@ -263,6 +263,25 @@ module GTE {
             this.treeView.removeISetView(this.treeView.findISetView(iSet));
         }
 
+        removeISetsByNodesHandler(){
+            let iSetsToRemove = this.getSelectedISets();
+
+            for (let i = 0; i < iSetsToRemove.length; i++) {
+                this.removeISetHandler(iSetsToRemove[i]);
+            }
+            iSetsToRemove = null;
+        }
+
+        getSelectedISets(){
+            let distinctISets = [];
+            this.selectedNodes.forEach((n)=>{
+                if(distinctISets.indexOf(n.node.iSet)===-1){
+                    distinctISets.push(n.node.iSet);
+                }
+            });
+
+            return distinctISets;
+        }
         /**A method for resetting the tree after each action on the tree*/
         private resetTree(){
 

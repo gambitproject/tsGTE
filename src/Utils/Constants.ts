@@ -36,6 +36,7 @@ module GTE {
     export const UNLINK_BUTTON_COLOR =0xff9f00;
     export const CUT_BUTTON_COLOR = 0x07c986;
     export const PLAYER_BUTTON_COLOR =0x999999;
+    export const CUT_SPRITE_TINT = 0x444444;
 
     //Misc
     export const ERROR_MESSAGE_COLOR = 0xff4545;
