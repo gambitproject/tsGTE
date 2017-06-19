@@ -24,6 +24,7 @@ module GTE {
             this.game.load.image("plus","src/Assets/Images/Plus.png");
             this.game.load.image("scissors","src/Assets/Images/Scissors.png");
             this.game.load.image("unlink","src/Assets/Images/Unlink.png");
+            this.game.load.image("chance","src/Assets/Images/Chance.png");
         }
 
         create() {

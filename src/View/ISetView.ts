@@ -8,6 +8,7 @@ module GTE {
         game: Phaser.Game;
         bmd: Phaser.BitmapData;
         iSet: ISet;
+        label:Phaser.Text;
         nodes: Array<NodeView>;
         lineWidth: number;
 
@@ -18,24 +19,11 @@ module GTE {
             this.nodes = nodes;
             this.sortNodesLeftToRight();
             this.createSimpleISet();
+            this.label = this.game.add.text(this.nodes[0].x,this.nodes[0].y, "",null);
             this.inputEnabled = true;
             this.input.pixelPerfectClick=true;
             this.input.pixelPerfectOver = true;
-            this.events.onInputDown.add(()=>{
-               this.nodes.forEach((n:NodeView)=>{
-                   n.inputHandler.dispatch(n,"inputDown");
-               })
-            });
-            this.events.onInputOver.add(()=>{
-                this.nodes.forEach((n:NodeView)=>{
-                   n.inputHandler.dispatch(n,"inputOver");
-                });
-            });
-            this.events.onInputOut.add(()=>{
-                this.nodes.forEach((n:NodeView)=>{
-                    n.inputHandler.dispatch(n,"inputOut");
-                });
-            });
+            this.events.onInputOver.dispatch(this);
         }
 
         /**Sorts the nodes left to right before drawing*/

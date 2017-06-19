@@ -174,8 +174,11 @@ module GTE {
 
         /**Checks if all nodes have the required number of children*/
         private checkNumberOfChildren(nodes:Array<Node>):boolean{
+            if(nodes[nodes.length-1].children.length === 0){
+                return false;
+            }
             for (let i = 0; i < nodes.length-1; i++) {
-                if(nodes[i].children.length!==nodes[i+1].children.length){
+                if(nodes[i].children.length!==nodes[i+1].children.length || nodes[i].children.length === 0){
                     return false;
                 }
             }

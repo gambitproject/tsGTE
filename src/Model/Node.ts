@@ -90,29 +90,31 @@ module GTE {
 
         /**Converts the current Node to a chance Node, setting the owner to the chancePlayer and assigning probabilities to children moves*/
         convertToChance(chancePlayer: Player, probabilities?: Array<number>,) {
-            this.type = NodeType.CHANCE;
-            this.payoff = null;
+            if (this.children.length>0 && this.iSet === null) {
+                this.type = NodeType.CHANCE;
+                this.payoff = null;
 
-            if (chancePlayer.id === 0) {
-                this.owner = chancePlayer;
-            }
-            else {
-                throw new Error("Given player is not a chance player");
-            }
-
-            if (this.iSet) {
-                this.iSet.removeNode(this);
-            }
-
-            if (probabilities && this.childrenMoves.length === probabilities.length) {
-                for (let i = 0; i < this.childrenMoves.length; i++) {
-                    this.childrenMoves[i].convertToChance(1 / probabilities[i]);
+                if (chancePlayer.id === 0) {
+                    this.owner = chancePlayer;
                 }
-            }
-            else if (probabilities && this.childrenMoves.length !== probabilities.length) {
-                throw new SyntaxError("Number of probabilities does not match number of moves!")
-            } else {
-                this.childrenMoves.forEach(c => c.convertToChance(1 / this.childrenMoves.length));
+                else {
+                    throw new Error("Given player is not a chance player");
+                }
+
+                if (this.iSet) {
+                    this.iSet.removeNode(this);
+                }
+
+                if (probabilities && this.childrenMoves.length === probabilities.length) {
+                    for (let i = 0; i < this.childrenMoves.length; i++) {
+                        this.childrenMoves[i].convertToChance(1 / probabilities[i]);
+                    }
+                }
+                else if (probabilities && this.childrenMoves.length !== probabilities.length) {
+                    throw new SyntaxError("Number of probabilities does not match number of moves!")
+                } else {
+                    this.childrenMoves.forEach(c => c.convertToChance(1 / this.childrenMoves.length));
+                }
             }
         }
 

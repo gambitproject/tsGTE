@@ -25,10 +25,6 @@ module GTE {
         selectionRectangle: SelectionRectangle;
         errorPopUp: ErrorPopUp;
 
-        // Preview Nodes and Moves are used when hovering
-        // private previewNodes: Array<NodeView>;
-        // private previewMoves: Array<MoveView>;
-
         // An array used to list all nodes that need to be deleted
         private nodesToDelete: Array<Node>;
         selectedNodes: Array<NodeView>;
@@ -38,8 +34,6 @@ module GTE {
             this.game = game;
             this.setCircleBitmapData(1);
 
-            // this.previewMoves = [];
-            // this.previewNodes = [];
             this.nodesToDelete = [];
             this.selectedNodes = [];
             this.selectionRectangle = new SelectionRectangle(this.game);
@@ -114,24 +108,6 @@ module GTE {
 
         /** The node specific method for attaching handlers*/
         private attachHandlersToNode(n: NodeView) {
-            // n.inputHandler.add(function () {
-            //     let node = <NodeView>arguments[0];
-            //     let handlerText = arguments[1];
-            //     switch (handlerText) {
-            //         // case "inputOver":
-            //         //     this.handleInputOverNode(node);
-            //         //     break;
-            //         case "inputOut":
-            //             this.handleInputOutNode(node);
-            //             break;
-            //         case "inputDown":
-            //             this.handleInputDownNode(node);
-            //             break;
-            //         default:
-            //             break;
-            //     }
-            // }, this);
-
             n.events.onInputOver.add(function(){
                 let node = <NodeView>arguments[0];
                 this.handleInputOverNode(node);
@@ -146,38 +122,41 @@ module GTE {
             },this);
         }
 
-        /**Handler for the signal HOVER*/
+        /**The iSet specific method for attaching handlers*/
+        private attachHandlersToISet(iSet:ISetView){
+            iSet.events.onInputOver.add(function(){
+               let iSet = <ISetView>arguments[0];
+               this.handleInputOverISet(iSet);
+            },this);
+        }
+
+        /**Handler for the signal HOVER on a Node*/
         private handleInputOverNode(nodeV: NodeView) {
-            if (!this.game.input.activePointer.isDown) {
+            if (!this.game.input.activePointer.isDown && nodeV.node.iSet === null) {
                 this.hoverSignal.dispatch(nodeV);
             }
         }
 
-        /**Handler for the signal HOVER_OUT*/
+        /**Handler for the signal HOVER_OUT on a Node*/
         private handleInputOutNode(nodeV?: NodeView) {
-            // if (nodeV) {
-            //     nodeV.resetNodeDrawing();
-            // }
-            // this.previewNodes.forEach(n => {
-            //     n.destroy();
-            //     n = null;
-            // });
-            // this.previewNodes = [];
-            //
-            // this.previewMoves.forEach(m => {
-            //     m.destroy();
-            //     m = null;
-            // });
-            // this.previewMoves = [];
+
         }
 
-        /**Handler for the signal CLICK*/
+        /**Handler for the signal CLICK on a Node*/
         private handleInputDownNode(nodeV: NodeView) {
             if (!this.game.input.activePointer.isDown) {
                 this.hoverSignal.dispatch(nodeV);
             }
         }
 
+        /**Handler for the signal HOVER on an ISet*/
+        private handleInputOverISet(iSetV:ISetView){
+            if(!this.game.input.activePointer.isDown){
+                this.hoverSignal.dispatch(iSetV);
+            }
+        }
+
+        /**Adding child or children to a node*/
         addNodeHandler(nodeV:NodeView){
             this.handleInputOutNode(nodeV);
             if (nodeV.node.children.length === 0) {
@@ -191,7 +170,7 @@ module GTE {
                 this.attachHandlersToNode(child1);
             }
 
-            this.undoRedoController.saveNewTree();
+            this.resetTree();
         }
 
         /** A method for assigning a player to a given node.*/
@@ -211,7 +190,8 @@ module GTE {
                 iSetView.tint = iSetView.iSet.player.color;
             }
             n.resetNodeDrawing();
-            this.treeView.drawTree();
+
+            this.resetTree();
             // this.treeView.moves.forEach(m=>{
             //     m.updateLabelText();
             // });
@@ -233,7 +213,9 @@ module GTE {
                     this.deleteNode(n);
                 });
                 this.nodesToDelete = [];
+                node.convertToDefault();
             }
+            this.resetTree();
         }
 
         /**Creates an iSet with the corresponding checks*/
@@ -272,10 +254,24 @@ module GTE {
             });
 
             this.tree.addISet(player,iSetNodes);
+            this.resetTree();
+        }
+
+        /**A method for deleting an iSet*/
+        removeISetHandler(iSet:ISet){
+            this.tree.removeISet(iSet);
+            this.treeView.removeISetView(this.treeView.findISetView(iSet));
+        }
+
+        /**A method for resetting the tree after each action on the tree*/
+        private resetTree(){
+
             this.treeView.drawTree();
             this.undoRedoController.saveNewTree();
-            // this.treeView.createISet();
-            // console.log(this.tree.iSets[0]);
+
+            this.treeView.iSets.forEach(iSetV=>{
+                this.attachHandlersToISet(iSetV);
+            });
         }
 
         /**Get all children of a given node*/
@@ -291,7 +287,5 @@ module GTE {
             this.treeView.removeNodeView(this.treeView.findNodeView(node));
             this.tree.removeNode(node);
         }
-
-
     }
 }
