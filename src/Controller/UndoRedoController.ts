@@ -43,6 +43,9 @@ module GTE {
                n.resetNodeDrawing();
             });
             this.treeController.attachHandlersToNodes();
+            this.treeController.treeView.iSets.forEach(iSetV=>{
+                this.treeController.attachHandlersToISet(iSetV);
+            });
         }
 
         saveNewTree() {

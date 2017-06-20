@@ -123,7 +123,7 @@ module GTE {
         }
 
         /**The iSet specific method for attaching handlers*/
-        private attachHandlersToISet(iSet:ISetView){
+        attachHandlersToISet(iSet:ISetView){
             iSet.events.onInputOver.add(function(){
                let iSet = <ISetView>arguments[0];
                this.handleInputOverISet(iSet);
