@@ -219,9 +219,9 @@ module GTE {
         }
 
         /**Creates an iSet with the corresponding checks*/
-        createISet() {
+        createISet(nodesV:Array<NodeView>) {
             let nodes = [];
-            this.selectedNodes.forEach(n => {
+            nodesV.forEach(n => {
                 nodes.push(n.node);
             });
             //Check for errors
@@ -235,7 +235,7 @@ module GTE {
             // Create a list of nodes to put into an iSet - create the union of all iSets
             let iSetNodes = [];
             let player = null;
-            this.selectedNodes.forEach((n) => {
+            nodesV.forEach((n) => {
                 if (n.node.iSet) {
                     n.node.iSet.nodes.forEach(iNode => {
                         iSetNodes.push(iNode);
@@ -263,6 +263,7 @@ module GTE {
             this.treeView.removeISetView(this.treeView.findISetView(iSet));
         }
 
+        /**A method which removes all isets from the selected nodes*/
         removeISetsByNodesHandler(){
             let iSetsToRemove = this.getSelectedISets();
 
@@ -272,6 +273,7 @@ module GTE {
             iSetsToRemove = null;
         }
 
+        /**A helper method which returns all iSets from the selected nodes*/
         getSelectedISets(){
             let distinctISets = [];
             this.selectedNodes.forEach((n)=>{
@@ -282,6 +284,40 @@ module GTE {
 
             return distinctISets;
         }
+
+        /**A method which cuts the information set*/
+        cutInformationSet(iSetV:ISetView,x:number,y:number){
+            if(iSetV.nodes.length === 2){
+                this.removeISetHandler(iSetV.iSet);
+            }
+            else{
+                let leftNodes = [];
+                let rightNodes = [];
+                iSetV.nodes.forEach(n=>{
+                    if(n.x<=x){
+                        leftNodes.push(n);
+                    }
+                    else{
+                        rightNodes.push(n);
+                    }
+                });
+                if(leftNodes.length===1){
+                    iSetV.iSet.removeNode(leftNodes[0].node);
+                    iSetV.removeNode(leftNodes[0]);
+                }
+                else if(rightNodes.length===1){
+                    iSetV.iSet.removeNode(rightNodes[0].node);
+                    iSetV.removeNode(rightNodes[0]);
+                }
+                else{
+                    this.removeISetHandler(iSetV.iSet);
+                    this.createISet(leftNodes);
+                    this.createISet(rightNodes);
+                }
+            }
+            this.resetTree();
+        }
+
         /**A method for resetting the tree after each action on the tree*/
         private resetTree(){
 

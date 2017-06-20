@@ -121,7 +121,7 @@ module GTE {
         /**A method for creating an iSet (keyboard I)*/
         createISetHandler() {
             if (this.treeController.selectedNodes.length > 1) {
-                this.treeController.createISet();
+                this.treeController.createISet(this.treeController.selectedNodes);
             }
         }
 
@@ -167,7 +167,9 @@ module GTE {
                 });
                 this.game.input.keyboard.enabled = true;
                 this.cutSprite.alpha = 0;
-            });
+
+                this.treeController.cutInformationSet(this.cutInformationSet,this.cutSprite.x,this.cutSprite.y);
+            },this);
 
         }
 

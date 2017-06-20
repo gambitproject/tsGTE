@@ -38,17 +38,17 @@ module GTE {
         render() {
             this.game.debug.text(this.game.time.fps.toString(), 20,20, "#000000", "20px Arial");
             // if(this.treeController) {
-                // this.game.debug.text("selectedNodes: "+this.treeController.selectedNodes.length.toString(),20,40,"#000000","20px Arial");
-            //     this.game.debug.text("iSetsInModel: "+this.treeController.tree.iSets.length.toString(),20,60,"#000000","20px Arial");
+                this.game.debug.text("undoTrees: "+this.treeController.undoRedoController.treesList.length,20,40,"#000000","20px Arial");
+                this.game.debug.text("index: "+this.treeController.undoRedoController.currentTreeIndex,20,60,"#000000","20px Arial");
             // }
             // this.game.debug.text("w: "+this.game.width + " h: "+this.game.height, 20,80, "#000000", "20px Arial");\
             // if(this.hoverManager){
             //     this.game.debug.text("selected in Hover: "+this.hoverManager.selectedNodesSprites.length.toString(), 20,60, "#000000", "20px Arial");
             // }
 
-            if(this.userActionController){
-                this.game.debug.text("cut x: "+this.userActionController.cutSprite.position.x+"    cut y: "+this.userActionController.cutSprite.position.y, 20,60, "#000000", "20px Arial");
-            }
+            // if(this.userActionController){
+            //     this.game.debug.text("cut x: "+this.userActionController.cutSprite.position.x+"    cut y: "+this.userActionController.cutSprite.position.y, 20,60, "#000000", "20px Arial");
+            // }
         }
     }
 }

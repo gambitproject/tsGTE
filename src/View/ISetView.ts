@@ -26,6 +26,12 @@ module GTE {
             this.events.onInputOver.dispatch(this);
         }
 
+        removeNode(nodeV:NodeView){
+            if(this.nodes.indexOf(nodeV)!==-1){
+                this.nodes.splice(this.nodes.indexOf(nodeV),1);
+            }
+        }
+
         /**Sorts the nodes left to right before drawing*/
         private sortNodesLeftToRight() {
             this.nodes.sort((n1, n2) => {
