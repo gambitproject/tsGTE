@@ -322,7 +322,7 @@ module GTE {
         private resetTree(){
 
             this.treeView.drawTree();
-            this.undoRedoController.saveNewTree();
+            // this.undoRedoController.saveNewTree();
 
             this.treeView.iSets.forEach(iSetV=>{
                 this.attachHandlersToISet(iSetV);

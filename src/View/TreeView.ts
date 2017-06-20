@@ -64,7 +64,9 @@ module GTE {
 
             this.treeTweenManager.startTweens(this.nodes, this.moves, this.iSets);
             // NOTE: All other moves will be updated from the tween manager.
-            this.moves[this.moves.length-1].updateMovePosition();
+            if(this.moves.length>0) {
+                this.moves[this.moves.length - 1].updateMovePosition();
+            }
         }
 
 

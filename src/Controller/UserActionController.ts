@@ -59,8 +59,9 @@ module GTE {
             else if (this.treeController.selectedNodes.length > 0) {
                 this.treeController.selectedNodes.forEach(n => {
                     this.treeController.addNodeHandler(n);
-                })
+                });
             }
+            this.treeController.undoRedoController.saveNewTree();
         }
 
         /** A method for deleting nodes (keyboard DELETE).*/
@@ -87,21 +88,20 @@ module GTE {
             deletedNodes.forEach(n => {
                 this.treeController.selectedNodes.splice(this.treeController.selectedNodes.indexOf(n), 1);
             });
-            // this.treeController.treeView.drawTree();
+            this.treeController.undoRedoController.saveNewTree();
         }
 
         /**A method for assigning players to nodes (keyboard 1,2,3,4)*/
         assignPlayerToNodeHandler(playerID: number, nodeV?: NodeView) {
             if (nodeV) {
                 this.treeController.assignPlayerToNode(playerID, nodeV);
-                // this.treeController.undoRedoController.saveNewTree();
             }
             else if (this.treeController.selectedNodes.length > 0) {
                 this.treeController.selectedNodes.forEach((n) => {
                     this.treeController.assignPlayerToNode(playerID, n);
-                    // this.treeController.undoRedoController.saveNewTree();
                 });
             }
+            this.treeController.undoRedoController.saveNewTree();
         }
 
         /**A method for assigning chance player to a node (keyboard 0)*/
@@ -116,6 +116,7 @@ module GTE {
                     n.resetNodeDrawing();
                 });
             }
+            this.treeController.undoRedoController.saveNewTree();
         }
 
         /**A method for creating an iSet (keyboard I)*/
@@ -123,13 +124,16 @@ module GTE {
             if (this.treeController.selectedNodes.length > 1) {
                 this.treeController.createISet(this.treeController.selectedNodes);
             }
+            this.treeController.undoRedoController.saveNewTree();
         }
 
         /**Remove iSetHandler*/
         removeISetHandler(iSet: ISet) {
             this.treeController.removeISetHandler(iSet);
+            this.treeController.undoRedoController.saveNewTree();
         }
 
+        /**Removes and iSet by a given list of nodes*/
         removeISetsByNodesHandler(nodeV?: NodeView) {
             if (nodeV) {
                 this.removeISetHandler(nodeV.node.iSet);
@@ -137,6 +141,7 @@ module GTE {
             else {
                 this.treeController.removeISetsByNodesHandler();
             }
+            this.treeController.undoRedoController.saveNewTree();
         }
 
         /**A method for assigning undo/redo functionality (keyboard ctrl/shift + Z)*/
@@ -169,6 +174,7 @@ module GTE {
                 this.cutSprite.alpha = 0;
 
                 this.treeController.cutInformationSet(this.cutInformationSet,this.cutSprite.x,this.cutSprite.y);
+                this.treeController.undoRedoController.saveNewTree();
             },this);
 
         }
