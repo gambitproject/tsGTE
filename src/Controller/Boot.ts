@@ -18,13 +18,13 @@ module GTE {
         radius: number;
 
         preload(){
-            this.game.load.image("link","src/Assets/Images/Link.png");
-            this.game.load.image("minus","src/Assets/Images/Minus.png");
-            this.game.load.image("player","src/Assets/Images/Player.png");
-            this.game.load.image("plus","src/Assets/Images/Plus.png");
-            this.game.load.image("scissors","src/Assets/Images/Scissors.png");
-            this.game.load.image("unlink","src/Assets/Images/Unlink.png");
-            this.game.load.image("chance","src/Assets/Images/Chance.png");
+            this.game.load.image("link","src/Assets/Images/HoverMenu/Link.png");
+            this.game.load.image("minus","src/Assets/Images/HoverMenu/Minus.png");
+            this.game.load.image("player","src/Assets/Images/HoverMenu/Player.png");
+            this.game.load.image("plus","src/Assets/Images/HoverMenu/Plus.png");
+            this.game.load.image("scissors","src/Assets/Images/HoverMenu/Scissors.png");
+            this.game.load.image("unlink","src/Assets/Images/HoverMenu/Unlink.png");
+            this.game.load.image("chance","src/Assets/Images/HoverMenu/Chance.png");
         }
 
         create() {

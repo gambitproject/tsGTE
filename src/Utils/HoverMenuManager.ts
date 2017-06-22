@@ -32,6 +32,7 @@ module GTE {
             this.userActionController = userActionController;
 
             this.buttonsGroup = this.game.add.group();
+            this.buttonsGroup.name = "hoverMenu";
             this.createButtonSprites();
             this.setButtonFunctionality();
             let nodeWidth = this.userActionController.treeController.treeView.nodes[0].width;

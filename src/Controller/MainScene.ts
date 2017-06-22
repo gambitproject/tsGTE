@@ -4,6 +4,7 @@
 ///<reference path="KeyboardController.ts"/>
 ///<reference path="UserActionController.ts"/>
 ///<reference path="../Utils/HoverMenuManager.ts"/>
+///<reference path="../Menus/TopMenu/TopMenu.ts"/>
 module GTE {
     /**A class for the main part of the software. This is the starting point of the core software*/
     export class MainScene extends Phaser.State {
@@ -16,12 +17,15 @@ module GTE {
         keyboardController:KeyboardController;
         //The Hover Menu Manager handles the buttons and signals when hovering on a node or iset.
         hoverManager:HoverMenuManager;
+        // Top Menu
+        topMenu:TopMenu;
 
         create() {
            this.treeController = new TreeController(this.game);
            this.userActionController = new UserActionController(this.game,this.treeController);
            this.keyboardController = new KeyboardController(this.game, this.userActionController);
            this.hoverManager = new HoverMenuManager(this.game, this.userActionController);
+           this.topMenu = new TopMenu(this.treeController);
 
            // The line below is used for fps testing purposes
            this.game.time.advancedTiming = true;
@@ -36,10 +40,10 @@ module GTE {
 
         /** This is used for testing purposes - displays a text 60 times a second in the app*/
         render() {
-            this.game.debug.text(this.game.time.fps.toString(), 20,20, "#000000", "20px Arial");
+            this.game.debug.text(this.game.time.fps.toString(), 20,60, "#000000", "20px Arial");
             // if(this.treeController) {
-                this.game.debug.text("undoTrees: "+this.treeController.undoRedoController.treesList.length,20,40,"#000000","20px Arial");
-                this.game.debug.text("index: "+this.treeController.undoRedoController.currentTreeIndex,20,60,"#000000","20px Arial");
+            //     this.game.debug.text("undoTrees: "+this.treeController.undoRedoController.treesList.length,20,80,"#000000","20px Arial");
+                // this.game.debug.text("index: "+this.treeController.undoRedoController.currentTreeIndex,20,100,"#000000","20px Arial");
             // }
             // this.game.debug.text("w: "+this.game.width + " h: "+this.game.height, 20,80, "#000000", "20px Arial");\
             // if(this.hoverManager){

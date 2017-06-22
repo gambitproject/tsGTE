@@ -1,19 +1,21 @@
 /// <reference path = "lib/phaser.d.ts"/>
 ///<reference path="src/Controller/Boot.ts"/>
 ///<reference path="src/Controller/MainScene.ts"/>
-module GTE {
+///<reference path="src/Menus/TopMenu/TopMenu.ts"/>
 
+module GTE {
     class GTE extends Phaser.Game {
         game: Phaser.Game;
 
         constructor(width?: number, height?: number) {
 
-            super(width, height, Phaser.AUTO, 'phaser-div', null, false, true);
+            super(width, height, Phaser.CANVAS, 'phaser-div', null, false, true);
 
             this.game = this;
             this.game.state.add("Boot", Boot, false);
             this.game.state.add("MainScene", MainScene, false);
             this.game.state.start("Boot");
+
         }
 
     }

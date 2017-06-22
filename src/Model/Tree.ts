@@ -2,8 +2,6 @@
 ///<reference path="Move.ts"/>
 ///<reference path="ISet.ts"/>
 ///<reference path="Player.ts"/>
-///<reference path="StrategicForm.ts"/>
-///<reference path="../Utils/ObjectCloner.ts"/>
 ///<reference path="../Utils/Constants.ts"/>
 
 module GTE {
@@ -14,7 +12,6 @@ module GTE {
         moves: Array<Move>;
         iSets: Array<ISet>;
         players: Array<Player>;
-        strategicForm: StrategicForm;
         private leaves;
 
         constructor() {
@@ -211,12 +208,6 @@ module GTE {
                 }
             }
             return false;
-        }
-
-        /**Clones the tree using an external library - given in utils */
-        clone() {
-            let objectCloner = new ObjectCloner();
-            return objectCloner.clone(this,true);
         }
     }
 }

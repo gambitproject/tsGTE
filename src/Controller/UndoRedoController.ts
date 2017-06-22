@@ -1,6 +1,7 @@
 ///<reference path="TreeController.ts"/>
 ///<reference path="../Model/Tree.ts"/>
 ///<reference path="../View/TreeView.ts"/>
+///<reference path="../Utils/TreeParser.ts"/>
 module GTE {
 
     /**A class for handling the Undo/Redo functionality */
@@ -8,12 +9,14 @@ module GTE {
         treeController: TreeController;
         treesList: Array<Tree>;
         currentTreeIndex: number;
+        treeParser:TreeParser;
 
         constructor(treeController: TreeController) {
             this.treeController = treeController;
             this.treesList = [];
             this.currentTreeIndex = 0;
-            this.treesList.push(treeController.tree.clone());
+            this.treeParser = new TreeParser();
+            this.treesList.push(this.treeParser.parse(this.treeParser.stringify(this.treeController.tree)));
         }
 
         /**Undo-Redo method */
@@ -36,7 +39,8 @@ module GTE {
             });
 
             //2. Change it with the corresponding one in treelist
-            this.treeController.tree = this.treesList[this.currentTreeIndex].clone();
+            // this.treeController.tree = this.treesList[this.currentTreeIndex].clone();
+            this.treeController.tree = this.treeParser.parse(this.treeParser.stringify(this.treesList[this.currentTreeIndex]));
             this.treeController.treeView = new TreeView(this.treeController.game,this.treeController.tree,this.treeController.treeProperties);
             this.treeController.emptySelectedNodes();
             this.treeController.treeView.nodes.forEach(n=>{
@@ -50,7 +54,7 @@ module GTE {
 
         saveNewTree() {
             this.treesList.splice(this.currentTreeIndex+1, this.treesList.length);
-            this.treesList.push(this.treeController.tree.clone());
+            this.treesList.push(this.treeParser.parse(this.treeParser.stringify(this.treeController.tree)));
             this.currentTreeIndex++;
         }
     }

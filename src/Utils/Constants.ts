@@ -41,5 +41,6 @@ module GTE {
     //Misc
     export const ERROR_MESSAGE_COLOR = 0xff4545;
     export const TREE_TWEEN_DURATION = 600;
+    export const GTE_DEFAULT_FILE_NAME = "GTE_Tree";
 
 }

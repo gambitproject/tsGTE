@@ -321,12 +321,13 @@ module GTE {
         /**A method for resetting the tree after each action on the tree*/
         private resetTree(){
 
-            this.treeView.drawTree();
-            // this.undoRedoController.saveNewTree();
+            if (this.tree.nodes.length>1) {
+                this.treeView.drawTree();
 
-            this.treeView.iSets.forEach(iSetV=>{
-                this.attachHandlersToISet(iSetV);
-            });
+                this.treeView.iSets.forEach(iSetV => {
+                    this.attachHandlersToISet(iSetV);
+                });
+            }
         }
 
         /**Get all children of a given node*/
