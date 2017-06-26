@@ -165,6 +165,16 @@ module GTE {
             }
         }
 
+        /**A helper method for finding the moveView, given a Move*/
+        findMoveView(move:Move){
+            for (let i = 0; i < this.moves.length; i++) {
+                let moveView = this.moves[i];
+                if (moveView.move === move) {
+                    return moveView;
+                }
+            }
+        }
+
         /**A method which removes the given nodeView from the treeView*/
         removeNodeView(nodeV: NodeView) {
             if (this.nodes.indexOf(nodeV) !== -1) {
@@ -203,12 +213,14 @@ module GTE {
         /** A method which decides whether to show the labels or not*/
         drawLabels(){
             if(this.tree.checkAllNodesLabeled()){
+                this.tree.resetLabels();
                 this.moves.forEach(m=>{
                     m.label.alpha=1;
                     m.updateLabel();
                 });
             }
             else{
+                this.tree.removeLabels();
                 this.moves.forEach(m=>{
                     m.label.alpha = 0;
                 })

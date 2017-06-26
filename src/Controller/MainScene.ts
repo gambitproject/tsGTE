@@ -17,15 +17,21 @@ module GTE {
         keyboardController:KeyboardController;
         //The Hover Menu Manager handles the buttons and signals when hovering on a node or iset.
         hoverManager:HoverMenuManager;
-        // Top Menu
+        // Top Menu with action buttons
         topMenu:TopMenu;
+        //The label input field which appears when you click on a label
+        labelInput:LabelInput;
 
         create() {
-           this.treeController = new TreeController(this.game);
-           this.userActionController = new UserActionController(this.game,this.treeController);
-           this.keyboardController = new KeyboardController(this.game, this.userActionController);
-           this.hoverManager = new HoverMenuManager(this.game, this.userActionController);
-           this.topMenu = new TopMenu(this.treeController);
+            this.labelInput = new LabelInput(this.game);
+            this.treeController = new TreeController(this.game, this.labelInput);
+            this.userActionController = new UserActionController(this.game,this.treeController);
+            this.keyboardController = new KeyboardController(this.game, this.userActionController);
+            this.hoverManager = new HoverMenuManager(this.game, this.userActionController);
+            this.topMenu = new TopMenu(this.treeController);
+            // this.game.input.onDown.add(()=>{
+            //     this.labelInput.show(this.game.input.activePointer.x,this.game.input.activePointer.y);
+            // });
 
            // The line below is used for fps testing purposes
            this.game.time.advancedTiming = true;

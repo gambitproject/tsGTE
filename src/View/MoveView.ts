@@ -9,8 +9,6 @@ module GTE {
         to: NodeView;
         label:Phaser.Text;
         move:Move;
-        // The offset is 1 for right or -1 for left from the line
-        labelHorizontalOffset:number;
 
         constructor(game: Phaser.Game, from: NodeView, to: NodeView) {
             super(game, from.x, from.y, game.cache.getBitmapData("move-line"));
@@ -28,8 +26,10 @@ module GTE {
 
             this.label = this.game.add.text(0,0,this.move.label,null);
             this.label.anchor.set(0.5,0.5);
-            this.label.fontSize = 20;
+            this.label.fontSize = this.from.width/2;
             this.label.fill = this.from.label.tint;
+
+            this.label.inputEnabled = true;
             this.label.events.onInputDown.dispatch(this);
 
 
@@ -44,6 +44,7 @@ module GTE {
             this.updateLabel();
         }
 
+        //TODO: Rewrite the align!!!
         updateLabel(){
             if(this.move.type === MoveType.CHANCE && this.move.probability){
                 this.label.text = this.move.probability.toString();

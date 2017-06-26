@@ -3,6 +3,7 @@
 ///<reference path="ISet.ts"/>
 ///<reference path="Player.ts"/>
 ///<reference path="../Utils/Constants.ts"/>
+///<reference path="LabelSetter.ts"/>
 
 module GTE {
     /**The class which stores all the needed information for the tree - lists of nodes, moves, isets, players and the root */
@@ -13,12 +14,14 @@ module GTE {
         iSets: Array<ISet>;
         players: Array<Player>;
         private leaves;
+        private labelSetter:LabelSetter;
 
         constructor() {
             this.nodes = [];
             this.moves = [];
             this.iSets = [];
             this.players = [];
+            this.labelSetter = new LabelSetter();
         }
 
         /** Adds a player to the list of players*/
@@ -162,11 +165,44 @@ module GTE {
 
         checkAllNodesLabeled(){
             for (let i = 0; i < this.nodes.length; i++) {
-                if(this.nodes[i].children.length !==0 && this.nodes[i].type !== NodeType.CHANCE && this.nodes[i].type !== NodeType.OWNED ){
+                if(this.nodes[i].children.length !==0 && this.players.indexOf(this.nodes[i].owner) ===-1){
                     return false;
                 }
             }
             return true;
+        }
+
+        removeLabels(){
+            this.labelSetter.removeLabels(this.moves);
+        }
+
+        resetLabels(){
+            this.labelSetter.calculateLabels(this.BFSOnTree(), this.players);
+        }
+
+        changeMoveLabel(move:Move, text:string){
+            move.label = text;
+            if(move.from.iSet!==null){
+                let index = move.from.childrenMoves.indexOf(move);
+                move.from.iSet.nodes.forEach(n=>{
+                    n.childrenMoves[index].label = text;
+                });
+            }
+        }
+
+        /**Breadth first search on the nodes of the tree*/
+        BFSOnTree(){
+            let bfsNodes:Array<Node> = [];
+            let nodesQueue: Array<Node>=[];
+            nodesQueue.push(this.root);
+            while(nodesQueue.length>0){
+                let current = nodesQueue.shift();
+                bfsNodes.push(current);
+                current.children.forEach((n=>{
+                    nodesQueue.push(n);
+                }));
+            }
+            return bfsNodes;
         }
 
         /**Checks if all nodes have the required number of children*/

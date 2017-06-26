@@ -10,6 +10,7 @@
 ///<reference path="../Utils/ErrorPopUp.ts"/>
 ///<reference path="../View/ISetView.ts"/>
 ///<reference path="../Utils/HoverMenuManager.ts"/>
+///<reference path="../Menus/LabelInput/LabelInput.ts"/>
 module GTE {
     /**A class which connects the TreeView and the Tree Model.
      * Depending on the level of abstraction, some properties can be moved to different classes*/
@@ -30,8 +31,12 @@ module GTE {
         selectedNodes: Array<NodeView>;
         hoverSignal:Phaser.Signal;
 
-        constructor(game: Phaser.Game) {
+        labelInput:LabelInput;
+
+        constructor(game: Phaser.Game, labelInput:LabelInput) {
             this.game = game;
+            this.labelInput = labelInput;
+
             this.setCircleBitmapData(1);
 
             this.nodesToDelete = [];
@@ -106,20 +111,31 @@ module GTE {
             }
         }
 
-        /** The node specific method for attaching handlers*/
+        /** The node specific method for attaching handlers
+         * Also when we add node we attach the handler for the parent move label*/
         private attachHandlersToNode(n: NodeView) {
-            n.events.onInputOver.add(function(){
-                let node = <NodeView>arguments[0];
-                this.handleInputOverNode(node);
+            n.events.onInputOver.add(()=>{
+                this.handleInputOverNode(n);
+            });
+            n.events.onInputDown.add(()=>{
+                this.handleInputDownNode(n);
+            });
+            n.events.onInputOut.add(()=>{
+                this.handleInputOutNode(n);
+            });
+
+            n.label.events.onInputDown.add(function(){
+                let nodeLabel = arguments[0];
+                this.handleInputDownNodeLabel(nodeLabel,n);
             },this);
-            n.events.onInputDown.add(function(){
-                let node = <NodeView>arguments[0];
-                this.handleInputDownNode(node);
-            },this);
-            n.events.onInputOut.add(function(){
-                let node = <NodeView>arguments[0];
-                this.handleInputOutNode(node);
-            },this);
+
+            if (n.node.parentMove) {
+                let move = this.treeView.findMoveView(n.node.parentMove);
+                move.label.events.onInputDown.add(function () {
+                    let moveLabel = arguments[0];
+                    this.handleInputDownMoveLabel(moveLabel,move);
+                },this);
+            }
         }
 
         /**The iSet specific method for attaching handlers*/
@@ -155,6 +171,17 @@ module GTE {
                 this.hoverSignal.dispatch(iSetV);
             }
         }
+
+        /**Halder for the signal CLICK on a Move Label*/
+        private handleInputDownMoveLabel(label:Phaser.Text,move:MoveView){
+            this.labelInput.show(label, move);
+        }
+
+        /**Handler for the signal CLICK on a Node Label*/
+        private handleInputDownNodeLabel(label:Phaser.Text,node:NodeView){
+            this.labelInput.show(label,node);
+        }
+
 
         /**Adding child or children to a node*/
         addNodeHandler(nodeV:NodeView){
@@ -192,9 +219,6 @@ module GTE {
             n.resetNodeDrawing();
 
             this.resetTree();
-            // this.treeView.moves.forEach(m=>{
-            //     m.updateLabelText();
-            // });
         }
 
         /**A method for deleting a node - 2 step deletion.*/
@@ -261,6 +285,7 @@ module GTE {
         removeISetHandler(iSet:ISet){
             this.tree.removeISet(iSet);
             this.treeView.removeISetView(this.treeView.findISetView(iSet));
+            this.resetTree();
         }
 
         /**A method which removes all isets from the selected nodes*/

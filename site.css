@@ -8,6 +8,7 @@ body {
     width: 100%;
     height:100%;
     overflow: hidden;
+    position:absolute;
 }
 
 div {
@@ -17,13 +18,14 @@ div {
 }
 
 #phaser-div{
+    top:5%;
     height:100%;
     width:100%;
+    position:absolute;
 
 }
 canvas{
 
-    border: 1px solid black;
     position: absolute;
     left:50%;
     top:50%;
@@ -32,12 +34,11 @@ canvas{
     -ms-transform: translate(-50%, -50%);
     -o-transform: translate(-50%, -50%);
     transform: translate(-50%, -50%);
-    /*border: 1px solid black;*/
-    /*width:100% !important;*/
-    /*height:100% !important;*/
+
 }
 
 #bug-fixer{
     visibility:hidden;
+    position:absolute;
 }
 

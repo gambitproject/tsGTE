@@ -2,6 +2,7 @@
 ///<reference path="../Model/ISet.ts"/>
 ///<reference path="../View/ISetView.ts"/>
 ///<reference path="../Utils/Constants.ts"/>
+///<reference path="../Model/Node.ts"/>
 module GTE {
     export class UserActionController {
         game: Phaser.Game;
@@ -9,10 +10,13 @@ module GTE {
         backgroundInputSprite: Phaser.Sprite;
         cutSprite: Phaser.Sprite;
         cutInformationSet: ISetView;
+        // Used for going to the next node on tab pressed
+        private nodesBFSOrder: Array<Node>;
 
         constructor(game: Phaser.Game, treeController: TreeController) {
             this.game = game;
             this.treeController = treeController;
+            this.nodesBFSOrder = [];
             this.createBackgroundForInputReset();
             this.createCutSprite();
         }
@@ -163,7 +167,7 @@ module GTE {
                 iSet.inputEnabled = false;
             });
 
-            this.game.input.onDown.addOnce(()=>{
+            this.game.input.onDown.addOnce(() => {
                 this.treeController.treeView.nodes.forEach(n => {
                     n.inputEnabled = true;
                 });
@@ -173,9 +177,9 @@ module GTE {
                 this.game.input.keyboard.enabled = true;
                 this.cutSprite.alpha = 0;
 
-                this.treeController.cutInformationSet(this.cutInformationSet,this.cutSprite.x,this.cutSprite.y);
+                this.treeController.cutInformationSet(this.cutInformationSet, this.cutSprite.x, this.cutSprite.y);
                 this.treeController.undoRedoController.saveNewTree();
-            },this);
+            }, this);
 
         }
 
@@ -222,6 +226,102 @@ module GTE {
                 mouseXPosition = null;
                 nodeWidth = null;
             }
+        }
+
+        /**If the label input is active, go to the next label
+         * If next is false, we go to the previous label*/
+        activateLabel(next: boolean) {
+
+            if (this.treeController.labelInput.active) {
+                if (this.treeController.labelInput.shouldRecalculateOrder) {
+                    this.nodesBFSOrder = this.treeController.tree.BFSOnTree();
+                }
+                // If we are currently looking at moves
+                if (this.treeController.labelInput.currentlySelected instanceof MoveView) {
+                    let index = this.nodesBFSOrder.indexOf((<MoveView>this.treeController.labelInput.currentlySelected).move.to);
+
+                    // Calculate the next index in the BFS order to tab to. If it is the last node, go to the next after the root, i.e. index 1
+                    let nextIndex;
+                    if (next) {
+                        nextIndex = this.nodesBFSOrder.length !== index + 1 ? index + 1 : 1;
+                    }
+                    else {
+                        nextIndex = index === 1 ? this.nodesBFSOrder.length - 1 : index - 1;
+                    }
+                    // Activate the next move
+                    let nextMove = this.treeController.treeView.findMoveView(this.nodesBFSOrder[nextIndex].parentMove);
+                    nextMove.label.events.onInputDown.dispatch(nextMove.label);
+                }
+                // If we are currently looking at nodes
+                else if (this.treeController.labelInput.currentlySelected instanceof NodeView) {
+                    let index = this.nodesBFSOrder.indexOf((<NodeView>this.treeController.labelInput.currentlySelected).node);
+                    let nextIndex = this.calculateNodeLabelIndex(next,index);
+                    let nextNode = this.treeController.treeView.findNodeView(this.nodesBFSOrder[nextIndex]);
+                    nextNode.label.events.onInputDown.dispatch(nextNode.label)
+                }
+            }
+        }
+
+        /**If the input field is on and we press enter, change the label*/
+        changeLabel() {
+            if (this.treeController.labelInput.active) {
+                if (this.treeController.labelInput.currentlySelected instanceof MoveView) {
+                    this.treeController.tree.changeMoveLabel((<MoveView>this.treeController.labelInput.currentlySelected).move, this.treeController.labelInput.inputField.val());
+                    this.treeController.treeView.moves.forEach(m => {
+                        m.updateLabel();
+                    });
+                    this.activateLabel(true);
+                }
+                else if (this.treeController.labelInput.currentlySelected instanceof NodeView) {
+                    (<NodeView>this.treeController.labelInput.currentlySelected).node.owner.label = this.treeController.labelInput.inputField.val();
+                    this.treeController.treeView.nodes.forEach((n: NodeView) => {
+                        n.setLabelText();
+                    });
+                    this.activateLabel(true);
+                }
+            }
+        }
+
+        /**Hides then input*/
+        hideInputLabel() {
+            if (this.treeController.labelInput.active) {
+                this.treeController.labelInput.hideLabel();
+            }
+        }
+
+        /**A helper method which calculates the next possible index of a labeled node*/
+        private calculateNodeLabelIndex(next: boolean, current: number) {
+            let nodeIndex = current;
+            if (next) {
+                for (let i = current + 1; i < this.nodesBFSOrder.length; i++) {
+                    if (this.nodesBFSOrder[i].owner && this.nodesBFSOrder[i].owner !== this.treeController.tree.players[0]) {
+                        return i;
+                    }
+                }
+                // If we have not found such an element in the next, keep search from the beginning
+                for (let i = 0; i < current; i++) {
+                    if (this.nodesBFSOrder[i].owner && this.nodesBFSOrder[i].owner !== this.treeController.tree.players[0]) {
+                        return i;
+                    }
+                }
+            }
+            // If we want the previous
+            else {
+                for (let i = current-1; i >= 0; i--) {
+                    if (this.nodesBFSOrder[i].owner && this.nodesBFSOrder[i].owner !== this.treeController.tree.players[0]) {
+                        return i;
+                    }
+                }
+                // If we have not found such an element in the next, keep search from the beginning
+                if (nodeIndex === current) {
+                    for (let i = this.nodesBFSOrder.length-1; i > current; i--) {
+                        if (this.nodesBFSOrder[i].owner && this.nodesBFSOrder[i].owner !== this.treeController.tree.players[0]) {
+                            return i;
+                        }
+                    }
+                }
+            }
+            return current;
         }
     }
 }

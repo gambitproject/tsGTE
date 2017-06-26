@@ -38,6 +38,8 @@ module GTE {
             this.createSprites();
             this.attachSignals();
             this.createLabel();
+            this.input.priorityID = 1;
+            this.label.input.priorityID = 2;
 
             this.game.add.existing(this);
         }
@@ -69,9 +71,9 @@ module GTE {
          * The signal itself returns a reference to the triggered node and the specific action.
          * The TreeController class will listen for these signals and act accordingly.*/
         private attachSignals(){
-            this.events.onInputOver.dispatch(this);
-            this.events.onInputOut.dispatch(this);
-            this.events.onInputDown.dispatch(this);
+            this.events.onInputOver.dispatch();
+            this.events.onInputOut.dispatch();
+            this.events.onInputDown.dispatch();
         }
 
         /** A method which creates the label for the Node*/
@@ -90,6 +92,9 @@ module GTE {
             this.label.fontSize = this.circle.width * LABEL_SIZE;
             this.label.fill = this.tint;
             this.label.anchor.set(0.5, 0.5);
+
+            this.label.inputEnabled = true;
+            this.label.events.onInputDown.dispatch(this);
         }
 
         /** A method which sets the position of the node to a specific x and y coordinate*/

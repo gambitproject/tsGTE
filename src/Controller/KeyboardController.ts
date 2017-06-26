@@ -7,7 +7,7 @@ module GTE {
      * you can check the attachHandlersToKeysMethod*/
     export class KeyboardController {
         game: Phaser.Game;
-        // There is a reference to the tree controller, so that whenever a key is pressed we can call the corresponding method
+        // There is a reference to the User , so that whenever a key is pressed we can call the corresponding method
         userActionController: UserActionController;
         shiftKey: Phaser.Key;
         controlKey: Phaser.Key;
@@ -21,11 +21,14 @@ module GTE {
         iKey: Phaser.Key;
         uKey: Phaser.Key;
         cKey: Phaser.Key;
-
+        tabKey: Phaser.Key;
+        enterKey: Phaser.Key;
+        escapeKey: Phaser.Key;
 
         constructor(game: Phaser.Game, userActionController: UserActionController) {
             this.game = game;
             this.userActionController = userActionController;
+
             this.playersKeys = [];
 
             this.addKeys();
@@ -45,6 +48,9 @@ module GTE {
             this.dKey = this.game.input.keyboard.addKey(Phaser.Keyboard.D);
             this.uKey = this.game.input.keyboard.addKey(Phaser.Keyboard.U);
             this.cKey = this.game.input.keyboard.addKey(Phaser.Keyboard.C);
+            this.tabKey = this.game.input.keyboard.addKey(Phaser.Keyboard.TAB);
+            this.enterKey = this.game.input.keyboard.addKey(Phaser.Keyboard.ENTER);
+            this.escapeKey = this.game.input.keyboard.addKey(Phaser.Keyboard.ESC);
 
             let keys = [Phaser.Keyboard.ONE, Phaser.Keyboard.TWO, Phaser.Keyboard.THREE, Phaser.Keyboard.FOUR];
 
@@ -53,6 +59,14 @@ module GTE {
             });
 
             this.deleteKey = this.game.input.keyboard.addKey(Phaser.Keyboard.DELETE);
+
+            this.game.input.keyboard.removeKeyCapture(Phaser.Keyboard.C);
+            this.game.input.keyboard.removeKeyCapture(Phaser.Keyboard.N);
+            this.game.input.keyboard.removeKeyCapture(Phaser.Keyboard.I);
+            this.game.input.keyboard.removeKeyCapture(Phaser.Keyboard.Z);
+            this.game.input.keyboard.removeKeyCapture(Phaser.Keyboard.D);
+            this.game.input.keyboard.removeKeyCapture(Phaser.Keyboard.U);
+            this.game.input.keyboard.removeKeyCapture(Phaser.Keyboard.ZERO);
         }
 
         /**A method which assigns action to each key via the UserActionController*/
@@ -93,9 +107,26 @@ module GTE {
             this.cKey.onDown.add(() => {
                 let distinctISetsSelected = this.userActionController.treeController.getSelectedISets();
                 if (distinctISetsSelected.length === 1) {
-                   this.userActionController.initiateCutSpriteHandler(this.userActionController.treeController.treeView.findISetView(distinctISetsSelected[0]));
+                    this.userActionController.initiateCutSpriteHandler(this.userActionController.treeController.treeView.findISetView(distinctISetsSelected[0]));
                 }
             });
+
+            this.tabKey.onDown.add(() => {
+                if(this.shiftKey.isDown) {
+                    this.userActionController.activateLabel(false);
+                }
+                else{
+                    this.userActionController.activateLabel(true);
+                }
+            });
+
+            this.enterKey.onDown.add(()=>{
+                this.userActionController.changeLabel();
+            });
+
+            this.escapeKey.onDown.add(()=>{
+                this.userActionController.hideInputLabel();
+            })
         }
     }
 }
