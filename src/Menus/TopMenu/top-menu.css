@@ -39,9 +39,10 @@
 
 .top-menu-img:hover{
     transform:scale(1.2);
+    cursor:pointer;
 }
 
-.file-button-wrapper{
+.button-wrapper{
     position:relative;
     float:left;
     height:60%;
@@ -53,4 +54,39 @@
 }
 #input-load{
     display:none;
+}
+
+
+#minusP-wrapper{
+    margin-left:10%;
+    height:40%;
+}
+#plusP-wrapper{
+    height:40%;
+}
+.player-number-wrapper{
+    margin:0;
+    cursor:default;
+}
+
+.player{
+    position: relative;
+    /*float:center;*/
+    width: auto;
+    height: 120%;
+    left:50%;
+    top:50%;
+    transform: translateX(-50%) translateY(-50%);
+}
+
+.player-number{
+    position:absolute;
+    font-size: 0.9em;
+    text-align: center;
+    font-family: Arial Black, serif;
+    color: #fbfffb;
+    left:50%;
+    top:85%;
+    transform: translateX(-50%) translateY(-50%);
+    backface-visibility: hidden;
 }

@@ -15,10 +15,20 @@ module GTE{
             for (let i = 0; i < players.length; i++) {
                 if(payoffs && payoffs[i]){
                     this.playerPayoffPairs.push({player:players[i],payoff:payoffs[i]});
-                } else{
+                }
+                else{
                     this.playerPayoffPairs.push({player:players[i],payoff:0});
                 }
             }
+        }
+
+        toString(){
+            let result = "";
+            this.playerPayoffPairs.forEach(pair=>{
+               result+=pair.payoff+"\n";
+            });
+
+            return result;
         }
 
         destroy(){

@@ -257,7 +257,7 @@ module GTE {
                     let index = this.nodesBFSOrder.indexOf((<NodeView>this.treeController.labelInput.currentlySelected).node);
                     let nextIndex = this.calculateNodeLabelIndex(next,index);
                     let nextNode = this.treeController.treeView.findNodeView(this.nodesBFSOrder[nextIndex]);
-                    nextNode.label.events.onInputDown.dispatch(nextNode.label)
+                    nextNode.ownerLabel.events.onInputDown.dispatch(nextNode.ownerLabel)
                 }
             }
         }

@@ -67,6 +67,10 @@ module GTE {
             this.game.input.keyboard.removeKeyCapture(Phaser.Keyboard.D);
             this.game.input.keyboard.removeKeyCapture(Phaser.Keyboard.U);
             this.game.input.keyboard.removeKeyCapture(Phaser.Keyboard.ZERO);
+            this.game.input.keyboard.removeKeyCapture(Phaser.Keyboard.ONE);
+            this.game.input.keyboard.removeKeyCapture(Phaser.Keyboard.TWO);
+            this.game.input.keyboard.removeKeyCapture(Phaser.Keyboard.THREE);
+            this.game.input.keyboard.removeKeyCapture(Phaser.Keyboard.FOUR);
         }
 
         /**A method which assigns action to each key via the UserActionController*/

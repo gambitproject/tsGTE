@@ -61,10 +61,10 @@ module GTE {
             this.tree.addPlayer(new Player(2, "2", PLAYER_COLORS[1]));
             this.treeProperties = new TreeViewProperties(250, 1000);
             this.treeView = new TreeView(this.game, this.tree, this.treeProperties);
-            this.treeView.nodes[0].label.text = "A";
-            this.treeView.nodes[1].label.text = "B";
+            this.treeView.nodes[0].ownerLabel.text = "A";
+            this.treeView.nodes[1].ownerLabel.text = "B";
 
-            this.treeView.nodes[2].label.text = "C";
+            this.treeView.nodes[2].ownerLabel.text = "C";
         }
 
         /**The update method is built-into Phaser and is called 60 times a second.
@@ -124,7 +124,7 @@ module GTE {
                 this.handleInputOutNode(n);
             });
 
-            n.label.events.onInputDown.add(function(){
+            n.ownerLabel.events.onInputDown.add(function(){
                 let nodeLabel = arguments[0];
                 this.handleInputDownNodeLabel(nodeLabel,n);
             },this);

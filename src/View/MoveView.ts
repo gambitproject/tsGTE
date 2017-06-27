@@ -27,7 +27,7 @@ module GTE {
             this.label = this.game.add.text(0,0,this.move.label,null);
             this.label.anchor.set(0.5,0.5);
             this.label.fontSize = this.from.width/2;
-            this.label.fill = this.from.label.tint;
+            this.label.fill = this.from.ownerLabel.tint;
 
             this.label.inputEnabled = true;
             this.label.events.onInputDown.dispatch(this);
@@ -68,7 +68,7 @@ module GTE {
             }
             this.label.x = center.x;
             this.label.y = center.y;
-            this.label.fill = this.from.label.fill;
+            this.label.fill = this.from.ownerLabel.fill;
         }
 
         destroy() {

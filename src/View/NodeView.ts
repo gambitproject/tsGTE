@@ -10,7 +10,8 @@ module GTE {
         node: Node;
 
         //The input handler will fire signals when the node is pressed, hovered and unhovered on
-        label: Phaser.Text;
+        ownerLabel: Phaser.Text;
+        payoffsLabel:Phaser.Text;
         isSelected: boolean;
         level:number;
         private circle: Phaser.Sprite;
@@ -37,9 +38,10 @@ module GTE {
             this.labelHorizontalOffset = 1;
             this.createSprites();
             this.attachSignals();
-            this.createLabel();
+            this.createLabels();
             this.input.priorityID = 1;
-            this.label.input.priorityID = 2;
+            this.ownerLabel.input.priorityID = 2;
+            this.payoffsLabel.input.priorityID = 2;
 
             this.game.add.existing(this);
         }
@@ -77,24 +79,30 @@ module GTE {
         }
 
         /** A method which creates the label for the Node*/
-        private createLabel() {
-            this.label = this.game.add.text(this.x + this.labelHorizontalOffset * this.circle.width,
+        private createLabels() {
+            this.ownerLabel = this.game.add.text(this.x + this.labelHorizontalOffset * this.circle.width,
                 this.y - this.circle.width, "", null);
 
             if (this.node.owner) {
-                this.label.setText(this.node.owner.getLabel(),true);
+                this.ownerLabel.setText(this.node.owner.getLabel(),true);
             }
             else {
-                this.label.text = "";
+                this.ownerLabel.text = "";
             }
 
             // this.label.position = this.position.add(this.labelHorizontalOffset*this.circle.width,this.y-this.circle.width);
-            this.label.fontSize = this.circle.width * LABEL_SIZE;
-            this.label.fill = this.tint;
-            this.label.anchor.set(0.5, 0.5);
+            this.ownerLabel.fontSize = this.circle.width * LABEL_SIZE;
+            this.ownerLabel.fill = this.tint;
+            this.ownerLabel.anchor.set(0.5, 0.5);
 
-            this.label.inputEnabled = true;
-            this.label.events.onInputDown.dispatch(this);
+            this.ownerLabel.inputEnabled = true;
+            this.ownerLabel.events.onInputDown.dispatch(this);
+
+            this.payoffsLabel = this.game.add.text(this.x,this.y+this.width,"",null);
+            this.payoffsLabel.fontSize = this.circle.width*LABEL_SIZE;
+            this.payoffsLabel.anchor.set(0.5,0);
+            this.payoffsLabel.inputEnabled = true;
+            this.payoffsLabel.events.onInputDown.dispatch(this);
         }
 
         /** A method which sets the position of the node to a specific x and y coordinate*/
@@ -110,8 +118,10 @@ module GTE {
             else{
                 this.labelHorizontalOffset=1;
             }
-            this.label.position.set(this.x + this.labelHorizontalOffset * this.circle.width,
+            this.ownerLabel.position.set(this.x + this.labelHorizontalOffset * this.circle.width,
                 this.y - this.circle.width);
+
+            this.payoffsLabel.position.set(this.x,this.y+this.width);
         }
 
         /**A method which changes the colour of the circle sprite*/
@@ -149,6 +159,7 @@ module GTE {
                 this.square.tint = 0x000000;
                 this.square.alpha = 1;
                 this.circle.alpha = 0;
+                this.previewSelected.alpha = 0;
             }
             // All other cases
             else {
@@ -162,13 +173,19 @@ module GTE {
         /** A method which sets the label text as the owner label*/
         setLabelText() {
             if (this.node.owner && this.node.type!==NodeType.CHANCE) {
-                this.label.alpha = 1;
-                this.label.setText(this.node.owner.getLabel(), true);
+                this.ownerLabel.alpha = 1;
+                this.ownerLabel.setText(this.node.owner.getLabel(), true);
                 let colorRGB = Phaser.Color.getRGB(this.node.owner.color);
-                this.label.fill = Phaser.Color.RGBtoString(colorRGB.r,colorRGB.g,colorRGB.b);
+                this.ownerLabel.fill = Phaser.Color.RGBtoString(colorRGB.r,colorRGB.g,colorRGB.b);
             }
             else{
-                this.label.alpha = 0;
+                this.ownerLabel.alpha = 0;
+            }
+
+            if(this.node.children.length===0){
+                // this.payoffsLabel.setText(this.node.payoff.toString());
+                this.payoffsLabel.addColor(PLAYER_BUTTON_COLOR[1],0);
+                this.payoffsLabel.addColor(PLAYER_BUTTON_COLOR[2],1);
             }
         }
 
@@ -178,7 +195,6 @@ module GTE {
 
         /** The destroy method of the node which prevents memory-leaks*/
         destroy() {
-            // this.node.destroy();
             this.node = null;
             this.circle.destroy();
             this.circle = null;
@@ -186,8 +202,10 @@ module GTE {
             this.square = null;
             this.previewSelected.destroy();
             this.previewSelected = null;
-            this.label.destroy();
-            this.label = null;
+            this.ownerLabel.destroy();
+            this.ownerLabel = null;
+            this.payoffsLabel.destroy();
+            this.payoffsLabel=null;
             this.tint = null;
             this.scale = null;
             this.labelHorizontalOffset = null;

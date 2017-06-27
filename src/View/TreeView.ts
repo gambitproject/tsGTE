@@ -225,6 +225,12 @@ module GTE {
                     m.label.alpha = 0;
                 })
             }
+            this.nodes.forEach(n=>{
+               if(n.node.children.length===0){
+
+                   // n.node.convertToLeaf(this.tree.players,);
+               }
+            });
         }
 
         /**Re-centers the tree on the screen*/

@@ -11,11 +11,30 @@ module GTE {
         treeController: TreeController;
         treeParser: TreeParser;
 
+        newButton:JQuery;
+        saveButton:JQuery;
+        loadButton:JQuery;
+        saveImageButton:JQuery;
+        inputLoad:JQuery;
+
+        playerPlusButton:JQuery;
+        playerMinusButton:JQuery;
+        playerNumber:JQuery;
+
         constructor(treeController: TreeController) {
             this.treeController = treeController;
             this.treeParser = new TreeParser();
             this.appendElements();
             setTimeout(() => {
+                this.newButton = $("#new-wrapper");
+                this.saveButton = $("#save-wrapper");
+                this.loadButton = $("#load-wrapper");
+                this.inputLoad = $("#input-load");
+                this.saveImageButton =  $("#save-image-wrapper");
+                this.playerNumber = $("#player-number");
+                this.playerMinusButton = $("#minusP-wrapper");
+                this.playerPlusButton = $("#plusP-wrapper");
+
                 this.attachEvents();
             }, 200);
 
@@ -31,21 +50,20 @@ module GTE {
         }
 
         attachEvents() {
-            'use strict';
-            $("#new-wrapper").on("click", () => {
+            this.newButton.on("click", () => {
                 this.treeController.deleteNodeHandler(this.treeController.tree.root);
                 this.treeController.addNodeHandler(this.treeController.treeView.nodes[0]);
             });
-            $("#save-wrapper").on("click", () => {
+            this.saveButton.on("click", () => {
                 let text = this.treeParser.stringify(this.treeController.tree);
                 let blob = new Blob([text], {type: "text/plain;charset=utf-8"});
                 saveAs(blob, GTE_DEFAULT_FILE_NAME + ".txt");
             });
-            $("#load-wrapper").on("click", () => {
-                $("#input-load").click();
+            this.loadButton.on("click", () => {
+                this.inputLoad.click();
             });
 
-            $("#input-load").on("change", (event) => {
+            this.inputLoad.on("change", (event) => {
 
                 let input = event.target;
 
@@ -59,15 +77,34 @@ module GTE {
                 reader.readAsText((<any>input).files[0]);
             });
 
-            $("#save-image-wrapper").on("click",()=>{
+            this.saveImageButton.on("click",()=>{
                 console.log("save-clicked");
                 this.treeController.game.world.getByName("hoverMenu").alpha = 0;
                 setTimeout(()=>{let cnvs = $('#phaser-div').find('canvas');
                     (<any>cnvs[0]).toBlob(function(blob) {
                         saveAs(blob, GTE_DEFAULT_FILE_NAME+".png");
-                    });},100);
-
+                    });
+                    },100);
             });
+
+            this.playerMinusButton.on("click",()=>{
+                let playersCount = parseInt(this.playerNumber.val());
+                if(playersCount>2){
+                    // this.treeController.tree.removePlayer(this.treeController.tree.players[playersCount]);
+                    this.playerNumber.val(playersCount-1);
+                }
+                console.log(this.playerNumber.val());
+            });
+
+            this.playerPlusButton.on("click",()=>{
+                let playersCount = parseInt(this.playerNumber.val());
+                if(playersCount<4){
+                    // this.treeController.tree.addPlayer(this.treeController.tree.players[playersCount]);
+                    this.playerNumber.val(playersCount+1);
+                }
+                console.log(this.playerNumber.val());
+            });
+
         }
 
         private handleLoadedFile(text: string) {

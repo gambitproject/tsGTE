@@ -59,7 +59,7 @@ module GTE {
         convertToDefault() {
             this.type = NodeType.DEFAULT;
             this.owner = null;
-            this.payoff = null;
+            // this.payoff = null;
             if (this.iSet) {
                 this.iSet.removeNode(this);
             }
@@ -71,7 +71,7 @@ module GTE {
         convertToLabeled(player: Player) {
             if (this.children.length > 0) {
                 this.type = NodeType.OWNED;
-                this.payoff = null;
+                // this.payoff = null;
                 this.owner = player;
 
                 this.childrenMoves.forEach(c => c.convertToLabeled());
@@ -81,7 +81,7 @@ module GTE {
         /**Converts the current Node to a leaf node, by setting payoffs */
         convertToLeaf(payoff: Payoff) {
             this.type = NodeType.LEAF;
-            this.payoff = payoff;
+            // this.payoff = payoff;
             this.owner = null;
             if (this.iSet) {
                 this.iSet.removeNode(this);
