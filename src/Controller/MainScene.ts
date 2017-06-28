@@ -28,7 +28,7 @@ module GTE {
             this.userActionController = new UserActionController(this.game,this.treeController);
             this.keyboardController = new KeyboardController(this.game, this.userActionController);
             this.hoverManager = new HoverMenuManager(this.game, this.userActionController);
-            this.topMenu = new TopMenu(this.treeController);
+            this.topMenu = new TopMenu(this.userActionController);
             // this.game.input.onDown.add(()=>{
             //     this.labelInput.show(this.game.input.activePointer.x,this.game.input.activePointer.y);
             // });

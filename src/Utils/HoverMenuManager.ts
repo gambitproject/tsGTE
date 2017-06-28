@@ -23,7 +23,9 @@ module GTE {
 
         buttonsGroup: Phaser.Group;
         buttonsArray: Array<HoverButton>;
+        private buttonWidth:number;
         menuTween: Phaser.Tween;
+
         private previouslyHoveredSprite: Phaser.Sprite;
         selectedNodesSprites: Array<NodeView>;
 
@@ -35,8 +37,11 @@ module GTE {
             this.buttonsGroup.name = "hoverMenu";
             this.createButtonSprites();
             this.setButtonFunctionality();
-            let nodeWidth = this.userActionController.treeController.treeView.nodes[0].width;
 
+            console.log(this.plusButton.width);
+            this.buttonWidth = this.plusButton.width;
+
+            let nodeWidth = this.userActionController.treeController.treeView.nodes[0].width;
             this.repositionButtonSprites(nodeWidth);
 
             this.menuTween = this.game.add.tween(this.buttonsGroup);
@@ -57,6 +62,14 @@ module GTE {
                 this.hideMenu();
             });
 
+            // If clicking on the top menu, hide the hover menu
+            setTimeout(()=>{
+                $("#top-container").on("click",()=>{
+                   this.hideMenu();
+                });
+            },300);
+
+
             this.selectedNodesSprites = this.userActionController.treeController.selectedNodes;
         }
 
@@ -76,22 +89,27 @@ module GTE {
                 this.cutButton, this.player1Button, this.player2Button, this.player3Button, this.player4Button, this.chancePlayerButton];
         }
 
-        private repositionButtonSprites(width: number) {
-            let buttonsScale = width * 0.001;
+        private repositionButtonSprites(nodeWidth:number) {
+            let buttonsScale = nodeWidth * 0.001;
             this.buttonsGroup.scale.set(buttonsScale);
-            let buttonWidth = 320;
-            this.plusButton.position.set(-0.5 * buttonWidth, 0);
-            this.minusButton.position.set(0.5 * buttonWidth, 0);
+            this.plusButton.position.set(-0.5 * this.buttonWidth, 0);
+            this.minusButton.position.set(0.5 * this.buttonWidth, 0);
 
-            this.player1Button.position.set(-2 * buttonWidth, buttonWidth);
-            this.player2Button.position.set(-buttonWidth, buttonWidth);
-            this.player3Button.position.set(0, buttonWidth);
-            this.player4Button.position.set(buttonWidth, buttonWidth);
-            this.chancePlayerButton.position.set(2 * buttonWidth, buttonWidth)
+            this.repositionPlayerButtonSprites();
 
-            this.unlinkButton.position.set(0, 2 * buttonWidth);
-            this.linkButton.position.set(-buttonWidth, 2 * buttonWidth);
-            this.cutButton.position.set(buttonWidth, 2 * buttonWidth);
+            this.unlinkButton.position.set(0, 2 * this.buttonWidth);
+            this.linkButton.position.set(-this.buttonWidth, 2 * this.buttonWidth);
+            this.cutButton.position.set(this.buttonWidth, 2 * this.buttonWidth);
+        }
+
+        private repositionPlayerButtonSprites(){
+            let playersCount = this.userActionController.treeController.tree.players.length;
+
+            this.player1Button.position.set(-0.5* (playersCount-1) * this.buttonWidth, this.buttonWidth);
+            this.player2Button.position.set(-0.5*(playersCount-3)*this.buttonWidth, this.buttonWidth);
+            this.player3Button.position.set(0.5*(5-playersCount)*this.buttonWidth, this.buttonWidth);
+            this.player4Button.position.set(this.buttonWidth, this.buttonWidth);
+            this.chancePlayerButton.position.set(0.5 *(playersCount-1) * this.buttonWidth, this.buttonWidth)
         }
 
         private setButtonFunctionality() {
@@ -185,10 +203,10 @@ module GTE {
                     this.hideMenu();
                 });
             });
-
         }
 
         triggerMenu(hoveredElement: Phaser.Sprite) {
+            this.repositionPlayerButtonSprites();
             this.game.world.bringToTop(this.buttonsGroup);
             if (this.previouslyHoveredSprite !== hoveredElement) {
                 if (this.buttonsGroup.alpha !== 0) {
@@ -201,9 +219,16 @@ module GTE {
         }
 
         private handleMenuCases(hoveredSprite: Phaser.Sprite) {
-
+            let playersCount = this.userActionController.treeController.tree.players.length;
 
             this.buttonsArray.forEach((button: HoverButton) => button.setActive());
+            if(playersCount===3){
+                this.player3Button.setHidden();
+                this.player4Button.setHidden();
+            }
+            if(playersCount===4){
+                this.player4Button.setHidden();
+            }
 
             //Case 1: The hovered sprite is a node
             if (hoveredSprite instanceof NodeView) {
@@ -270,7 +295,6 @@ module GTE {
                 this.buttonsGroup.y = (<ISetView>hoveredSprite).label.y;
                 this.linkButton.setInactive();
                 this.chancePlayerButton.setInactive();
-
             }
             this.menuTween = this.game.add.tween(this.buttonsGroup).to({
                 y: this.buttonsGroup.position.y + 50,

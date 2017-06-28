@@ -3,6 +3,7 @@
 ///<reference path="../View/ISetView.ts"/>
 ///<reference path="../Utils/Constants.ts"/>
 ///<reference path="../Model/Node.ts"/>
+///<reference path="UndoRedoController.ts"/>
 module GTE {
     export class UserActionController {
         game: Phaser.Game;
@@ -10,6 +11,7 @@ module GTE {
         backgroundInputSprite: Phaser.Sprite;
         cutSprite: Phaser.Sprite;
         cutInformationSet: ISetView;
+        undoRedoController:UndoRedoController;
         // Used for going to the next node on tab pressed
         private nodesBFSOrder: Array<Node>;
 
@@ -17,6 +19,7 @@ module GTE {
             this.game = game;
             this.treeController = treeController;
             this.nodesBFSOrder = [];
+            this.undoRedoController = new UndoRedoController(this.treeController);
             this.createBackgroundForInputReset();
             this.createCutSprite();
         }
@@ -65,7 +68,7 @@ module GTE {
                     this.treeController.addNodeHandler(n);
                 });
             }
-            this.treeController.undoRedoController.saveNewTree();
+            this.undoRedoController.saveNewTree();
         }
 
         /** A method for deleting nodes (keyboard DELETE).*/
@@ -92,7 +95,7 @@ module GTE {
             deletedNodes.forEach(n => {
                 this.treeController.selectedNodes.splice(this.treeController.selectedNodes.indexOf(n), 1);
             });
-            this.treeController.undoRedoController.saveNewTree();
+            this.undoRedoController.saveNewTree();
         }
 
         /**A method for assigning players to nodes (keyboard 1,2,3,4)*/
@@ -105,7 +108,7 @@ module GTE {
                     this.treeController.assignPlayerToNode(playerID, n);
                 });
             }
-            this.treeController.undoRedoController.saveNewTree();
+            this.undoRedoController.saveNewTree();
         }
 
         /**A method for assigning chance player to a node (keyboard 0)*/
@@ -120,7 +123,18 @@ module GTE {
                     n.resetNodeDrawing();
                 });
             }
-            this.treeController.undoRedoController.saveNewTree();
+            this.undoRedoController.saveNewTree();
+        }
+
+        /**A method which removes the last player from the list of players*/
+        removeLastPlayerHandler(){
+            this.treeController.tree.removePlayer(this.treeController.tree.players[this.treeController.tree.players.length-1]);
+            $("#player-number").html((this.treeController.tree.players.length-1).toString());
+            this.treeController.treeView.nodes.forEach((n:NodeView)=>{
+                n.resetNodeDrawing();
+            });
+            this.treeController.treeView.drawTree();
+            this.undoRedoController.saveNewTree();
         }
 
         /**A method for creating an iSet (keyboard I)*/
@@ -128,13 +142,13 @@ module GTE {
             if (this.treeController.selectedNodes.length > 1) {
                 this.treeController.createISet(this.treeController.selectedNodes);
             }
-            this.treeController.undoRedoController.saveNewTree();
+            this.undoRedoController.saveNewTree();
         }
 
         /**Remove iSetHandler*/
         removeISetHandler(iSet: ISet) {
             this.treeController.removeISetHandler(iSet);
-            this.treeController.undoRedoController.saveNewTree();
+            this.undoRedoController.saveNewTree();
         }
 
         /**Removes and iSet by a given list of nodes*/
@@ -145,12 +159,12 @@ module GTE {
             else {
                 this.treeController.removeISetsByNodesHandler();
             }
-            this.treeController.undoRedoController.saveNewTree();
+            this.undoRedoController.saveNewTree();
         }
 
         /**A method for assigning undo/redo functionality (keyboard ctrl/shift + Z)*/
         undoRedoHandler(undo: boolean) {
-            this.treeController.undoRedoController.changeTreeInController(undo);
+            this.undoRedoController.changeTreeInController(undo);
         }
 
         /**Starts the "Cut" state for an Information set*/
@@ -178,7 +192,7 @@ module GTE {
                 this.cutSprite.alpha = 0;
 
                 this.treeController.cutInformationSet(this.cutInformationSet, this.cutSprite.x, this.cutSprite.y);
-                this.treeController.undoRedoController.saveNewTree();
+                this.undoRedoController.saveNewTree();
             }, this);
 
         }

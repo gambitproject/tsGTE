@@ -6,7 +6,6 @@
 ///<reference path="../View/MoveView.ts"/>
 ///<reference path="../Utils/SelectionRectangle.ts"/>
 ///<reference path="../Utils/Constants.ts"/>
-///<reference path="UndoRedoController.ts"/>
 ///<reference path="../Utils/ErrorPopUp.ts"/>
 ///<reference path="../View/ISetView.ts"/>
 ///<reference path="../Utils/HoverMenuManager.ts"/>
@@ -20,8 +19,6 @@ module GTE {
         tree: Tree;
         treeView: TreeView;
         treeProperties: TreeViewProperties;
-
-        undoRedoController: UndoRedoController;
 
         selectionRectangle: SelectionRectangle;
         errorPopUp: ErrorPopUp;
@@ -44,7 +41,6 @@ module GTE {
             this.selectionRectangle = new SelectionRectangle(this.game);
             this.createInitialTree();
             this.attachHandlersToNodes();
-            this.undoRedoController = new UndoRedoController(this);
             this.errorPopUp = new ErrorPopUp(this.game);
             this.hoverSignal = new Phaser.Signal();
         }
@@ -200,27 +196,6 @@ module GTE {
             this.resetTree();
         }
 
-        /** A method for assigning a player to a given node.*/
-        assignPlayerToNode(playerID: number, n: NodeView) {
-            if (playerID > this.tree.players.length - 1) {
-                this.tree.addPlayer(new Player(playerID, playerID.toString(), PLAYER_COLORS[playerID - 1]));
-
-            }
-            n.node.convertToLabeled(this.tree.findPlayerById(playerID));
-            // If the node is in an iset, change the owner of the iSet to the new player
-            if(n.node.iSet && n.node.iSet.nodes.length>1){
-                n.node.iSet.changePlayer(n.node.owner);
-                let iSetView = this.treeView.findISetView(n.node.iSet);
-                iSetView.nodes.forEach(nv=>{
-                    nv.resetNodeDrawing();
-                });
-                iSetView.tint = iSetView.iSet.player.color;
-            }
-            n.resetNodeDrawing();
-
-            this.resetTree();
-        }
-
         /**A method for deleting a node - 2 step deletion.*/
         deleteNodeHandler(node: Node) {
             if (this.tree.nodes.indexOf(node) === -1) {
@@ -240,6 +215,42 @@ module GTE {
                 node.convertToDefault();
             }
             this.resetTree();
+        }
+
+        /** A method for assigning a player to a given node.*/
+        assignPlayerToNode(playerID: number, n: NodeView) {
+            //if someone adds player 4 before adding player 3, we will add player 3 instead.
+            if(playerID>this.tree.players.length){
+                playerID--;
+            }
+
+            this.addPlayer(playerID);
+
+            n.node.convertToLabeled(this.tree.findPlayerById(playerID));
+            // If the node is in an iset, change the owner of the iSet to the new player
+            if(n.node.iSet && n.node.iSet.nodes.length>1){
+                n.node.iSet.changePlayer(n.node.owner);
+                let iSetView = this.treeView.findISetView(n.node.iSet);
+                iSetView.nodes.forEach(nv=>{
+                    nv.resetNodeDrawing();
+                });
+                iSetView.tint = iSetView.iSet.player.color;
+            }
+            n.resetNodeDrawing();
+
+            this.resetTree();
+        }
+        /**A method for adding a new player if there isn't one created already*/
+        addPlayer(playerID:number){
+            //if someone adds player 4 before adding player 3, we will add player 3 instead.
+            if(playerID>this.tree.players.length){
+                playerID--;
+            }
+
+            if (playerID > this.tree.players.length - 1) {
+                this.tree.addPlayer(new Player(playerID, playerID.toString(), PLAYER_COLORS[playerID - 1]));
+                $("#player-number").html((this.tree.players.length-1).toString());
+            }
         }
 
         /**Creates an iSet with the corresponding checks*/

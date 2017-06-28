@@ -79,7 +79,7 @@
     transform: translateX(-50%) translateY(-50%);
 }
 
-.player-number{
+#player-number{
     position:absolute;
     font-size: 0.9em;
     text-align: center;
