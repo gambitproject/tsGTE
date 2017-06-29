@@ -190,6 +190,12 @@ module GTE {
             }
         }
 
+        resetPayoffsPlayers(){
+            this.nodes.forEach(n=>{
+               n.payoffs.setPlayersCount(this.players.length-1);
+            });
+        }
+
         /**Breadth first search on the nodes of the tree*/
         BFSOnTree(){
             let bfsNodes:Array<Node> = [];

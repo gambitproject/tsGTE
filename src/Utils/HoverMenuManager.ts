@@ -236,6 +236,10 @@ module GTE {
                 this.buttonsGroup.y = hoveredSprite.y;
                 //Case 1.1: There is no multiple selection of nodes
                 if (this.selectedNodesSprites.length <= 1) {
+                    // If the selected node is not the hovered sprite
+                    if(this.selectedNodesSprites[0] && this.selectedNodesSprites[0]!==hoveredSprite){
+                        return;
+                    }
                     this.unlinkButton.setHidden();
                     this.linkButton.setHidden();
                     this.cutButton.setHidden();
@@ -271,6 +275,7 @@ module GTE {
                     //Check whether all nodes are in different sets to disable unlink button
                     if (differentISets.length !== 1) {
                         this.unlinkButton.setInactive();
+                        this.cutButton.setInactive();
                     }
                     else {
                         this.linkButton.setInactive();
@@ -296,8 +301,13 @@ module GTE {
                 this.linkButton.setInactive();
                 this.chancePlayerButton.setInactive();
             }
+
+            let sign = 1;
+            if(hoveredSprite instanceof NodeView && (<NodeView>hoveredSprite).node.children.length===0){
+                sign=-1;
+            }
             this.menuTween = this.game.add.tween(this.buttonsGroup).to({
-                y: this.buttonsGroup.position.y + 50,
+                y: this.buttonsGroup.position.y + sign*50,
                 alpha: 1
             }, 300, Phaser.Easing.Default, true);
         }

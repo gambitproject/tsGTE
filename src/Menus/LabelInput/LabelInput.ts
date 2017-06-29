@@ -32,7 +32,8 @@ module GTE {
 
         show(label:Phaser.Text, sprite:Phaser.Sprite) {
             this.currentlySelected = sprite;
-            this.inputField.val(label.text);
+            this.inputField.val(label.text.replace("\n"," "));
+            // this.inputField.click();
             if (!this.active) {
                 this.labelOverlay.addClass("show-overlay");
                 this.inputField.addClass("show-label");
@@ -41,10 +42,17 @@ module GTE {
             else{
                 this.shouldRecalculateOrder = false;
             }
+
+
+
             this.inputField.css({
                 "left": label.x,
                 "top": label.y,
             });
+            setTimeout(()=>{
+                this.inputField.select();
+            },100);
+
             this.active = true;
         }
 

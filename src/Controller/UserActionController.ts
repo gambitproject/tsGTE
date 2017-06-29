@@ -1,4 +1,5 @@
 ///<reference path="../../lib/phaser.d.ts"/>
+///<reference path="../../lib/jquery.d.ts"/>
 ///<reference path="../Model/ISet.ts"/>
 ///<reference path="../View/ISetView.ts"/>
 ///<reference path="../Utils/Constants.ts"/>
@@ -14,11 +15,13 @@ module GTE {
         undoRedoController:UndoRedoController;
         // Used for going to the next node on tab pressed
         private nodesBFSOrder: Array<Node>;
+        private leavesDFSOrder:Array<Node>;
 
         constructor(game: Phaser.Game, treeController: TreeController) {
             this.game = game;
             this.treeController = treeController;
             this.nodesBFSOrder = [];
+            this.leavesDFSOrder = [];
             this.undoRedoController = new UndoRedoController(this.treeController);
             this.createBackgroundForInputReset();
             this.createCutSprite();
@@ -116,11 +119,13 @@ module GTE {
             if (n) {
                 n.node.convertToChance(this.treeController.tree.players[0]);
                 n.resetNodeDrawing();
+                n.resetLabelText();
             }
             else if (this.treeController.selectedNodes.length > 0) {
                 this.treeController.selectedNodes.forEach((n) => {
                     n.node.convertToChance(this.treeController.tree.players[0]);
                     n.resetNodeDrawing();
+                    n.resetLabelText();
                 });
             }
             this.undoRedoController.saveNewTree();
@@ -132,7 +137,9 @@ module GTE {
             $("#player-number").html((this.treeController.tree.players.length-1).toString());
             this.treeController.treeView.nodes.forEach((n:NodeView)=>{
                 n.resetNodeDrawing();
+                n.resetLabelText();
             });
+            this.treeController.tree.resetPayoffsPlayers();
             this.treeController.treeView.drawTree();
             this.undoRedoController.saveNewTree();
         }
@@ -249,6 +256,7 @@ module GTE {
             if (this.treeController.labelInput.active) {
                 if (this.treeController.labelInput.shouldRecalculateOrder) {
                     this.nodesBFSOrder = this.treeController.tree.BFSOnTree();
+                    this.leavesDFSOrder = this.treeController.tree.getLeaves();
                 }
                 // If we are currently looking at moves
                 if (this.treeController.labelInput.currentlySelected instanceof MoveView) {
@@ -268,10 +276,26 @@ module GTE {
                 }
                 // If we are currently looking at nodes
                 else if (this.treeController.labelInput.currentlySelected instanceof NodeView) {
-                    let index = this.nodesBFSOrder.indexOf((<NodeView>this.treeController.labelInput.currentlySelected).node);
-                    let nextIndex = this.calculateNodeLabelIndex(next,index);
-                    let nextNode = this.treeController.treeView.findNodeView(this.nodesBFSOrder[nextIndex]);
-                    nextNode.ownerLabel.events.onInputDown.dispatch(nextNode.ownerLabel)
+                    // If owner label
+                    if((<NodeView>this.treeController.labelInput.currentlySelected).ownerLabel.alpha===1) {
+                        let index = this.nodesBFSOrder.indexOf((<NodeView>this.treeController.labelInput.currentlySelected).node);
+                        let nextIndex = this.calculateNodeLabelIndex(next, index);
+                        let nextNode = this.treeController.treeView.findNodeView(this.nodesBFSOrder[nextIndex]);
+                        nextNode.ownerLabel.events.onInputDown.dispatch(nextNode.ownerLabel)
+                    }
+                    // If payoffs label
+                    else{
+                        let index = this.leavesDFSOrder.indexOf((<NodeView>this.treeController.labelInput.currentlySelected).node)
+                        let nextIndex;
+                        if (next) {
+                            nextIndex = this.leavesDFSOrder.length !== index + 1 ? index + 1 : 0;
+                        }
+                        else {
+                            nextIndex = index === 0 ? this.leavesDFSOrder.length-1 : index - 1;
+                        }
+                        let nextNode = this.treeController.treeView.findNodeView(this.leavesDFSOrder[nextIndex]);
+                        nextNode.payoffsLabel.events.onInputDown.dispatch(nextNode.payoffsLabel);
+                    }
                 }
             }
         }
@@ -287,11 +311,22 @@ module GTE {
                     this.activateLabel(true);
                 }
                 else if (this.treeController.labelInput.currentlySelected instanceof NodeView) {
-                    (<NodeView>this.treeController.labelInput.currentlySelected).node.owner.label = this.treeController.labelInput.inputField.val();
-                    this.treeController.treeView.nodes.forEach((n: NodeView) => {
-                        n.setLabelText();
-                    });
-                    this.activateLabel(true);
+
+                    if ((<NodeView>this.treeController.labelInput.currentlySelected).ownerLabel.alpha===1) {
+                        (<NodeView>this.treeController.labelInput.currentlySelected).node.owner.label = this.treeController.labelInput.inputField.val();
+                        this.treeController.treeView.nodes.forEach((n: NodeView) => {
+                            n.resetLabelText();
+                        });
+                        this.activateLabel(true);
+                    }
+                    else{
+
+                        (<NodeView>this.treeController.labelInput.currentlySelected).node.payoffs.loadFromString(this.treeController.labelInput.inputField.val())
+                        this.treeController.treeView.nodes.forEach((n: NodeView) => {
+                            n.resetLabelText();
+                        });
+                        this.activateLabel(true);
+                    }
                 }
             }
         }

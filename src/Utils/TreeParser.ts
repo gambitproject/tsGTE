@@ -3,7 +3,7 @@
 ///<reference path="../Model/Node.ts"/>
 ///<reference path="../Model/ISet.ts"/>
 ///<reference path="../Model/Player.ts"/>
-///<reference path="../Model/Payoff.ts"/>
+///<reference path="../Model/Payoffs.ts"/>
 module GTE {
     export class TreeParser {
 
@@ -30,15 +30,8 @@ module GTE {
                     let ownerIndex = tree.players.indexOf(n.owner);
                     strippedTree.nodePlayerPair.push({nodeIndex:tree.nodes.indexOf(n),playerIndex:ownerIndex});
                 }
-                if (n.payoff) {
-                    let players = [];
-                    let payoffs = [];
-                    n.payoff.playerPayoffPairs.forEach(pair => {
-                        let playerIndex = tree.players.indexOf(pair.player);
-                        players.push(strippedTree.players[playerIndex]);
-                        payoffs.push(pair.payoff);
-                    });
-                    node.payoff = new Payoff(players, payoffs);
+                if (n.payoffs) {
+                    node.payoffs.outcomes = n.payoffs.outcomes;
                 }
 
                 strippedTree.nodes.push(node);
@@ -101,7 +94,7 @@ module GTE {
                 let node = new Node();
                 node.type = n.type;
                 node.depth = n.depth;
-                node.payoff = n.payoff;
+                node.payoffs.outcomes = n.payoffs.outcomes.slice(0);
                 clonedTree.nodes.push(node);
 
             });

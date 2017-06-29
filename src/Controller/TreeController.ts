@@ -1,4 +1,5 @@
 /// <reference path = "../../lib/phaser.d.ts"/>
+///<reference path="../../lib/jquery.d.ts"/>
 ///<reference path="../Model/Tree.ts"/>
 ///<reference path="../View/TreeView.ts"/>
 ///<reference path="../View/TreeViewProperties.ts"/>
@@ -125,6 +126,11 @@ module GTE {
                 this.handleInputDownNodeLabel(nodeLabel,n);
             },this);
 
+            n.payoffsLabel.events.onInputDown.add(function(){
+               let nodeLabel = arguments[0];
+               this.handleInputDownNodePayoffs(nodeLabel,n);
+            },this);
+
             if (n.node.parentMove) {
                 let move = this.treeView.findMoveView(n.node.parentMove);
                 move.label.events.onInputDown.add(function () {
@@ -170,12 +176,22 @@ module GTE {
 
         /**Halder for the signal CLICK on a Move Label*/
         private handleInputDownMoveLabel(label:Phaser.Text,move:MoveView){
-            this.labelInput.show(label, move);
+            if(label.alpha!==0) {
+                this.labelInput.show(label, move);
+            }
         }
 
         /**Handler for the signal CLICK on a Node Label*/
         private handleInputDownNodeLabel(label:Phaser.Text,node:NodeView){
-            this.labelInput.show(label,node);
+            if(label.alpha!==0) {
+                this.labelInput.show(label, node);
+            }
+        }
+
+        private handleInputDownNodePayoffs(label:Phaser.Text,node:NodeView){
+            if(label.alpha!==0) {
+                this.labelInput.show(label, node);
+            }
         }
 
 
@@ -192,7 +208,6 @@ module GTE {
                 let child1 = this.treeView.addChildToNode(nodeV);
                 this.attachHandlersToNode(child1);
             }
-
             this.resetTree();
         }
 
@@ -233,10 +248,12 @@ module GTE {
                 let iSetView = this.treeView.findISetView(n.node.iSet);
                 iSetView.nodes.forEach(nv=>{
                     nv.resetNodeDrawing();
+                    nv.resetLabelText();
                 });
                 iSetView.tint = iSetView.iSet.player.color;
             }
             n.resetNodeDrawing();
+            n.resetLabelText();
 
             this.resetTree();
         }
@@ -250,6 +267,7 @@ module GTE {
             if (playerID > this.tree.players.length - 1) {
                 this.tree.addPlayer(new Player(playerID, playerID.toString(), PLAYER_COLORS[playerID - 1]));
                 $("#player-number").html((this.tree.players.length-1).toString());
+                this.treeView.drawLabels();
             }
         }
 

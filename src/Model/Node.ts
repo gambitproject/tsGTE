@@ -1,7 +1,7 @@
 ///<reference path="Move.ts"/>
 ///<reference path="ISet.ts"/>
 ///<reference path="Player.ts"/>
-///<reference path="Payoff.ts"/>
+///<reference path="Payoffs.ts"/>
 module GTE {
     /**The types of Node. If a node does not have type, it can be deleted */
     export enum NodeType {DEFAULT = 1, CHANCE, OWNED, LEAF}
@@ -16,8 +16,7 @@ module GTE {
         iSet: ISet;
         owner: Player;
         depth: number;
-        payoff: Payoff;
-
+        payoffs: Payoffs;
         constructor(depth?: number, type?: NodeType, parent?: Node) {
             this.depth = depth || 0;
             this.type = type || NodeType.DEFAULT;
@@ -26,6 +25,7 @@ module GTE {
             this.childrenMoves = [];
             this.owner = null;
             this.iSet = null;
+            this.payoffs = new Payoffs();
         }
 
         /**The method adds a child to the current Node. */
@@ -59,7 +59,6 @@ module GTE {
         convertToDefault() {
             this.type = NodeType.DEFAULT;
             this.owner = null;
-            // this.payoff = null;
             if (this.iSet) {
                 this.iSet.removeNode(this);
             }
@@ -71,7 +70,6 @@ module GTE {
         convertToLabeled(player: Player) {
             if (this.children.length > 0) {
                 this.type = NodeType.OWNED;
-                // this.payoff = null;
                 this.owner = player;
 
                 this.childrenMoves.forEach(c => c.convertToLabeled());
@@ -79,9 +77,8 @@ module GTE {
         }
 
         /**Converts the current Node to a leaf node, by setting payoffs */
-        convertToLeaf(payoff: Payoff) {
+        convertToLeaf() {
             this.type = NodeType.LEAF;
-            // this.payoff = payoff;
             this.owner = null;
             if (this.iSet) {
                 this.iSet.removeNode(this);
@@ -92,7 +89,7 @@ module GTE {
         convertToChance(chancePlayer: Player, probabilities?: Array<number>,) {
             if (this.children.length>0 && this.iSet === null) {
                 this.type = NodeType.CHANCE;
-                this.payoff = null;
+                this.payoffs = null;
 
                 if (chancePlayer.id === 0) {
                     this.owner = chancePlayer;
@@ -140,8 +137,8 @@ module GTE {
             if (this.iSet) {
                 this.iSet.removeNode(this);
             }
-            if (this.payoff) {
-                this.payoff.destroy();
+            if (this.payoffs) {
+                this.payoffs.destroy();
             }
             if (this.children.length > 0) {
                 this.children.forEach((c) => c.destroy());

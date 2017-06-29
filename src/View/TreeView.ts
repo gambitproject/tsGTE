@@ -218,19 +218,29 @@ module GTE {
                     m.label.alpha=1;
                     m.updateLabel();
                 });
+                this.tree.resetPayoffsPlayers();
+                this.nodes.forEach(n=>{
+                    if(n.node.children.length===0){
+                        n.node.convertToLeaf();
+                        n.resetNodeDrawing();
+                        n.resetLabelText();
+                    }
+                });
             }
             else{
                 this.tree.removeLabels();
                 this.moves.forEach(m=>{
                     m.label.alpha = 0;
-                })
+                });
+                this.nodes.forEach(n=>{
+                   n.resetLabelText();
+                   n.payoffsLabel.alpha = 0;
+                   if(n.node.type===NodeType.LEAF){
+                       n.node.convertToDefault();
+                       n.resetNodeDrawing();
+                   }
+                });
             }
-            this.nodes.forEach(n=>{
-               if(n.node.children.length===0){
-
-                   // n.node.convertToLeaf(this.tree.players,);
-               }
-            });
         }
 
         /**Re-centers the tree on the screen*/

@@ -120,7 +120,9 @@ module GTE {
                     this.userActionController.treeController.emptySelectedNodes();
                     this.userActionController.treeController.treeView.nodes.forEach(n => {
                         n.resetNodeDrawing();
+                        n.resetLabelText();
                     });
+                    this.userActionController.treeController.treeView.drawLabels();
                     this.userActionController.treeController.attachHandlersToNodes();
                     this.userActionController.treeController.treeView.iSets.forEach(iSetV => {
                         this.userActionController.treeController.attachHandlersToISet(iSetV);

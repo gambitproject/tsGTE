@@ -37,7 +37,7 @@ module GTE {
             });
 
             // this.setHidden();
-
+            this.input.priorityID = 5;
             group.add(this);
             group.add(this.circle);
             group.add(this.icon);
