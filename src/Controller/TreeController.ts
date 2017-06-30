@@ -56,7 +56,7 @@ module GTE {
             this.tree.addPlayer(new Player(1, "1", PLAYER_COLORS[0]));
 
             this.tree.addPlayer(new Player(2, "2", PLAYER_COLORS[1]));
-            this.treeProperties = new TreeViewProperties(250, 1000);
+            this.treeProperties = new TreeViewProperties(220, 1000);
             this.treeView = new TreeView(this.game, this.tree, this.treeProperties);
             this.treeView.nodes[0].ownerLabel.text = "A";
             this.treeView.nodes[1].ownerLabel.text = "B";

@@ -26,12 +26,13 @@ module GTE {
 
             this.label = this.game.add.text(0,0,this.move.label,null);
             this.label.anchor.set(0.5,0.5);
-            this.label.fontSize = this.from.width/2;
+            this.label.fontSize = this.from.width*0.44;
             this.label.fill = this.from.ownerLabel.tint;
+            this.label.fontStyle = "italic";
+            this.label.fontWeight = 200;
 
             this.label.inputEnabled = true;
             this.label.events.onInputDown.dispatch(this);
-
 
             this.game.add.existing(this);
             this.game.world.sendToBack(this);
@@ -59,15 +60,14 @@ module GTE {
             }
             let center = new Phaser.Point(Math.abs((this.from.x+this.to.x)/2),Math.abs((this.from.y+this.to.y)/2));
             if(this.rotation>0){
-                center.x=center.x-this.label.height;
-                this.label.align = "left"
+                center.x=center.x-this.label.height/2;
             }
             else{
-                center.x = center.x+this.label.height;
-                this.label.align = "right"
+                center.x = center.x+this.label.height/2;
+
             }
             this.label.x = center.x;
-            this.label.y = center.y;
+            this.label.y = center.y-this.label.height*0.33;
             this.label.fill = this.from.ownerLabel.fill;
         }
 

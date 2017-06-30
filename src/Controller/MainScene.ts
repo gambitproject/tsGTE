@@ -59,6 +59,13 @@ module GTE {
             // if(this.userActionController){
             //     this.game.debug.text("cut x: "+this.userActionController.cutSprite.position.x+"    cut y: "+this.userActionController.cutSprite.position.y, 20,60, "#000000", "20px Arial");
             // }
+            // if(this.treeController && this.treeController.treeView && this.treeController.treeView){
+            //     this.treeController.treeView.moves.forEach(m=>{
+            //         if(m.label) {
+            //             this.game.debug.spriteBounds(m.label,"#ff0000",false);
+            //         }
+            //     })
+            // }
         }
     }
 }
