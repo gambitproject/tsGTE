@@ -172,6 +172,7 @@ module GTE {
         /**A method for assigning undo/redo functionality (keyboard ctrl/shift + Z)*/
         undoRedoHandler(undo: boolean) {
             this.undoRedoController.changeTreeInController(undo);
+            $("#player-number").html((this.treeController.tree.players.length-1).toString());
         }
 
         /**Starts the "Cut" state for an Information set*/
