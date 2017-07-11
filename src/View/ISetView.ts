@@ -21,6 +21,7 @@ module GTE {
             this.createSimpleISet();
             this.label = this.game.add.text(this.nodes[0].x,this.nodes[0].y, "",null);
             this.inputEnabled = true;
+            this.input.priorityID = 100;
             this.input.pixelPerfectClick=true;
             this.input.pixelPerfectOver = true;
             this.events.onInputOver.dispatch(this);

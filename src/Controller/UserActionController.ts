@@ -5,6 +5,10 @@
 ///<reference path="../Utils/Constants.ts"/>
 ///<reference path="../Model/Node.ts"/>
 ///<reference path="UndoRedoController.ts"/>
+///<reference path="../Utils/TreeParser.ts"/>
+///<reference path="../../lib/FileSaver.d.ts"/>
+
+
 module GTE {
     export class UserActionController {
         game: Phaser.Game;
@@ -13,6 +17,7 @@ module GTE {
         cutSprite: Phaser.Sprite;
         cutInformationSet: ISetView;
         undoRedoController:UndoRedoController;
+        treeParser:TreeParser;
         // Used for going to the next node on tab pressed
         private nodesBFSOrder: Array<Node>;
         private leavesDFSOrder:Array<Node>;
@@ -23,6 +28,7 @@ module GTE {
             this.nodesBFSOrder = [];
             this.leavesDFSOrder = [];
             this.undoRedoController = new UndoRedoController(this.treeController);
+            this.treeParser = new TreeParser();
             this.createBackgroundForInputReset();
             this.createCutSprite();
         }
@@ -48,6 +54,71 @@ module GTE {
                 if (!this.game.input.keyboard.isDown(Phaser.Keyboard.SHIFT))
                     this.deselectNodesHandler();
             });
+        }
+
+        /**Resets the current Tree*/
+        createNewTree(){
+            this.treeController.deleteNodeHandler(this.treeController.tree.root);
+            this.treeController.addNodeHandler(this.treeController.treeView.nodes[0]);
+        }
+
+        /**Saves a tree to a txt file*/
+        saveTreeToFile(){
+            let text = this.treeParser.stringify(this.treeController.tree);
+            let blob = new Blob([text], {type: "text/plain;charset=utf-8"});
+            saveAs(blob, GTE_DEFAULT_FILE_NAME + ".txt");
+        }
+
+        /**Toggles the open file menu to chose a txt file with a tree*/
+        toggleOpenFile(){
+            let input = event.target;
+
+            let reader = new FileReader();
+            reader.onload = () => {
+                let text = reader.result;
+                this.loadTreeFromFile(text);
+            };
+
+            reader.readAsText((<any>input).files[0]);
+        }
+        /**A method which loads the tree from a selected file*/
+        private loadTreeFromFile(text: string) {
+            console.log("handler");
+            try {
+                this.treeController.deleteNodeHandler(this.treeController.tree.root);
+                this.treeController.treeView.nodes[0].destroy();
+                this.treeController.treeView.iSets.forEach((iSet: ISetView) => {
+                    iSet.destroy();
+                });
+                let tree = this.treeParser.parse(text);
+                if (tree.nodes.length >= 3) {
+                    this.treeController.tree = tree;
+                    this.treeController.treeView = new TreeView(this.treeController.game, this.treeController.tree, this.treeController.treeProperties);
+                    this.treeController.emptySelectedNodes();
+                    this.treeController.treeView.nodes.forEach(n => {
+                        n.resetNodeDrawing();
+                        n.resetLabelText();
+                    });
+                    this.treeController.treeView.drawLabels();
+                    this.treeController.attachHandlersToNodes();
+                    this.treeController.treeView.iSets.forEach(iSetV => {
+                        this.treeController.attachHandlersToISet(iSetV);
+                    });
+                }
+            }
+            catch (err) {
+                this.treeController.errorPopUp.show("Error in reading file. ");
+                this.treeController.createInitialTree();
+            }
+        }
+        /**A method which saves the tree to a png file*/
+        saveTreeToImage(){
+            this.game.world.getByName("hoverMenu").alpha = 0;
+            setTimeout(()=>{let cnvs = $('#phaser-div').find('canvas');
+                (<any>cnvs[0]).toBlob(function(blob) {
+                    saveAs(blob, GTE_DEFAULT_FILE_NAME+".png");
+                });
+            },100);
         }
 
         /**A method for deselecting nodes.*/
@@ -139,7 +210,6 @@ module GTE {
                 n.resetNodeDrawing();
                 n.resetLabelText();
             });
-            this.treeController.tree.resetPayoffsPlayers();
             this.treeController.treeView.drawTree();
             this.undoRedoController.saveNewTree();
         }
@@ -286,7 +356,7 @@ module GTE {
                     }
                     // If payoffs label
                     else{
-                        let index = this.leavesDFSOrder.indexOf((<NodeView>this.treeController.labelInput.currentlySelected).node)
+                        let index = this.leavesDFSOrder.indexOf((<NodeView>this.treeController.labelInput.currentlySelected).node);
                         let nextIndex;
                         if (next) {
                             nextIndex = this.leavesDFSOrder.length !== index + 1 ? index + 1 : 0;
@@ -322,7 +392,7 @@ module GTE {
                     }
                     else{
 
-                        (<NodeView>this.treeController.labelInput.currentlySelected).node.payoffs.loadFromString(this.treeController.labelInput.inputField.val())
+                        (<NodeView>this.treeController.labelInput.currentlySelected).node.payoffs.loadFromString(this.treeController.labelInput.inputField.val());
                         this.treeController.treeView.nodes.forEach((n: NodeView) => {
                             n.resetLabelText();
                         });

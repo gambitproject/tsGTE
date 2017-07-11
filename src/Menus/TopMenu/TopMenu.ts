@@ -1,8 +1,4 @@
 ///<reference path="../../../lib/jquery.d.ts"/>
-///<reference path="../../../lib/FileSaver.d.ts"/>
-///<reference path="../../Model/Tree.ts"/>
-///<reference path="../../Utils/TreeParser.ts"/>
-///<reference path="../../View/ISetView.ts"/>
 ///<reference path="../../Controller/UserActionController.ts"/>
 
 
@@ -21,6 +17,9 @@ module GTE {
         playerMinusButton:JQuery;
         playerNumber:JQuery;
 
+        undoButton:JQuery;
+        redoButton:JQuery;
+
         constructor(userActionController: UserActionController) {
             this.userActionController = userActionController;
             this.treeParser = new TreeParser();
@@ -34,6 +33,8 @@ module GTE {
                 this.playerNumber = $("#player-number");
                 this.playerMinusButton = $("#minusP-wrapper");
                 this.playerPlusButton = $("#plusP-wrapper");
+                this.undoButton = $("#undo-wrapper");
+                this.redoButton = $("#redo-wrapper");
                 this.attachEvents();
             }, 300);
 
@@ -50,48 +51,34 @@ module GTE {
 
         attachEvents() {
             this.newButton.on("click", () => {
-                this.userActionController.treeController.deleteNodeHandler(this.userActionController.treeController.tree.root);
-                this.userActionController.treeController.addNodeHandler(this.userActionController.treeController.treeView.nodes[0]);
+                this.userActionController.createNewTree();
             });
             this.saveButton.on("click", () => {
-                let text = this.treeParser.stringify(this.userActionController.treeController.tree);
-                let blob = new Blob([text], {type: "text/plain;charset=utf-8"});
-                saveAs(blob, GTE_DEFAULT_FILE_NAME + ".txt");
+                this.userActionController.saveTreeToFile();
             });
             this.loadButton.on("click", () => {
                 this.inputLoad.click();
             });
 
             this.inputLoad.on("change", (event) => {
-
-                let input = event.target;
-
-                let reader = new FileReader();
-                reader.onload = () => {
-                    let text = reader.result;
-                    this.handleLoadedFile(text);
-                };
-
-
-                reader.readAsText((<any>input).files[0]);
+                this.userActionController.toggleOpenFile();
             });
 
             this.saveImageButton.on("click",()=>{
-                console.log("save-clicked");
-                this.userActionController.treeController.game.world.getByName("hoverMenu").alpha = 0;
-                setTimeout(()=>{let cnvs = $('#phaser-div').find('canvas');
-                    (<any>cnvs[0]).toBlob(function(blob) {
-                        saveAs(blob, GTE_DEFAULT_FILE_NAME+".png");
-                    });
-                    },100);
+                this.userActionController.saveTreeToImage()
             });
 
             this.playerMinusButton.on("click",()=>{
                 let playersCount = parseInt(this.playerNumber.html());
-                if(playersCount>2){
+                if(playersCount>1){
                     this.userActionController.removeLastPlayerHandler();
                     this.playerNumber.html((playersCount-1).toString());
+                    this.playerPlusButton.css({opacity:1});
                 }
+                if(playersCount===2){
+                    this.playerMinusButton.css({opacity:0.3});
+                }
+
                 console.log(this.playerNumber);
             });
 
@@ -100,39 +87,38 @@ module GTE {
                 if(playersCount<4){
                     this.userActionController.treeController.addPlayer(playersCount+1);
                     this.playerNumber.html((playersCount+1).toString());
+                    this.playerMinusButton.css({opacity:1});
+                }
+                if(playersCount===3) {
+                    this.playerPlusButton.css({opacity: 0.3});
                 }
             });
 
+            this.undoButton.on("click",()=>{
+                this.userActionController.undoRedoHandler(true);
+                this.resetUndoReddoButtons();
+            });
+
+            this.redoButton.on("click",()=>{
+               this.userActionController.undoRedoHandler(false);
+               this.resetUndoReddoButtons();
+            });
         }
 
-        private handleLoadedFile(text: string) {
-            console.log("handler");
-            try {
-                this.userActionController.treeController.deleteNodeHandler(this.userActionController.treeController.tree.root);
-                this.userActionController.treeController.treeView.nodes[0].destroy();
-                this.userActionController.treeController.treeView.iSets.forEach((iSet: ISetView) => {
-                    iSet.destroy();
-                });
-                let tree = this.treeParser.parse(text);
-                if (tree.nodes.length >= 3) {
-                    this.userActionController.treeController.tree = tree;
-                    this.userActionController.treeController.treeView = new TreeView(this.userActionController.treeController.game, this.userActionController.treeController.tree, this.userActionController.treeController.treeProperties);
-                    this.userActionController.treeController.emptySelectedNodes();
-                    this.userActionController.treeController.treeView.nodes.forEach(n => {
-                        n.resetNodeDrawing();
-                        n.resetLabelText();
-                    });
-                    this.userActionController.treeController.treeView.drawLabels();
-                    this.userActionController.treeController.attachHandlersToNodes();
-                    this.userActionController.treeController.treeView.iSets.forEach(iSetV => {
-                        this.userActionController.treeController.attachHandlersToISet(iSetV);
-                    });
-                }
+        resetUndoReddoButtons(){
+            if(this.userActionController.undoRedoController.currentTreeIndex===0){
+                this.undoButton.css({opacity:0.3});
             }
-            catch (err) {
-                this.userActionController.treeController.errorPopUp.show("Error in reading file. ");
-                this.userActionController.treeController.createInitialTree();
+            else{
+                this.undoButton.css({opacity:1});
+            }
+            if(this.userActionController.undoRedoController.currentTreeIndex === this.userActionController.undoRedoController.treesList.length-1){
+                this.redoButton.css({opacity:0.3});
+            }
+            else{
+                this.redoButton.css({opacity:1});
             }
         }
+
     }
 }

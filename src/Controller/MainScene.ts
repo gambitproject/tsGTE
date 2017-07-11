@@ -16,7 +16,7 @@ module GTE {
         // The Keyboard Controller handles input and sends signals and executes methods from the treeController
         keyboardController:KeyboardController;
         //The Hover Menu Manager handles the buttons and signals when hovering on a node or iset.
-        hoverManager:HoverMenuManager;
+        hoverManager:HoverMenuController;
         // Top Menu with action buttons
         topMenu:TopMenu;
         //The label input field which appears when you click on a label
@@ -27,7 +27,7 @@ module GTE {
             this.treeController = new TreeController(this.game, this.labelInput);
             this.userActionController = new UserActionController(this.game,this.treeController);
             this.keyboardController = new KeyboardController(this.game, this.userActionController);
-            this.hoverManager = new HoverMenuManager(this.game, this.userActionController);
+            this.hoverManager = new HoverMenuController(this.game, this.userActionController);
             this.topMenu = new TopMenu(this.userActionController);
             // this.game.input.onDown.add(()=>{
             //     this.labelInput.show(this.game.input.activePointer.x,this.game.input.activePointer.y);

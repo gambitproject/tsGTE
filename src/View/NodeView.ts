@@ -127,12 +127,6 @@ module GTE {
             this.payoffsLabel.position.set(this.x, this.y);
         }
 
-        /**A method which changes the colour of the circle sprite*/
-        setColor(tint: number) {
-            this.circle.tint = tint;
-            // this.square.alpha = alpha;
-        }
-
         /** A method which converts the node, depending on whether it is a chance, owned or default.*/
         resetNodeDrawing() {
             // this.setLabelText();
@@ -205,10 +199,6 @@ module GTE {
             else{
                 this.payoffsLabel.alpha = 0;
             }
-        }
-
-        setLabelOffset() {
-            //TODO: Implement this
         }
 
         /** The destroy method of the node which prevents memory-leaks*/

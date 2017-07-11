@@ -18,7 +18,6 @@ module GTE {
         nodes: Array<NodeView>;
         moves: Array<MoveView>;
         iSets: Array<ISetView>;
-        //TESTING!
         treeTweenManager: TreeTweenManager;
 
         constructor(game: Phaser.Game, tree: Tree, properties: TreeViewProperties) {
@@ -118,7 +117,6 @@ module GTE {
             }
         }
 
-        /**TEST METHOD*/
         private drawISets() {
             for (let i = 0; i < this.iSets.length; i++) {
                 // this.iSets[i].destroy();
@@ -218,7 +216,6 @@ module GTE {
                     m.label.alpha=1;
                     m.updateLabel();
                 });
-                this.tree.resetPayoffsPlayers();
                 this.nodes.forEach(n=>{
                     if(n.node.children.length===0){
                         n.node.convertToLeaf();

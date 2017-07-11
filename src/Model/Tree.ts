@@ -29,6 +29,7 @@ module GTE {
             if (this.players.indexOf(player) === -1) {
                 this.players.push(player);
             }
+            this.resetPayoffsPlayers();
         }
 
         /** Removes a given player from the list, also removes all instances of the player from nodes and isets. */
@@ -45,6 +46,7 @@ module GTE {
                         iSet.destroy();
                     }
                 });
+                this.resetPayoffsPlayers();
             }
         }
 

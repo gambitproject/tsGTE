@@ -28,14 +28,14 @@ module GTE {
                     // If it is not in an information set, give the moves labels
                     if (n.iSet === null) {
                         n.children.forEach(n => {
-                            n.parentMove.label = labels.shift();
+                            n.parentMove.convertToLabeled(labels.shift());
                         });
                     }
                     // If it is an information set and it is the n such node in the set, give labels
                     // to all moves in the information set
                     else if (n === n.iSet.nodes[0]) {
                         n.children.forEach(n => {
-                            n.parentMove.label = labels.shift();
+                            n.parentMove.convertToLabeled(labels.shift());
                         });
 
                         for (let i = 1; i < n.iSet.nodes.length; i++) {

@@ -2,11 +2,11 @@
 ///<reference path="../Controller/UserActionController.ts"/>
 ///<reference path="../View/NodeView.ts"/>
 ///<reference path="../View/ISetView.ts"/>
-///<reference path="HoverButton.ts"/>
+///<reference path="../Utils/HoverButton.ts"/>
 
 module GTE {
 
-    export class HoverMenuManager {
+    export class HoverMenuController {
         game: Phaser.Game;
         userActionController: UserActionController;
 
