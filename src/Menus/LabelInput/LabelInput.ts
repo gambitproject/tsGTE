@@ -32,7 +32,7 @@ module GTE {
 
         show(label:Phaser.Text, sprite:Phaser.Sprite) {
             this.currentlySelected = sprite;
-            this.inputField.val(label.text.replace("\n"," "));
+            this.inputField.val(label.text.replace(/\n/g," "));
             // this.inputField.click();
             if (!this.active) {
                 this.labelOverlay.addClass("show-overlay");

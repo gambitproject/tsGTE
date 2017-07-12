@@ -26,7 +26,7 @@ module GTE {
                 let node = new Node();
                 node.type = n.type;
                 node.depth = n.depth;
-                if (node.type === NodeType.OWNED) {
+                if (node.type === NodeType.OWNED || node.type === NodeType.CHANCE) {
                     let ownerIndex = tree.players.indexOf(n.owner);
                     strippedTree.nodePlayerPair.push({nodeIndex:tree.nodes.indexOf(n),playerIndex:ownerIndex});
                 }
@@ -46,11 +46,11 @@ module GTE {
                     label: null,
                     probability: null
                 };
-                move.type = m.type;
-                if (m.type === MoveType.LABELED) {
+
+                if (m.label) {
                     move.label = m.label;
                 }
-                if (m.type === MoveType.CHANCE) {
+                if (m.probability) {
                     move.probability = m.probability;
                 }
                 move.fromIndex = tree.nodes.indexOf(m.from);
@@ -115,7 +115,6 @@ module GTE {
 
             strippedTree.moves.forEach(m => {
                 let move = new Move();
-                move.type = m.type;
                 move.label = m.label;
                 move.probability = m.probability;
                 move.from = clonedTree.nodes[m.fromIndex];

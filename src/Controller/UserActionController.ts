@@ -155,7 +155,6 @@ module GTE {
                 this.treeController.selectedNodes.forEach(n => {
                     this.treeController.deleteNodeHandler(n.node);
                 });
-                // this.treeController.treeView.drawTree();
             }
             let deletedNodes = [];
             if (this.treeController.selectedNodes.length > 0) {
@@ -186,17 +185,13 @@ module GTE {
         }
 
         /**A method for assigning chance player to a node (keyboard 0)*/
-        assignChancePlayerToNodeHandler(n?: NodeView) {
-            if (n) {
-                n.node.convertToChance(this.treeController.tree.players[0]);
-                n.resetNodeDrawing();
-                n.resetLabelText();
+        assignChancePlayerToNodeHandler(nodeV?: NodeView) {
+            if (nodeV) {
+                this.treeController.assignChancePlayerToNode(nodeV);
             }
             else if (this.treeController.selectedNodes.length > 0) {
                 this.treeController.selectedNodes.forEach((n) => {
-                    n.node.convertToChance(this.treeController.tree.players[0]);
-                    n.resetNodeDrawing();
-                    n.resetLabelText();
+                    this.treeController.assignChancePlayerToNode(n);
                 });
             }
             this.undoRedoController.saveNewTree();

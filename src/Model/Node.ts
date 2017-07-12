@@ -50,11 +50,6 @@ module GTE {
             }
         }
 
-        /**The method gets the index of the node, from the children of the parent */
-        getIndexFromParent() {
-            return this.parent.children.indexOf(this);
-        }
-
         /**Converts the current Node to a default Node */
         convertToDefault() {
             this.type = NodeType.DEFAULT;
@@ -73,6 +68,9 @@ module GTE {
                 this.owner = player;
 
                 this.childrenMoves.forEach(c => c.convertToLabeled());
+                if(this.iSet && this.iSet.nodes.length>1) {
+                    this.iSet.changePlayer(this.owner);
+                }
             }
         }
 
@@ -89,7 +87,6 @@ module GTE {
         convertToChance(chancePlayer: Player, probabilities?: Array<number>,) {
             if (this.children.length>0 && this.iSet === null) {
                 this.type = NodeType.CHANCE;
-                this.payoffs = null;
 
                 if (chancePlayer.id === 0) {
                     this.owner = chancePlayer;

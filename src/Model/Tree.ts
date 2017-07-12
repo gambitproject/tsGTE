@@ -74,13 +74,6 @@ module GTE {
             }
         }
 
-        /** Adds a given node to a given iset */
-        addNodeToISet(iSet: ISet, node: Node) {
-            if (this.iSets.indexOf(iSet) !== -1) {
-                iSet.addNode(node);
-            }
-        }
-
         /** Adds node to the tree and checks if it should be the root*/
         addNode(node?: Node) {
             node = node || new Node();
@@ -180,6 +173,31 @@ module GTE {
 
         resetLabels(){
             this.labelSetter.calculateLabels(this.BFSOnTree(), this.players);
+            this.resetChanceProbabilities();
+        }
+
+        private resetChanceProbabilities(){
+            // Find all chance moves
+            this.nodes.forEach(node=>{
+                let shouldReset = false;
+                if(node.type===NodeType.CHANCE){
+                    let sum=0;
+                    for (let i = 0; i < node.childrenMoves.length; i++) {
+                        let move = node.childrenMoves[i];
+                        if(!move.probability){
+                            shouldReset=true;
+                            break;
+                        }
+                        sum+=move.probability;
+                    }
+
+                    if(shouldReset || sum!==1){
+                        node.childrenMoves.forEach(m=>{
+                            m.probability =1/node.childrenMoves.length;
+                        });
+                    }
+                }
+            });
         }
 
         changeMoveLabel(move:Move, text:string){

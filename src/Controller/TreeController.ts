@@ -9,7 +9,6 @@
 ///<reference path="../Utils/Constants.ts"/>
 ///<reference path="../Utils/ErrorPopUp.ts"/>
 ///<reference path="../View/ISetView.ts"/>
-///<reference path="../Utils/HoverMenuManager.ts"/>
 ///<reference path="../Menus/LabelInput/LabelInput.ts"/>
 module GTE {
     /**A class which connects the TreeView and the Tree Model.
@@ -244,7 +243,6 @@ module GTE {
             n.node.convertToLabeled(this.tree.findPlayerById(playerID));
             // If the node is in an iset, change the owner of the iSet to the new player
             if(n.node.iSet && n.node.iSet.nodes.length>1){
-                n.node.iSet.changePlayer(n.node.owner);
                 let iSetView = this.treeView.findISetView(n.node.iSet);
                 iSetView.nodes.forEach(nv=>{
                     nv.resetNodeDrawing();
@@ -256,6 +254,15 @@ module GTE {
             n.resetLabelText();
 
             this.resetTree();
+        }
+
+        /**A method for assigning chance player to a given node*/
+        assignChancePlayerToNode(n:NodeView){
+            n.node.convertToChance(this.tree.players[0]);
+            n.resetNodeDrawing();
+            n.resetLabelText();
+            this.resetTree();
+
         }
         /**A method for adding a new player if there isn't one created already*/
         addPlayer(playerID:number){

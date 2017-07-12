@@ -45,12 +45,11 @@ module GTE {
             this.updateLabel();
         }
 
-        //TODO: Rewrite the align!!!
         updateLabel(){
-            if(this.move.type === MoveType.CHANCE && this.move.probability){
-                this.label.text = this.move.probability.toString();
+            if(this.move.from.type===NodeType.CHANCE && this.move.probability!==null){
+                this.label.text = this.move.getProbabilityText(true);
             }
-            else if(this.move.type === MoveType.LABELED && this.move.label){
+            else if(this.move.from.type===NodeType.OWNED && this.move.label){
                 this.label.text = this.move.label;
 
             }
@@ -68,7 +67,12 @@ module GTE {
             }
             this.label.x = center.x;
             this.label.y = center.y-this.label.height*0.33;
-            this.label.fill = this.from.ownerLabel.fill;
+            if (this.move.from.type===NodeType.OWNED) {
+                this.label.fill = this.from.ownerLabel.fill;
+            }
+            else if(this.move.from.type===NodeType.CHANCE){
+                this.label.fill = "#000";
+            }
         }
 
         destroy() {
