@@ -47,7 +47,7 @@ module GTE {
 
         updateLabel(){
             if(this.move.from.type===NodeType.CHANCE && this.move.probability!==null){
-                this.label.text = this.move.getProbabilityText(true);
+                this.label.text = this.move.getProbabilityText(false);
             }
             else if(this.move.from.type===NodeType.OWNED && this.move.label){
                 this.label.text = this.move.label;

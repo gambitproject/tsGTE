@@ -40,7 +40,7 @@ module GTE {
                 return this.convertToFraction();
             }
             else{
-                return (Math.ceil(this.probability * 100) / 100).toString();
+                return (Math.round(this.probability * 100) / 100).toString();
             }
         }
 
@@ -56,7 +56,7 @@ module GTE {
         }
 
         private gcd(m:number,n:number){
-            if ( ! n) {
+            if (!n) {
                 return m;
             }
 

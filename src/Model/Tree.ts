@@ -14,7 +14,7 @@ module GTE {
         iSets: Array<ISet>;
         players: Array<Player>;
         private leaves;
-        private labelSetter:LabelSetter;
+        private labelSetter: LabelSetter;
 
         constructor() {
             this.nodes = [];
@@ -86,18 +86,18 @@ module GTE {
         }
 
         /**Removes a given node from the tree.*/
-        removeNode(node:Node){
-            if(this.nodes.indexOf(node)!==-1){
+        removeNode(node: Node) {
+            if (this.nodes.indexOf(node) !== -1) {
                 //Remove the parent move from the tree
-                if(this.moves.indexOf(node.parentMove)!==-1) {
+                if (this.moves.indexOf(node.parentMove) !== -1) {
                     this.moves.splice(this.moves.indexOf(node.parentMove), 1);
                     node.parentMove.destroy();
                 }
                 this.nodes.splice(this.nodes.indexOf(node), 1);
 
-                if(node.parent && node.parent.iSet){
-                    if(node.parent.iSet.nodes.length<=2){
-                        this.iSets.splice(this.iSets.indexOf(node.iSet),1);
+                if (node.parent && node.parent.iSet) {
+                    if (node.parent.iSet.nodes.length <= 2) {
+                        this.iSets.splice(this.iSets.indexOf(node.iSet), 1);
                     }
                     node.parent.iSet.removeNode(node.parent);
                 }
@@ -137,94 +137,99 @@ module GTE {
 
         /**A method which checks whether an information set can be created from a list of nodes.
          * If not, throws errors which are handled in the controller. Uses 4 helper methods.*/
-        canCreateISet(nodes:Array<Node>){
+        canCreateISet(nodes: Array<Node>) {
             // NOTE: Marked as not needed - iSets can be created without players
             // if(!this.checkIfNodesHavePlayers(nodes)){
             //     throw new Error(NODES_MISSING_PLAYERS_ERROR_TEXT);
             // }
 
-            if(!this.checkNumberOfChildren(nodes)){
+            if (!this.checkNumberOfChildren(nodes)) {
                 throw new Error(NODES_NUMBER_OF_CHILDREN_ERROR_TEXT);
             }
 
             // The below method will throw an error when there are 2 different players among the nodes
             // but will not throw an error if there is 1 player and some nodes without a player
-            if(!this.checkIfNodesHaveTheSamePlayer(nodes)){
+            if (!this.checkIfNodesHaveTheSamePlayer(nodes)) {
                 throw new Error(NODES_DIFFERENT_PLAYERS_ERROR_TEXT);
             }
 
-            if(this.checkIfNodesSharePathToRoot(nodes)) {
+            if (this.checkIfNodesSharePathToRoot(nodes)) {
                 throw new Error(SAME_PATH_ON_ROOT_ERROR_TEXT);
             }
         }
 
-        checkAllNodesLabeled(){
+        checkAllNodesLabeled() {
             for (let i = 0; i < this.nodes.length; i++) {
-                if(this.nodes[i].children.length !==0 && this.players.indexOf(this.nodes[i].owner) ===-1){
+                if (this.nodes[i].children.length !== 0 && this.players.indexOf(this.nodes[i].owner) === -1) {
                     return false;
                 }
             }
             return true;
         }
 
-        removeLabels(){
+        removeLabels() {
             this.labelSetter.removeLabels(this.moves);
         }
 
-        resetLabels(){
+        resetLabels() {
             this.labelSetter.calculateLabels(this.BFSOnTree(), this.players);
             this.resetChanceProbabilities();
         }
 
-        private resetChanceProbabilities(){
+        private resetChanceProbabilities() {
             // Find all chance moves
-            this.nodes.forEach(node=>{
+            this.nodes.forEach(node => {
                 let shouldReset = false;
-                if(node.type===NodeType.CHANCE){
-                    let sum=0;
+                if (node.type === NodeType.CHANCE) {
+                    let sum = 0;
                     for (let i = 0; i < node.childrenMoves.length; i++) {
                         let move = node.childrenMoves[i];
-                        if(!move.probability){
-                            shouldReset=true;
+                        if (!move.probability) {
+                            shouldReset = true;
                             break;
                         }
-                        sum+=move.probability;
+                        sum += move.probability;
                     }
 
-                    if(shouldReset || sum!==1){
-                        node.childrenMoves.forEach(m=>{
-                            m.probability =1/node.childrenMoves.length;
+                    if (shouldReset || sum !== 1) {
+                        node.childrenMoves.forEach(m => {
+                            m.probability = 1 / node.childrenMoves.length;
                         });
                     }
                 }
             });
         }
 
-        changeMoveLabel(move:Move, text:string){
-            move.label = text;
-            if(move.from.iSet!==null){
-                let index = move.from.childrenMoves.indexOf(move);
-                move.from.iSet.nodes.forEach(n=>{
-                    n.childrenMoves[index].label = text;
-                });
+        changeMoveLabel(move: Move, text: string) {
+            if (move.from.type === NodeType.CHANCE) {
+                this.chanceNodesSetProbabilities(move, text);
+            }
+            else {
+                move.label = text;
+                if (move.from.iSet !== null) {
+                    let index = move.from.childrenMoves.indexOf(move);
+                    move.from.iSet.nodes.forEach(n => {
+                        n.childrenMoves[index].label = text;
+                    });
+                }
             }
         }
 
-        resetPayoffsPlayers(){
-            this.nodes.forEach(n=>{
-               n.payoffs.setPlayersCount(this.players.length-1);
+        resetPayoffsPlayers() {
+            this.nodes.forEach(n => {
+                n.payoffs.setPlayersCount(this.players.length - 1);
             });
         }
 
         /**Breadth first search on the nodes of the tree*/
-        BFSOnTree(){
-            let bfsNodes:Array<Node> = [];
-            let nodesQueue: Array<Node>=[];
+        BFSOnTree() {
+            let bfsNodes: Array<Node> = [];
+            let nodesQueue: Array<Node> = [];
             nodesQueue.push(this.root);
-            while(nodesQueue.length>0){
+            while (nodesQueue.length > 0) {
                 let current = nodesQueue.shift();
                 bfsNodes.push(current);
-                current.children.forEach((n=>{
+                current.children.forEach((n => {
                     nodesQueue.push(n);
                 }));
             }
@@ -232,12 +237,12 @@ module GTE {
         }
 
         /**Checks if all nodes have the required number of children*/
-        private checkNumberOfChildren(nodes:Array<Node>):boolean{
-            if(nodes[nodes.length-1].children.length === 0){
+        private checkNumberOfChildren(nodes: Array<Node>): boolean {
+            if (nodes[nodes.length - 1].children.length === 0) {
                 return false;
             }
-            for (let i = 0; i < nodes.length-1; i++) {
-                if(nodes[i].children.length!==nodes[i+1].children.length || nodes[i].children.length === 0){
+            for (let i = 0; i < nodes.length - 1; i++) {
+                if (nodes[i].children.length !== nodes[i + 1].children.length || nodes[i].children.length === 0) {
                     return false;
                 }
             }
@@ -245,31 +250,79 @@ module GTE {
         }
 
         /**Checks if selected nodes have the same player assigned*/
-        private checkIfNodesHaveTheSamePlayer(nodes:Array<Node>):boolean{
+        private checkIfNodesHaveTheSamePlayer(nodes: Array<Node>): boolean {
             let players = [];
             for (let i = 0; i < nodes.length; i++) {
                 let node = nodes[i];
-                if(node.owner && players.indexOf(node.owner)===-1){
+                if (node.owner && players.indexOf(node.owner) === -1) {
                     players.push(node.owner);
                 }
             }
-            return players.length<=1;
+            return players.length <= 1;
         }
 
         /**Checks whether any 2 nodes of an array share a path to the root.*/
-        private checkIfNodesSharePathToRoot(nodes:Array<Node>):boolean{
+        private checkIfNodesSharePathToRoot(nodes: Array<Node>): boolean {
             for (let i = 0; i < nodes.length; i++) {
                 let n1 = nodes[i];
                 let path1 = n1.getPathToRoot();
-                for (let j = i+1; j < nodes.length; j++) {
+                for (let j = i + 1; j < nodes.length; j++) {
                     let n2 = nodes[j];
                     let path2 = n2.getPathToRoot();
-                    if(path1.indexOf(n2)!==-1 || path2.indexOf(n1)!==-1){
+                    if (path1.indexOf(n2) !== -1 || path2.indexOf(n1) !== -1) {
                         return true;
                     }
                 }
             }
             return false;
+        }
+
+        /** A method which sets the probabilities of a chance node, once a new probability is set externally*/
+        private chanceNodesSetProbabilities(move: Move, text: string) {
+            let newProb = parseFloat(text);
+            if (newProb>=0 && newProb <= 1) {
+                move.probability = newProb;
+                let probabilities = [];
+                let currentIndex = -1;
+                // Take the current index of the move and take the probabilities
+                for (let i = 0; i < move.from.childrenMoves.length; i++) {
+                    probabilities.push(move.from.childrenMoves[i].probability);
+                    if (move === move.from.childrenMoves[i]) {
+                        currentIndex = i;
+                    }
+                }
+
+                // Calculate the sum of all probabilities before the given element
+                let probSumBeforeCurrent = 0;
+                for (let i = 0; i < currentIndex; i++) {
+                    probSumBeforeCurrent += probabilities[i];
+                }
+
+                // Case 0: Borderline case - if the last element is set with total probability less than 1
+                // We reset all previous elements
+                if (probSumBeforeCurrent + newProb < 1 && currentIndex === probabilities.length - 1) {
+                    for (let i = 0; i < currentIndex; i++) {
+                        move.from.childrenMoves[i].probability = (1 - newProb) / (currentIndex);
+                    }
+                }
+                // Case 1: Standard case - the new probabilitiy with the previous does not exceed 1
+                // We set the remaining probabilities to be the average of the remaining
+                else if (probSumBeforeCurrent + newProb <= 1) {
+                    for (let i = currentIndex + 1; i < probabilities.length; i++) {
+                        move.from.childrenMoves[i].probability = (1 - probSumBeforeCurrent - newProb) / (probabilities.length - currentIndex - 1);
+                    }
+                }
+                // Case 2: If the previous + the current new probability exceed 1
+                // We set all probabilities afterwards to be 0, and the previous will be averaged of the remaining
+                else if (probSumBeforeCurrent + newProb > 1) {
+                    for (let i = 0; i < currentIndex; i++) {
+                        move.from.childrenMoves[i].probability = (1 - newProb) / (currentIndex);
+                    }
+                    for (let i = currentIndex + 1; i < probabilities.length; i++) {
+                        move.from.childrenMoves[i].probability = 0;
+                    }
+                }
+            }
         }
     }
 }

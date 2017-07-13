@@ -369,6 +369,7 @@ module GTE {
         /**If the input field is on and we press enter, change the label*/
         changeLabel() {
             if (this.treeController.labelInput.active) {
+                // If we are looking at moves
                 if (this.treeController.labelInput.currentlySelected instanceof MoveView) {
                     this.treeController.tree.changeMoveLabel((<MoveView>this.treeController.labelInput.currentlySelected).move, this.treeController.labelInput.inputField.val());
                     this.treeController.treeView.moves.forEach(m => {
@@ -376,6 +377,7 @@ module GTE {
                     });
                     this.activateLabel(true);
                 }
+                // If we are currently looking at nodes
                 else if (this.treeController.labelInput.currentlySelected instanceof NodeView) {
 
                     if ((<NodeView>this.treeController.labelInput.currentlySelected).ownerLabel.alpha===1) {
