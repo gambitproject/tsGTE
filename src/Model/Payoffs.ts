@@ -6,6 +6,7 @@ module GTE{
         outcomes:Array<number>;
         private playersCount:number;
 
+
         constructor(payoffs?:Array<number>){
             this.outcomes = [];
             this.playersCount = 2;
@@ -30,6 +31,13 @@ module GTE{
                 }
             }
         }
+
+        setRandomPayoffs(){
+            for (let i = 0; i < this.outcomes.length; i++) {
+                this.outcomes[i] = Math.floor(Math.random()*21);
+            }
+        }
+
         setPlayersCount(playersCount:number){
             this.playersCount = playersCount;
         }

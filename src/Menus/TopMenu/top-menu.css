@@ -92,3 +92,28 @@
     transform: translateX(-50%) translateY(-50%);
     backface-visibility: hidden;
 }
+
+.tooltip{
+    visibility: hidden;
+    font-size:1em;
+    white-space:nowrap;
+    top:50%;
+    left:50%;
+    transform: translateX(-50%) translateY(100%);
+    background-color: #ffffcc;
+    color: black;
+    text-align:center;
+    padding: 5px;
+    position:absolute;
+    z-index: 200;
+    opacity:0;
+    transition: opacity 300ms linear;
+    transition-delay:700ms;
+    backface-visibility: hidden;
+    border: 1px solid black;
+}
+
+.button-wrapper:hover .tooltip{
+    visibility:visible;
+    opacity:1;
+}

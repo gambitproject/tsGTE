@@ -15,18 +15,18 @@ module GTE {
             this.game.state.add("Boot", Boot, false);
             this.game.state.add("MainScene", MainScene, false);
             this.game.state.start("Boot");
-
         }
-
     }
 
     window.onload = () => {
-        let width = window.innerWidth * devicePixelRatio;
-        let height = window.innerHeight * devicePixelRatio;
-        if (width > 1920) {
-            width = 1920;
-            height = 1920 / window.innerWidth * window.innerHeight;
-        }
-        new GTE(width, height);
+        setTimeout(()=>{
+            let width = window.innerWidth * devicePixelRatio;
+            let height = window.innerHeight * devicePixelRatio;
+            if (width > 1920) {
+                width = 1920;
+                height = 1920 / window.innerWidth * window.innerHeight;
+            }
+            new GTE(1920, 1080);
+        },200)
     }
 }

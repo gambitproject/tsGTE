@@ -7,18 +7,23 @@ module GTE {
         userActionController: UserActionController;
         treeParser: TreeParser;
 
-        newButton:JQuery;
-        saveButton:JQuery;
-        loadButton:JQuery;
-        saveImageButton:JQuery;
-        inputLoad:JQuery;
+        newButton: JQuery;
+        saveButton: JQuery;
+        loadButton: JQuery;
+        saveImageButton: JQuery;
+        inputLoad: JQuery;
 
-        playerPlusButton:JQuery;
-        playerMinusButton:JQuery;
-        playerNumber:JQuery;
+        playerPlusButton: JQuery;
+        playerMinusButton: JQuery;
+        playerNumber: JQuery;
 
-        undoButton:JQuery;
-        redoButton:JQuery;
+        undoButton: JQuery;
+        redoButton: JQuery;
+
+        randomPayoffsButton: JQuery;
+        zeroSumButton: JQuery;
+        fractionDecimalButton: JQuery;
+
 
         constructor(userActionController: UserActionController) {
             this.userActionController = userActionController;
@@ -29,12 +34,15 @@ module GTE {
                 this.saveButton = $("#save-wrapper");
                 this.loadButton = $("#load-wrapper");
                 this.inputLoad = $("#input-load");
-                this.saveImageButton =  $("#save-image-wrapper");
+                this.saveImageButton = $("#save-image-wrapper");
                 this.playerNumber = $("#player-number");
                 this.playerMinusButton = $("#minusP-wrapper");
                 this.playerPlusButton = $("#plusP-wrapper");
                 this.undoButton = $("#undo-wrapper");
                 this.redoButton = $("#redo-wrapper");
+                this.randomPayoffsButton = $("#random-payoffs-wrapper");
+                this.zeroSumButton = $("#zero-sum-wrapper");
+                this.fractionDecimalButton = $("#fraction-decimal-wrapper");
                 this.attachEvents();
             }, 300);
 
@@ -64,59 +72,85 @@ module GTE {
                 this.userActionController.toggleOpenFile();
             });
 
-            this.saveImageButton.on("click",()=>{
+            this.saveImageButton.on("click", () => {
                 this.userActionController.saveTreeToImage()
             });
 
-            this.playerMinusButton.on("click",()=>{
+            this.playerMinusButton.on("click", () => {
                 let playersCount = parseInt(this.playerNumber.html());
-                if(playersCount>1){
+                if (playersCount > 1) {
                     this.userActionController.removeLastPlayerHandler();
-                    this.playerNumber.html((playersCount-1).toString());
-                    this.playerPlusButton.css({opacity:1});
+                    this.playerNumber.html((playersCount - 1).toString());
+                    this.playerPlusButton.css({opacity: 1});
                 }
-                if(playersCount===2){
-                    this.playerMinusButton.css({opacity:0.3});
+                if (playersCount === 2) {
+                    this.playerMinusButton.css({opacity: 0.3});
                 }
 
                 console.log(this.playerNumber);
             });
 
-            this.playerPlusButton.on("click",()=>{
+            this.playerPlusButton.on("click", () => {
                 let playersCount = parseInt(this.playerNumber.html());
-                if(playersCount<4){
-                    this.userActionController.treeController.addPlayer(playersCount+1);
-                    this.playerNumber.html((playersCount+1).toString());
-                    this.playerMinusButton.css({opacity:1});
+                if (playersCount < 4) {
+                    this.userActionController.treeController.addPlayer(playersCount + 1);
+                    this.playerNumber.html((playersCount + 1).toString());
+                    this.playerMinusButton.css({opacity: 1});
                 }
-                if(playersCount===3) {
+                if (playersCount === 3) {
                     this.playerPlusButton.css({opacity: 0.3});
                 }
             });
 
-            this.undoButton.on("click",()=>{
+            this.undoButton.on("click", () => {
                 this.userActionController.undoRedoHandler(true);
                 this.resetUndoReddoButtons();
             });
 
-            this.redoButton.on("click",()=>{
-               this.userActionController.undoRedoHandler(false);
-               this.resetUndoReddoButtons();
+            this.redoButton.on("click", () => {
+                this.userActionController.undoRedoHandler(false);
+                this.resetUndoReddoButtons();
             });
+
+            this.randomPayoffsButton.on("click", () => {
+                this.userActionController.randomPayoffsHandler();
+            });
+            this.zeroSumButton.on("click", () => {
+                let src = this.zeroSumButton.find("img").attr("src");
+                console.log(src);
+                if (src === "src/Assets/Images/TopMenu/zeroSum.png") {
+                    this.zeroSumButton.find("img").attr("src", "src/Assets/Images/TopMenu/nonZeroSum.png")
+                }
+                else if (src === "src/Assets/Images/TopMenu/nonZeroSum.png") {
+                    this.zeroSumButton.find("img").attr("src", "src/Assets/Images/TopMenu/zeroSum.png")
+                }
+            });
+
+            this.fractionDecimalButton.on("click", () => {
+                let src = this.fractionDecimalButton.find("img").attr("src");
+                console.log(src);
+                if (src === "src/Assets/Images/TopMenu/fraction.png") {
+                    this.fractionDecimalButton.find("img").attr("src", "src/Assets/Images/TopMenu/decimal.png")
+                }
+                else if (src === "src/Assets/Images/TopMenu/decimal.png") {
+                    this.fractionDecimalButton.find("img").attr("src", "src/Assets/Images/TopMenu/fraction.png")
+                }
+            });
+
         }
 
-        resetUndoReddoButtons(){
-            if(this.userActionController.undoRedoController.currentTreeIndex===0){
-                this.undoButton.css({opacity:0.3});
+        resetUndoReddoButtons() {
+            if (this.userActionController.undoRedoController.currentTreeIndex === 0) {
+                this.undoButton.css({opacity: 0.3});
             }
-            else{
-                this.undoButton.css({opacity:1});
+            else {
+                this.undoButton.css({opacity: 1});
             }
-            if(this.userActionController.undoRedoController.currentTreeIndex === this.userActionController.undoRedoController.treesList.length-1){
-                this.redoButton.css({opacity:0.3});
+            if (this.userActionController.undoRedoController.currentTreeIndex === this.userActionController.undoRedoController.treesList.length - 1) {
+                this.redoButton.css({opacity: 0.3});
             }
-            else{
-                this.redoButton.css({opacity:1});
+            else {
+                this.redoButton.css({opacity: 1});
             }
         }
 

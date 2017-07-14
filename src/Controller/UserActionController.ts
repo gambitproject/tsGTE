@@ -93,7 +93,7 @@ module GTE {
                 let tree = this.treeParser.parse(text);
                 if (tree.nodes.length >= 3) {
                     this.treeController.tree = tree;
-                    this.treeController.treeView = new TreeView(this.treeController.game, this.treeController.tree, this.treeController.treeProperties);
+                    this.treeController.treeView = new TreeView(this.treeController.game, this.treeController.tree, this.treeController.treeViewProperties);
                     this.treeController.emptySelectedNodes();
                     this.treeController.treeView.nodes.forEach(n => {
                         n.resetNodeDrawing();
@@ -238,6 +238,11 @@ module GTE {
         undoRedoHandler(undo: boolean) {
             this.undoRedoController.changeTreeInController(undo);
             $("#player-number").html((this.treeController.tree.players.length-1).toString());
+        }
+
+        /**A method for assigning random payoffs*/
+        randomPayoffsHandler(){
+            this.treeController.randomPayoffs();
         }
 
         /**Starts the "Cut" state for an Information set*/

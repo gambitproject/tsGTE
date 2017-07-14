@@ -45,7 +45,7 @@ module GTE {
             this.createText();
             this.createHoverCircle();
 
-            this.game.time.events.add(1000, () => {
+            this.game.time.events.add(1200, () => {
                 this.game.state.start("MainScene");
             });
         }

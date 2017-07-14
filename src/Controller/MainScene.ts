@@ -3,7 +3,6 @@
 ///<reference path="../View/NodeView.ts"/>
 ///<reference path="KeyboardController.ts"/>
 ///<reference path="UserActionController.ts"/>
-///<reference path="../Utils/HoverMenuManager.ts"/>
 ///<reference path="../Menus/TopMenu/TopMenu.ts"/>
 module GTE {
     /**A class for the main part of the software. This is the starting point of the core software*/

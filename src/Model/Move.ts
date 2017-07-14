@@ -31,9 +31,9 @@ module GTE {
         getProbabilityText(fractional?:boolean){
             if(fractional && this.probability!==1 && this.probability!==0){
                 for (let i = 1; i < 21; i++) {
-                    for (let j = 1; j < 7; j++) {
-                        if(j<i && Math.abs(j/i-this.probability)<0.00001){
-                            return j + "/" + i;
+                    for (let j = i+1; j < 20; j++) {
+                        if(Math.abs(i/j-this.probability)<0.00001){
+                            return i + "/" + j;
                         }
                     }
                 }

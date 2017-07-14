@@ -10,6 +10,7 @@
 ///<reference path="../Utils/ErrorPopUp.ts"/>
 ///<reference path="../View/ISetView.ts"/>
 ///<reference path="../Menus/LabelInput/LabelInput.ts"/>
+///<reference path="../Utils/TreeProperties.ts"/>
 module GTE {
     /**A class which connects the TreeView and the Tree Model.
      * Depending on the level of abstraction, some properties can be moved to different classes*/
@@ -18,7 +19,8 @@ module GTE {
         bmd: Phaser.BitmapData;
         tree: Tree;
         treeView: TreeView;
-        treeProperties: TreeViewProperties;
+        treeViewProperties: TreeViewProperties;
+        treeProperties:TreeProperties;
 
         selectionRectangle: SelectionRectangle;
         errorPopUp: ErrorPopUp;
@@ -52,11 +54,11 @@ module GTE {
             this.tree.addChildToNode(this.tree.nodes[0]);
             this.tree.addChildToNode(this.tree.nodes[0]);
             this.tree.addPlayer(new Player(0, "0", 0x000000));
-
             this.tree.addPlayer(new Player(1, "1", PLAYER_COLORS[0]));
             this.tree.addPlayer(new Player(2, "2", PLAYER_COLORS[1]));
-            this.treeProperties = new TreeViewProperties(220, 1000);
-            this.treeView = new TreeView(this.game, this.tree, this.treeProperties);
+            this.treeViewProperties = new TreeViewProperties(220, 1000);
+            this.treeProperties = new TreeProperties();
+            this.treeView = new TreeView(this.game, this.tree, this.treeViewProperties);
             this.treeView.nodes[0].ownerLabel.text = "A";
             this.treeView.nodes[1].ownerLabel.text = "B";
 
@@ -376,6 +378,15 @@ module GTE {
                     this.createISet(rightNodes);
                 }
             }
+            this.resetTree();
+        }
+
+        /**A method for assigning random payoffs to nodes*/
+        randomPayoffs(){
+            let leaves = this.tree.getLeaves();
+            leaves.forEach((n:Node)=>{
+                n.payoffs.setRandomPayoffs();
+            });
             this.resetTree();
         }
 
