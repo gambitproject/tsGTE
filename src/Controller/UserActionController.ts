@@ -458,5 +458,11 @@ module GTE {
             }
             return current;
         }
+
+        //TEST METHOD!
+        createStrategicForm(){
+            let stratForm = new StrategicForm(this.treeController.tree);
+            let stratFormView = new StrategicFormView(this.game,stratForm);
+        }
     }
 }

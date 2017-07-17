@@ -44,6 +44,7 @@ module GTE {
             this.createLines();
             this.createText();
             this.createHoverCircle();
+            this.createCell();
 
             this.game.time.events.add(1200, () => {
                 this.game.state.start("MainScene");
@@ -132,6 +133,14 @@ module GTE {
             this.bmd.ctx.fillStyle = "#ffffff";
             this.bmd.ctx.arc(this.bmd.width / 2, this.bmd.height / 2, 150, 0, Math.PI * 2);
             this.bmd.ctx.fill();
+        }
+
+        createCell(){
+            let cellWidth = CELL_WIDTH*this.game.width;
+            this.bmd = this.game.make.bitmapData(cellWidth,cellWidth,"cell",true);
+            this.bmd.ctx.strokeStyle = "#000000";
+            this.bmd.ctx.lineWidth = cellWidth*CELL_STROKE_WIDTH;
+            this.bmd.ctx.strokeRect(0,0,cellWidth,cellWidth);
         }
     }
 }

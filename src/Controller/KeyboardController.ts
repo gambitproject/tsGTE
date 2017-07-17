@@ -170,6 +170,10 @@ module GTE {
                     this.userActionController.saveTreeToFile();
                 }
             });
+
+            this.testButton.onDown.add(()=>{
+               this.userActionController.createStrategicForm();
+            });
         }
     }
 }

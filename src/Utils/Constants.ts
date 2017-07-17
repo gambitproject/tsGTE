@@ -43,4 +43,10 @@ module GTE {
     export const TREE_TWEEN_DURATION = 600;
     export const GTE_DEFAULT_FILE_NAME = "GTE_Tree";
 
+    //Strategic Form
+    export const CELL_WIDTH = 0.15;
+    export const CELL_STROKE_WIDTH = 0.05;
+    export const CELL_NUMBER_SIZE = 0.3;
+    export const PLAYER_TEXT_SIZE = 0.35;
+
 }
