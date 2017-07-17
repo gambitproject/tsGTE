@@ -42,12 +42,11 @@ module GTE {
         updateMovePosition(){
             this.rotation = Phaser.Point.angle(this.from.position, this.to.position) + Math.PI / 2;
             this.height = Phaser.Point.distance(this.from.position, this.to.position);
-            this.updateLabel();
         }
 
-        updateLabel(){
+        updateLabel(fractionOn:boolean){
             if(this.move.from.type===NodeType.CHANCE && this.move.probability!==null){
-                this.label.text = this.move.getProbabilityText(false);
+                this.label.text = this.move.getProbabilityText(fractionOn);
             }
             else if(this.move.from.type===NodeType.OWNED && this.move.label){
                 this.label.text = this.move.label;

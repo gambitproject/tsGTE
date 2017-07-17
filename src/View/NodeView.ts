@@ -40,8 +40,8 @@ module GTE {
             this.attachSignals();
             this.createLabels();
             this.input.priorityID = 1;
-            this.ownerLabel.input.priorityID = 2;
-            this.payoffsLabel.input.priorityID = 3;
+            this.ownerLabel.input.priorityID = 199;
+            this.payoffsLabel.input.priorityID = 199;
 
             this.game.add.existing(this);
         }
@@ -102,7 +102,7 @@ module GTE {
             this.payoffsLabel.fontSize = this.circle.width * LABEL_SIZE;
             this.payoffsLabel.anchor.set(0.5, 0);
             this.payoffsLabel.inputEnabled = true;
-            this.payoffsLabel.lineSpacing=-15;
+            this.payoffsLabel.lineSpacing = -15;
             this.payoffsLabel.align = "center";
             this.payoffsLabel.events.onInputDown.dispatch(this, "payoff");
 
@@ -174,7 +174,7 @@ module GTE {
         }
 
         /** A method which sets the label text as the owner label*/
-        resetLabelText() {
+        resetLabelText(zeroSumOn:boolean) {
             if (this.node.owner && this.node.type !== NodeType.CHANCE) {
                 this.ownerLabel.alpha = 1;
                 this.ownerLabel.setText(this.node.owner.getLabel(), true);
@@ -186,17 +186,22 @@ module GTE {
             }
 
             if (this.node.children.length === 0) {
-
+                if(zeroSumOn){
+                    this.node.payoffs.convertToZeroSum();
+                }
                 let payoffsString = this.node.payoffs.toString();
                 let labelsArray = payoffsString.split(" ");
-                this.payoffsLabel.text="";
+                this.payoffsLabel.text = "";
+                this.payoffsLabel.clearColors();
                 for (let i = 0; i < labelsArray.length; i++) {
-                    this.payoffsLabel.text+=labelsArray[i]+"\n";
-                    this.payoffsLabel.addColor(Phaser.Color.getWebRGB(PLAYER_COLORS[i]),(this.payoffsLabel.text.length-labelsArray[i].length-i-1));
+                    this.payoffsLabel.text += labelsArray[i] + "\n";
+                    this.payoffsLabel.addColor(Phaser.Color.getWebRGB(PLAYER_COLORS[i]), (this.payoffsLabel.text.length - labelsArray[i].length - i - 1));
                 }
+
+                this.payoffsLabel.text = this.payoffsLabel.text.slice(0, -1);
                 this.payoffsLabel.alpha = 1;
             }
-            else{
+            else {
                 this.payoffsLabel.alpha = 0;
             }
         }

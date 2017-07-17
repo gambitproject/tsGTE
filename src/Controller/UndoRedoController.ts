@@ -45,7 +45,7 @@ module GTE {
             this.treeController.emptySelectedNodes();
             this.treeController.treeView.nodes.forEach(n=>{
                n.resetNodeDrawing();
-               n.resetLabelText();
+               n.resetLabelText(this.treeController.treeViewProperties.zeroSumOn);
             });
             this.treeController.treeView.drawLabels();
             this.treeController.attachHandlersToNodes();

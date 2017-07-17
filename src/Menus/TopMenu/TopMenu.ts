@@ -124,6 +124,7 @@ module GTE {
                 else if (src === "src/Assets/Images/TopMenu/nonZeroSum.png") {
                     this.zeroSumButton.find("img").attr("src", "src/Assets/Images/TopMenu/zeroSum.png")
                 }
+                this.userActionController.toggleZeroSum();
             });
 
             this.fractionDecimalButton.on("click", () => {
@@ -135,6 +136,7 @@ module GTE {
                 else if (src === "src/Assets/Images/TopMenu/decimal.png") {
                     this.fractionDecimalButton.find("img").attr("src", "src/Assets/Images/TopMenu/fraction.png")
                 }
+                this.userActionController.toggleFractionDecimal();
             });
 
         }

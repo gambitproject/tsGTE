@@ -46,6 +46,7 @@ module GTE {
             // NOTE: Moves positions are only updated on initial drawing
             this.moves.forEach(m => {
                 m.updateMovePosition();
+                m.updateLabel(this.properties.fractionOn);
             });
         }
 
@@ -65,6 +66,7 @@ module GTE {
             // NOTE: All other moves will be updated from the tween manager.
             if(this.moves.length>0) {
                 this.moves[this.moves.length - 1].updateMovePosition();
+                this.moves[this.moves.length - 1].updateLabel(this.properties.fractionOn);
             }
         }
 
@@ -214,13 +216,13 @@ module GTE {
                 this.tree.resetLabels();
                 this.moves.forEach(m=>{
                     m.label.alpha=1;
-                    m.updateLabel();
+                    m.updateLabel(this.properties.fractionOn);
                 });
                 this.nodes.forEach(n=>{
                     if(n.node.children.length===0){
                         n.node.convertToLeaf();
                         n.resetNodeDrawing();
-                        n.resetLabelText();
+                        n.resetLabelText(this.properties.zeroSumOn);
                     }
                 });
             }
@@ -230,7 +232,7 @@ module GTE {
                     m.label.alpha = 0;
                 });
                 this.nodes.forEach(n=>{
-                   n.resetLabelText();
+                   n.resetLabelText(this.properties.zeroSumOn);
                    n.payoffsLabel.alpha = 0;
                    if(n.node.type===NodeType.LEAF){
                        n.node.convertToDefault();

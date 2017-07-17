@@ -42,6 +42,12 @@ module GTE{
             this.playersCount = playersCount;
         }
 
+        convertToZeroSum(){
+            if(this.playersCount === 2){
+                this.outcomes[1]=-this.outcomes[0];
+            }
+        }
+
         toString(){
             let numbersToShow = [];
             for (let i = 0; i < this.playersCount; i++) {

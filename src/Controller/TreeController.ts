@@ -10,7 +10,6 @@
 ///<reference path="../Utils/ErrorPopUp.ts"/>
 ///<reference path="../View/ISetView.ts"/>
 ///<reference path="../Menus/LabelInput/LabelInput.ts"/>
-///<reference path="../Utils/TreeProperties.ts"/>
 module GTE {
     /**A class which connects the TreeView and the Tree Model.
      * Depending on the level of abstraction, some properties can be moved to different classes*/
@@ -20,7 +19,6 @@ module GTE {
         tree: Tree;
         treeView: TreeView;
         treeViewProperties: TreeViewProperties;
-        treeProperties:TreeProperties;
 
         selectionRectangle: SelectionRectangle;
         errorPopUp: ErrorPopUp;
@@ -57,7 +55,6 @@ module GTE {
             this.tree.addPlayer(new Player(1, "1", PLAYER_COLORS[0]));
             this.tree.addPlayer(new Player(2, "2", PLAYER_COLORS[1]));
             this.treeViewProperties = new TreeViewProperties(220, 1000);
-            this.treeProperties = new TreeProperties();
             this.treeView = new TreeView(this.game, this.tree, this.treeViewProperties);
             this.treeView.nodes[0].ownerLabel.text = "A";
             this.treeView.nodes[1].ownerLabel.text = "B";
@@ -248,12 +245,12 @@ module GTE {
                 let iSetView = this.treeView.findISetView(n.node.iSet);
                 iSetView.nodes.forEach(nv=>{
                     nv.resetNodeDrawing();
-                    nv.resetLabelText();
+                    nv.resetLabelText(this.treeViewProperties.zeroSumOn);
                 });
                 iSetView.tint = iSetView.iSet.player.color;
             }
             n.resetNodeDrawing();
-            n.resetLabelText();
+            n.resetLabelText(this.treeViewProperties.zeroSumOn);
 
             this.resetTree();
         }
@@ -262,7 +259,7 @@ module GTE {
         assignChancePlayerToNode(n:NodeView){
             n.node.convertToChance(this.tree.players[0]);
             n.resetNodeDrawing();
-            n.resetLabelText();
+            n.resetLabelText(this.treeViewProperties.zeroSumOn);
             this.resetTree();
 
         }

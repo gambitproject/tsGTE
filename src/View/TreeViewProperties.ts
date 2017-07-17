@@ -4,10 +4,14 @@ module GTE{
     export class TreeViewProperties{
         levelHeight:number;
         initialLevelDistance:number;
+        zeroSumOn:boolean;
+        fractionOn:boolean;
 
         constructor(levelHeight:number, initialLevelDistance:number){
             this.levelHeight = levelHeight;
             this.initialLevelDistance = initialLevelDistance;
+            this.zeroSumOn = false;
+            this.fractionOn = true;
         }
     }
 }

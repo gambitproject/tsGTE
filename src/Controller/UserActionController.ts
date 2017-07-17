@@ -97,7 +97,7 @@ module GTE {
                     this.treeController.emptySelectedNodes();
                     this.treeController.treeView.nodes.forEach(n => {
                         n.resetNodeDrawing();
-                        n.resetLabelText();
+                        n.resetLabelText(this.treeController.treeViewProperties.zeroSumOn);
                     });
                     this.treeController.treeView.drawLabels();
                     this.treeController.attachHandlersToNodes();
@@ -203,7 +203,7 @@ module GTE {
             $("#player-number").html((this.treeController.tree.players.length-1).toString());
             this.treeController.treeView.nodes.forEach((n:NodeView)=>{
                 n.resetNodeDrawing();
-                n.resetLabelText();
+                n.resetLabelText(this.treeController.treeViewProperties.zeroSumOn);
             });
             this.treeController.treeView.drawTree();
             this.undoRedoController.saveNewTree();
@@ -243,6 +243,18 @@ module GTE {
         /**A method for assigning random payoffs*/
         randomPayoffsHandler(){
             this.treeController.randomPayoffs();
+        }
+
+        /**A method which toggles the zero sum on or off*/
+        toggleZeroSum(){
+            this.treeController.treeViewProperties.zeroSumOn = !this.treeController.treeViewProperties.zeroSumOn;
+            this.treeController.treeView.drawTree();
+        }
+
+        /**A method which toggles the fractional or decimal view of chance moves*/
+        toggleFractionDecimal(){
+            this.treeController.treeViewProperties.fractionOn = !this.treeController.treeViewProperties.fractionOn;
+            this.treeController.treeView.drawTree();
         }
 
         /**Starts the "Cut" state for an Information set*/
@@ -378,7 +390,7 @@ module GTE {
                 if (this.treeController.labelInput.currentlySelected instanceof MoveView) {
                     this.treeController.tree.changeMoveLabel((<MoveView>this.treeController.labelInput.currentlySelected).move, this.treeController.labelInput.inputField.val());
                     this.treeController.treeView.moves.forEach(m => {
-                        m.updateLabel();
+                        m.updateLabel(this.treeController.treeViewProperties.fractionOn);
                     });
                     this.activateLabel(true);
                 }
@@ -388,7 +400,7 @@ module GTE {
                     if ((<NodeView>this.treeController.labelInput.currentlySelected).ownerLabel.alpha===1) {
                         (<NodeView>this.treeController.labelInput.currentlySelected).node.owner.label = this.treeController.labelInput.inputField.val();
                         this.treeController.treeView.nodes.forEach((n: NodeView) => {
-                            n.resetLabelText();
+                            n.resetLabelText(this.treeController.treeViewProperties.zeroSumOn);
                         });
                         this.activateLabel(true);
                     }
@@ -396,11 +408,12 @@ module GTE {
 
                         (<NodeView>this.treeController.labelInput.currentlySelected).node.payoffs.loadFromString(this.treeController.labelInput.inputField.val());
                         this.treeController.treeView.nodes.forEach((n: NodeView) => {
-                            n.resetLabelText();
+                            n.resetLabelText(this.treeController.treeViewProperties.zeroSumOn);
                         });
                         this.activateLabel(true);
                     }
                 }
+                this.undoRedoController.saveNewTree();
             }
         }
 
