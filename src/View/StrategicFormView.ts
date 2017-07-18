@@ -7,14 +7,17 @@ module GTE {
         game: Phaser.Game;
 
         strategicForm: StrategicForm;
-        rows: Array<String>;
-        cols: Array<String>;
+        rows: Array<string>;
+        cols: Array<string>;
 
         group: Phaser.Group;
         cells: Array<SCell>;
         diagonalLine: Phaser.Sprite;
         p1Text: Phaser.Text;
         p2Text: Phaser.Text;
+
+        p1Moves: Array<Phaser.Text>;
+        p2Moves: Array<Phaser.Text>;
 
         constructor(game: Phaser.Game, strategicForm: StrategicForm) {
             this.game = game;
@@ -24,6 +27,8 @@ module GTE {
             this.rows = strategicForm.strategies[0];
             this.cols = strategicForm.strategies[1];
             this.cells = [];
+            this.p1Moves = [];
+            this.p2Moves = [];
 
 
             this.group.scale.set(0.35);
@@ -35,7 +40,7 @@ module GTE {
             this.generateGrid(cellWidth, cellStroke);
             this.drawDiagonalLine(cellWidth, cellStroke);
             this.createPlayerTexts(cellWidth);
-            this.createStrategiesTexts(cellWidth);
+            this.createStrategiesTexts(cellWidth, cellStroke);
         }
 
         generateGrid(cellWidth: number, cellStroke: number) {
@@ -57,20 +62,65 @@ module GTE {
         createPlayerTexts(cellWidth: number) {
             let diagonalWidth = cellWidth * 0.75;
             let lineWidth = diagonalWidth / Math.sqrt(2);
-            console.log(lineWidth);
             this.p1Text = this.game.add.text(-0.75 * lineWidth, -0.25 * lineWidth, this.strategicForm.tree.players[1].label, null, this.group);
             this.p1Text.anchor.set(0.5, 0.5);
-            this.p1Text.fontSize = diagonalWidth*PLAYER_TEXT_SIZE;
+            this.p1Text.fontSize = diagonalWidth * PLAYER_TEXT_SIZE;
             this.p1Text.fill = Phaser.Color.getWebRGB(PLAYER_COLORS[0]);
 
             this.p2Text = this.game.add.text(-1 / 4 * lineWidth, -3 / 4 * lineWidth, this.strategicForm.tree.players[2].label, null, this.group);
             this.p2Text.anchor.set(0.5, 0.5);
-            this.p2Text.fontSize = diagonalWidth*PLAYER_TEXT_SIZE;
+            this.p2Text.fontSize = diagonalWidth * PLAYER_TEXT_SIZE;
             this.p2Text.fill = Phaser.Color.getWebRGB(PLAYER_COLORS[1]);
         }
 
-        createStrategiesTexts(cellWidth:number){
+        createStrategiesTexts(cellWidth: number, cellStroke: number) {
+            for (let i = 0; i < this.rows.length; i++) {
+                let text = this.game.add.text(-cellWidth * MOVES_OFFSET, cellWidth * i + 0.5 * cellWidth, this.rows[i], null, this.group);
+                text.anchor.set(1, 0.5);
+                text.fontSize = cellWidth * MOVES_TEXT_SIZE;
+                text.fill = Phaser.Color.getWebRGB(PLAYER_COLORS[0]);
+                this.p1Moves.push(text);
+            }
+            for (let i = 0; i < this.cols.length; i++) {
+                let text = this.game.add.text(cellWidth * i + 0.5 * cellWidth - 0.5 * i * cellStroke, 0, this.cols[i], null, this.group);
+                text.anchor.set(0.5, 0.5);
+                text.fontSize = cellWidth * MOVES_TEXT_SIZE;
+                text.fill = Phaser.Color.getWebRGB(PLAYER_COLORS[1]);
+                this.p2Moves.push(text);
+            }
 
+            let maxAngle = 0;
+            let shouldRotate = false;
+            this.p2Moves.forEach((m: Phaser.Text) => {
+                if (m.width > cellWidth) {
+                    shouldRotate = true;
+                    let diagonal = m.width * Math.sqrt(2);
+                    let angle = Math.acos(cellWidth / diagonal);
+                    if (maxAngle < angle) {
+                        maxAngle = angle;
+                    }
+                }
+            });
+
+            if (shouldRotate) {
+                this.p2Moves.forEach((m: Phaser.Text) => {
+                    m.rotation = -maxAngle;
+                    m.y=-m.width*0.5*Math.sin(maxAngle) - m.height*0.3;
+                });
+            }
+            else{
+                this.p2Moves.forEach((m:Phaser.Text)=>{
+                   m.y=-m.height*0.5;
+                });
+            }
+        }
+
+        destroy(){
+            this.rows = null;
+            this.cols = null;
+            this.group.destroy(true,false);
+            this.p1Moves = null;
+            this.p2Moves = null;
         }
     }
 }

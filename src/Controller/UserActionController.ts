@@ -7,6 +7,8 @@
 ///<reference path="UndoRedoController.ts"/>
 ///<reference path="../Utils/TreeParser.ts"/>
 ///<reference path="../../lib/FileSaver.d.ts"/>
+///<reference path="../Model/StrategicForm.ts"/>
+///<reference path="../View/StrategicFormView.ts"/>
 
 
 module GTE {
@@ -18,9 +20,13 @@ module GTE {
         cutInformationSet: ISetView;
         undoRedoController:UndoRedoController;
         treeParser:TreeParser;
+
+        strategicForm:StrategicForm;
+        strategicFormView:StrategicFormView;
         // Used for going to the next node on tab pressed
         private nodesBFSOrder: Array<Node>;
         private leavesDFSOrder:Array<Node>;
+
 
         constructor(game: Phaser.Game, treeController: TreeController) {
             this.game = game;
@@ -461,8 +467,9 @@ module GTE {
 
         //TEST METHOD!
         createStrategicForm(){
-            let stratForm = new StrategicForm(this.treeController.tree);
-            let stratFormView = new StrategicFormView(this.game,stratForm);
+
+            this.strategicForm = new StrategicForm(this.treeController.tree);
+            this.strategicFormView = new StrategicFormView(this.game,this.strategicForm);
         }
     }
 }

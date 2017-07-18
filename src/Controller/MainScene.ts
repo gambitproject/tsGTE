@@ -65,6 +65,14 @@ module GTE {
             //         }
             //     });
             // }
+            // if(this.userActionController && this.userActionController.strategicFormView){
+            //     this.userActionController.strategicFormView.cells.forEach(c=>{
+            //         if(c.p1Text && c.p2Text) {
+            //             this.game.debug.spriteBounds(c.p1Text,"#ff0000",false);
+            //             this.game.debug.spriteBounds(c.p2Text,"#ff0000",false);
+            //         }
+            //     });
+            // }
         }
     }
 }

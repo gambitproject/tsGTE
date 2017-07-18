@@ -19,23 +19,33 @@ module GTE {
         generateStrategicForm() {
             let leaves = this.tree.getLeaves();
 
+            let visited = [];
             leaves.forEach((n: Node) => {
                 let p1String = "";
                 let p2String = "";
 
                 let current = n;
                 while (current.parent) {
-                    if (current.parent.owner === this.tree.players[1]) {
+                    if (current.parent.owner === this.tree.players[1] && visited.indexOf(current)===-1) {
                         p1String += current.parentMove.label;
                     }
-                    else if (current.parent.owner === this.tree.players[2]) {
+                    else if (current.parent.owner === this.tree.players[2] && visited.indexOf(current)===-1) {
                         p2String += current.parentMove.label;
+                    }
+
+                    if(visited.indexOf(current)===-1){
+                        visited.push(current);
                     }
                     current = current.parent;
                 }
 
-                this.strategies[0].push(p1String.split("").reverse().join(""));
-                this.strategies[1].push(p2String.split("").reverse().join(""));
+                if(p1String!==""){
+                    this.strategies[0].push(p1String.split("").reverse().join(""));
+                }
+
+                if (p2String!=="") {
+                    this.strategies[1].push(p2String.split("").reverse().join(""));
+                }
             });
         }
     }

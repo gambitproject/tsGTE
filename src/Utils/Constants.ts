@@ -48,5 +48,7 @@ module GTE {
     export const CELL_STROKE_WIDTH = 0.05;
     export const CELL_NUMBER_SIZE = 0.3;
     export const PLAYER_TEXT_SIZE = 0.35;
+    export const MOVES_OFFSET = 0.05;
+    export const MOVES_TEXT_SIZE = 0.25;
 
 }

@@ -12,12 +12,12 @@ module GTE{
             this.game = game;
             this.anchor.set(0,0);
 
-            this.p1Text = this.game.add.text(this.position.x+this.width*0.15, this.position.y+this.width*0.85,"0",null);
+            this.p1Text = this.game.add.text(this.position.x+this.width*0.1, this.position.y+this.width*0.9,Math.round(Math.random()*20).toString(),null);
             this.p1Text.anchor.set(0,1);
             this.p1Text.fontSize = this.width*CELL_NUMBER_SIZE;
             this.p1Text.fill = Phaser.Color.getWebRGB(PLAYER_COLORS[0]);
 
-            this.p2Text = this.game.add.text(this.position.x+this.width*0.85, this.position.y+this.width*0.15,"1",null);
+            this.p2Text = this.game.add.text(this.position.x+this.width*0.9, this.position.y+this.width*0.1,Math.round(Math.random()*20).toString(),null);
             this.p2Text.anchor.set(1,0);
             this.p2Text.fontSize = this.width*CELL_NUMBER_SIZE;
             this.p2Text.fill = Phaser.Color.getWebRGB(PLAYER_COLORS[1]);
