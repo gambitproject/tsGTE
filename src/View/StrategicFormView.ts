@@ -32,7 +32,7 @@ module GTE {
 
 
             this.group.scale.set(0.35);
-            this.group.position.set(this.game.width * 0.75, this.game.height * 0.1);
+            this.group.position.set(this.game.width * 0.5, this.game.height * 0.5);
 
             let cellWidth = this.game.width * CELL_WIDTH;
             let cellStroke = cellWidth * CELL_STROKE_WIDTH;

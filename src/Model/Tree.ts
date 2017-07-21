@@ -13,7 +13,7 @@ module GTE {
         moves: Array<Move>;
         iSets: Array<ISet>;
         players: Array<Player>;
-        private leaves;
+        private dfsNodes:Array<Node>;
         private labelSetter: LabelSetter;
 
         constructor() {
@@ -118,21 +118,46 @@ module GTE {
             this.moves.push(child.parentMove);
         }
 
-        /**Returns the number of leaves in the tree.*/
-        getLeaves() {
-            this.leaves = [];
-            this.leavesDFS(this.root);
-            return this.leaves;
+        /**Depth first search on the nodes of the tree*/
+        DFSOnTree(){
+            this.dfsNodes = [];
+            this.DFSRecursion(this.root);
+            return this.dfsNodes;
         }
 
-        /**Recursive call to determine the number of leaves in the tree*/
-        private leavesDFS(node: Node) {
-            if (node.children.length !== 0) {
-                node.children.forEach(n => this.leavesDFS(n));
+        private DFSRecursion(node:Node){
+            this.dfsNodes.push(node);
+            node.children.forEach(n=>{
+               this.DFSRecursion(n);
+            });
+        }
+
+
+        /**Breadth first search on the nodes of the tree*/
+        BFSOnTree() {
+            let bfsNodes: Array<Node> = [];
+            let nodesQueue: Array<Node> = [];
+            nodesQueue.push(this.root);
+            while (nodesQueue.length > 0) {
+                let current = nodesQueue.shift();
+                bfsNodes.push(current);
+                current.children.forEach((n => {
+                    nodesQueue.push(n);
+                }));
             }
-            else {
-                this.leaves.push(node);
-            }
+            return bfsNodes;
+        }
+
+        /**Returns the number of leaves in the tree.*/
+        getLeaves() {
+            let leaves = [];
+            this.DFSOnTree();
+            this.dfsNodes.forEach(n=>{
+                if(n.children.length===0){
+                    leaves.push(n);
+                }
+            });
+            return leaves;
         }
 
         /**A method which checks whether an information set can be created from a list of nodes.
@@ -219,21 +244,6 @@ module GTE {
             this.nodes.forEach(n => {
                 n.payoffs.setPlayersCount(this.players.length - 1);
             });
-        }
-
-        /**Breadth first search on the nodes of the tree*/
-        BFSOnTree() {
-            let bfsNodes: Array<Node> = [];
-            let nodesQueue: Array<Node> = [];
-            nodesQueue.push(this.root);
-            while (nodesQueue.length > 0) {
-                let current = nodesQueue.shift();
-                bfsNodes.push(current);
-                current.children.forEach((n => {
-                    nodesQueue.push(n);
-                }));
-            }
-            return bfsNodes;
         }
 
         /**Checks if all nodes have the required number of children*/
