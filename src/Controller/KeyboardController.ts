@@ -138,10 +138,10 @@ module GTE {
 
             // Cut information set
             this.cKey.onDown.add(() => {
-                let distinctISetsSelected = this.userActionController.treeController.getSelectedISets();
-                if (distinctISetsSelected.length === 1) {
-                    this.userActionController.initiateCutSpriteHandler(this.userActionController.treeController.treeView.findISetView(distinctISetsSelected[0]));
-                }
+                // let distinctISetsSelected = this.userActionController.treeController.getSelectedISets();
+                // if (distinctISetsSelected.length === 1) {
+                //     this.userActionController.initiateCutSpriteHandler(this.userActionController.treeController.treeView.findISetView(distinctISetsSelected[0]));
+                // }
             });
 
             // Change to the next label

@@ -469,7 +469,7 @@ module GTE {
         createStrategicForm(){
 
             this.strategicForm = new StrategicForm(this.treeController.tree);
-            this.strategicFormView = new StrategicFormView(this.game,this.strategicForm);
+            // this.strategicFormView = new StrategicFormView(this.game,this.strategicForm);
         }
     }
 }
