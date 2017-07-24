@@ -24,7 +24,7 @@ module GTE {
             bfsNodes.forEach(n=>{
                 if (n.type === NodeType.OWNED) {
                     // reference the labels depending on the player
-                    let labels = n.owner === players[1] ? p1Labels : p2Labels;
+                    let labels = n.player === players[1] ? p1Labels : p2Labels;
                     // If it is not in an information set, give the moves labels
                     if (n.iSet === null) {
                         n.children.forEach(n => {

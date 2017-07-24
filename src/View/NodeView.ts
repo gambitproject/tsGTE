@@ -28,8 +28,8 @@ module GTE {
             this.inputEnabled = true;
             this.node = node;
             this.level = this.node.depth;
-            if (this.node.owner) {
-                this.tint = node.owner.color;
+            if (this.node.player) {
+                this.tint = node.player.color;
             }
             else {
                 this.tint = 0x000000;
@@ -83,8 +83,8 @@ module GTE {
             this.ownerLabel = this.game.add.text(this.x + this.labelHorizontalOffset * this.circle.width,
                 this.y - this.circle.width, "", null);
 
-            if (this.node.owner) {
-                this.ownerLabel.setText(this.node.owner.getLabel(), true);
+            if (this.node.player) {
+                this.ownerLabel.setText(this.node.player.getLabel(), true);
             }
             else {
                 this.ownerLabel.text = "";
@@ -145,14 +145,14 @@ module GTE {
                 this.previewSelected.alpha = 0.3
             }
             // Not Selected, owned and not Chance
-            else if (this.node.owner && this.node.type !== NodeType.CHANCE) {
-                this.circle.tint = this.node.owner.color;
+            else if (this.node.player && this.node.type !== NodeType.CHANCE) {
+                this.circle.tint = this.node.player.color;
                 this.circle.alpha = 1;
                 this.square.alpha = 0;
                 this.previewSelected.alpha = 0;
             }
             // Not selected, owned and chance
-            else if (this.node.owner && this.node.type === NodeType.CHANCE) {
+            else if (this.node.player && this.node.type === NodeType.CHANCE) {
                 this.square.tint = 0x000000;
                 this.square.alpha = 1;
                 this.circle.alpha = 0;
@@ -173,12 +173,12 @@ module GTE {
             }
         }
 
-        /** A method which sets the label text as the owner label*/
+        /** A method which sets the label text as the player label*/
         resetLabelText(zeroSumOn:boolean) {
-            if (this.node.owner && this.node.type !== NodeType.CHANCE) {
+            if (this.node.player && this.node.type !== NodeType.CHANCE) {
                 this.ownerLabel.alpha = 1;
-                this.ownerLabel.setText(this.node.owner.getLabel(), true);
-                let colorRGB = Phaser.Color.getRGB(this.node.owner.color);
+                this.ownerLabel.setText(this.node.player.getLabel(), true);
+                let colorRGB = Phaser.Color.getRGB(this.node.player.color);
                 this.ownerLabel.fill = Phaser.Color.RGBtoString(colorRGB.r, colorRGB.g, colorRGB.b);
             }
             else {

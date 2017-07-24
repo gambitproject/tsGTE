@@ -19,28 +19,30 @@ module GTE {
             this.generateStrategicForm();
         }
 
+        /**Generates the strategic form, which is stored in two arrays of strategies for P1 and P2*/
         generateStrategicForm() {
             this.checkStrategicFormPossible();
 
+            // The order of information sets is breadth-first. If at some point we wish to change this - swap with dfs.
             let nodes = this.tree.BFSOnTree();
             let p1InfoSets = [];
             let p2InfoSets = [];
 
             //Get all P1 and P2 information sets and singletons separated from the DFS order.
             nodes.forEach(n => {
-                if (n.owner === this.tree.players[1]) {
+                if (n.player === this.tree.players[1]) {
                     if (n.iSet && p1InfoSets.indexOf(n.iSet) === -1) {
                         p1InfoSets.push(n.iSet);
                     }
-                    else if(!n.iSet) {
+                    else if (!n.iSet) {
                         p1InfoSets.push(n);
                     }
                 }
-                else if (n.owner === this.tree.players[2]) {
+                else if (n.player === this.tree.players[2]) {
                     if (n.iSet && p2InfoSets.indexOf(n.iSet) === -1) {
                         p2InfoSets.push(n.iSet);
                     }
-                    else if(!n.iSet) {
+                    else if (!n.iSet) {
                         p2InfoSets.push(n);
                     }
                 }
@@ -50,51 +52,48 @@ module GTE {
             this.p2Strategies = [];
             this.generateStrategies(p1InfoSets);
             this.generateStrategies(p2InfoSets);
-            this.strategyToString(this.p1Strategies);
-            this.strategyToString(this.p2Strategies);
+            // this.strategyToString(this.p1Strategies);
+            // this.strategyToString(this.p2Strategies);
 
         }
 
+        /**A method which generates the strategies for a specific player, given his collection of iSets*/
         generateStrategies(infoSets: Array<any>) {
             let currentStrategy = [];
             this.recurseStrategies(infoSets, 0, currentStrategy);
         }
 
+        // We create combinations of all moves, given their specific slot (index) which corresponds to the current
+        // node or an information set we are looking at. "Strategy" stores the moves that are played in the recursion.
         private recurseStrategies(infoSets, index, strategy) {
+            // If we have reached the last slot for the combinations, save it and go back in the recursion.
             if (index === infoSets.length) {
-                if (infoSets[0] instanceof Node) {
-                    if (infoSets[0].owner === this.tree.players[1]) {
-                        this.p1Strategies.push(strategy.slice(0));
-                    }
-                    else if (infoSets[0].owner === this.tree.players[2]) {
-                        this.p2Strategies.push(strategy.slice(0));
-                    }
+                if (infoSets[0].player === this.tree.players[1]) {
+                    this.p1Strategies.push(strategy.slice(0));
                 }
-                else if (infoSets[0] instanceof ISet) {
-                    if (infoSets[0].player === this.tree.players[1]) {
-                        this.p1Strategies.push(strategy.slice(0));
-                    }
-                    else if (infoSets[0].player === this.tree.players[2]) {
-                        this.p2Strategies.push(strategy.slice(0));
-                    }
+                else if (infoSets[0].player === this.tree.players[2]) {
+                    this.p2Strategies.push(strategy.slice(0));
                 }
                 return;
             }
-            let currentISet = infoSets[index];
+
+            //Depending on whether the current iSet is a singleton (node) or not, we take the moves and save the nodes
+            // of the iSet in an array
+            let currentISet;
             let moves = [];
 
             if (infoSets[index] instanceof Node) {
                 currentISet = [infoSets[index]];
                 moves = currentISet[0].childrenMoves;
-
             }
             else if (infoSets[index] instanceof ISet) {
                 currentISet = infoSets[index].nodes;
                 moves = currentISet[0].childrenMoves;
             }
 
+            // We perform a check of whether the node is reachable from the previously played moves by the player
             let isReachable = false;
-            if (index!==0) {
+            if (index !== 0) {
                 let nonNullIndex = this.findFirstNonNullIndex(strategy, index);
                 let nodesToCheckReachability = [];
                 let lastEarlierMove: Move = strategy[nonNullIndex];
@@ -111,23 +110,27 @@ module GTE {
 
                 isReachable = this.isReachable(currentISet, nodesToCheckReachability);
             }
-            if(this.isFirstMove(currentISet[0]) || isReachable){
+            // If the move is the first that a player has played or is reachable, we save it to "strategies" and move on
+            if (this.isFirstMove(currentISet[0]) || isReachable) {
                 for (let i = 0; i < moves.length; i++) {
                     strategy.push(moves[i]);
                     this.recurseStrategies(infoSets, index + 1, strategy);
                     strategy.pop();
                 }
             }
-            else{
+            // If the move is not reachable, we push "null" which will later be transformed into a "*"
+            else {
                 strategy.push(null);
                 this.recurseStrategies(infoSets, index + 1, strategy);
                 strategy.pop();
             }
         }
-        isFirstMove(node:Node){
+
+        // A helper method for the recursion
+        private isFirstMove(node: Node) {
             let current = node.parent;
-            while(current){
-                if(current.owner===node.owner){
+            while (current) {
+                if (current.player === node.player) {
                     return false;
                 }
                 current = current.parent;
@@ -135,6 +138,7 @@ module GTE {
             return true;
         }
 
+        // A helper method for the recursion
         private findFirstNonNullIndex(strategy, index) {
             for (let i = index - 1; i >= 0; i--) {
                 if (strategy[i]) {
@@ -143,7 +147,6 @@ module GTE {
             }
             return 0;
         }
-
 
         // From is the "lower" (in terms of the tree) move
         isReachable(from: Array<Node>, to: Array<Node>) {
@@ -173,26 +176,36 @@ module GTE {
 
         checkStrategicFormPossible() {
             if (this.tree.players.length !== 3) {
-                throw new Error("Strategic form only available for 2 players!");
+                throw new Error(STRATEGIC_PLAYERS_ERROR_TEXT);
             }
-            //TODO: Perfect recall check
+            this.tree.perfectRecallCheck();
         }
 
-        strategyToString(strategies){
+
+
+        strategyToString(strategies) {
+            let strategyAsString = [];
             for (let i = 0; i < strategies.length; i++) {
                 let str = "";
                 for (let j = 0; j < strategies[i].length; j++) {
                     let current = strategies[i][j];
                     if (current) {
-                        str += current.label + " ";
+                        str += current.label + ",";
                     }
                     else {
-                        str += "* ";
+                        str += "*,";
                     }
 
                 }
-                console.log(str);
+                strategyAsString.push(str.substring(0,str.length-1));
             }
+            return strategyAsString;
+        }
+
+        destroy(){
+            this.p1Strategies = null;
+            this.p2Strategies = null;
+            this.strategies = null;
         }
     }
 }

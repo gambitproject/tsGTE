@@ -37,7 +37,7 @@ module GTE {
             if (this.players.indexOf(player) !== -1) {
                 this.players.splice(this.players.indexOf(player), 1);
                 this.nodes.forEach(n => {
-                    if (n.owner === player) {
+                    if (n.player === player) {
                         n.convertToDefault();
                     }
                 });
@@ -183,9 +183,38 @@ module GTE {
             }
         }
 
+        /**A method for checking whether the game has perfect recall.*/
+        perfectRecallCheck() {
+            for (let i = 0; i < this.iSets.length; i++) {
+                let iSet = this.iSets[i];
+                let iSetReachability = [];
+                iSet.nodes.forEach((n: Node) => {
+                    let current = n.parent;
+                    let currentMove = n.parentMove;
+                    while (current) {
+                        if (current.player === n.player) {
+                            iSetReachability.push({node:current,move:currentMove});
+                        }
+                        currentMove = current.parentMove;
+                        current=current.parent;
+                    }
+                });
+                console.log(iSetReachability);
+                for (let j = 0; j < iSetReachability.length; j++) {
+                    let pair1 = iSetReachability[j];
+                    for (let k = j+1; k < iSetReachability.length; k++) {
+                        let pair2 = iSetReachability[k];
+                        if(pair1.node === pair2.node && pair1.move !== pair2.move){
+                            throw new Error(IMPERFECT_RECALL_ERROR_TEXT);
+                        }
+                    }
+                }
+            }
+        }
+
         checkAllNodesLabeled() {
             for (let i = 0; i < this.nodes.length; i++) {
-                if (this.nodes[i].children.length !== 0 && this.players.indexOf(this.nodes[i].owner) === -1) {
+                if (this.nodes[i].children.length !== 0 && this.players.indexOf(this.nodes[i].player) === -1) {
                     return false;
                 }
             }
@@ -264,8 +293,8 @@ module GTE {
             let players = [];
             for (let i = 0; i < nodes.length; i++) {
                 let node = nodes[i];
-                if (node.owner && players.indexOf(node.owner) === -1) {
-                    players.push(node.owner);
+                if (node.player && players.indexOf(node.player) === -1) {
+                    players.push(node.player);
                 }
             }
             return players.length <= 1;

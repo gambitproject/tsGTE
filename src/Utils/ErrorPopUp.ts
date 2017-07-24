@@ -40,6 +40,9 @@ module GTE{
         }
 
         show(text:string){
+            this.fullScreenSprite.bringToTop();
+            this.errorRectangle.bringToTop();
+            this.errorMessage.bringToTop();
             this.errorMessage.text = text;
 
             this.errorRectangle.width = this.errorMessage.width*1.2;

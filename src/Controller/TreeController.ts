@@ -307,8 +307,8 @@ module GTE {
                     iSetNodes.push(n.node);
                 }
 
-                if(n.node.owner){
-                    player = n.node.owner;
+                if(n.node.player){
+                    player = n.node.player;
                 }
             });
 
@@ -337,7 +337,7 @@ module GTE {
         getSelectedISets(){
             let distinctISets = [];
             this.selectedNodes.forEach((n)=>{
-                if(distinctISets.indexOf(n.node.iSet)===-1){
+                if(n.node.iSet && distinctISets.indexOf(n.node.iSet)===-1){
                     distinctISets.push(n.node.iSet);
                 }
             });

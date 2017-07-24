@@ -2,7 +2,7 @@
 ///<reference path="Player.ts"/>
 ///<reference path="Node.ts"/>
 module GTE{
-    /**The class that represents the ISet. The ISet has owner, array storing all nodes, and a label */
+    /**The class that represents the ISet. The ISet has player, array storing all nodes, and a label */
     export class ISet{
         player: Player;
         nodes: Array<Node>;
@@ -21,11 +21,11 @@ module GTE{
         }
 
         addNode(node:Node){
-            if(this.player && node.owner && node.owner !== this.player){
-                throw new Error("ISet player is different from node owner!");
+            if(this.player && node.player && node.player !== this.player){
+                throw new Error("ISet player is different from node player!");
             }
-            if(this.player && !node.owner){
-                node.owner = this.player;
+            if(this.player && !node.player){
+                node.player = this.player;
             }
             if(this.nodes.indexOf(node)===-1){
                 this.nodes.push(node);

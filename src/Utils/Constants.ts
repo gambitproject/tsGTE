@@ -27,6 +27,7 @@ module GTE {
     export const NODES_MISSING_PLAYERS_ERROR_TEXT = "Cannot create information set for \n nodes which do not have player assigned.";
     export const NODES_DIFFERENT_PLAYERS_ERROR_TEXT = "Cannot create information set for \n nodes which have different players.";
     export const NODES_NUMBER_OF_CHILDREN_ERROR_TEXT = "Cannot create information set for \n nodes which have different number of children or are leaves.";
+    export const IMPERFECT_RECALL_ERROR_TEXT = "The game tree does not have perfect recall";
     export const ISET_LINE_WIDTH = 0.05;
 
     //Hover Button Colors
@@ -50,5 +51,7 @@ module GTE {
     export const PLAYER_TEXT_SIZE = 0.35;
     export const MOVES_OFFSET = 0.05;
     export const MOVES_TEXT_SIZE = 0.25;
+    export const STRATEGIC_PLAYERS_ERROR_TEXT = "Strategic form only available for 2 players!";
+
 
 }

@@ -78,6 +78,7 @@ module GTE {
             this.game.input.keyboard.removeKeyCapture(Phaser.Keyboard.FOUR);
             this.game.input.keyboard.removeKeyCapture(Phaser.Keyboard.SPACEBAR);
             this.game.input.keyboard.removeKeyCapture(Phaser.Keyboard.CONTROL);
+            this.game.input.keyboard.removeKeyCapture(Phaser.Keyboard.DELETE);
 
         }
 
@@ -138,10 +139,10 @@ module GTE {
 
             // Cut information set
             this.cKey.onDown.add(() => {
-                // let distinctISetsSelected = this.userActionController.treeController.getSelectedISets();
-                // if (distinctISetsSelected.length === 1) {
-                //     this.userActionController.initiateCutSpriteHandler(this.userActionController.treeController.treeView.findISetView(distinctISetsSelected[0]));
-                // }
+                let distinctISetsSelected = this.userActionController.treeController.getSelectedISets();
+                if (distinctISetsSelected.length === 1) {
+                    this.userActionController.initiateCutSpriteHandler(this.userActionController.treeController.treeView.findISetView(distinctISetsSelected[0]));
+                }
             });
 
             // Change to the next label

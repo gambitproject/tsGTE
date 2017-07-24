@@ -17,13 +17,13 @@ module GTE {
             this.hovered = false;
             this.buttonKey = key;
             this.inputEnabled = true;
-
             this.circle = this.game.add.sprite(0, 0, this.game.cache.getBitmapData("hover-circle"));
+
             this.circle.position=this.position;
             this.circle.tint = circleColor;
             this.circle.anchor.set(0.5,0.5);
-
             this.icon = this.game.add.sprite(0, 0, key);
+
             this.icon.anchor.set(0.5, 0.5);
             this.icon.position = this.position;
             if (iconColor) {
@@ -33,11 +33,11 @@ module GTE {
                 this.hovered = true;
             });
             this.events.onInputOut.add(()=>{
-               this.hovered = false;
+                this.hovered = false;
             });
 
+            this.input.priorityID = 200;
             // this.setHidden();
-            this.input.priorityID = 5;
             group.add(this);
             group.add(this.circle);
             group.add(this.icon);
@@ -51,18 +51,22 @@ module GTE {
             if(this.icon.tint!==0xffffff){
                 this.icon.alpha = 0.2;
             }
+            this.inputEnabled=false;
         }
 
         setActive() {
             this.active = true;
             this.circle.alpha = 1;
             this.icon.alpha = 1;
+            this.inputEnabled = true;
+            this.input.priorityID = 200;
         }
 
         setHidden(){
             this.active = false;
             this.circle.alpha = 0;
             this.icon.alpha = 0;
+            this.inputEnabled = false;
         }
 
         destroy(){

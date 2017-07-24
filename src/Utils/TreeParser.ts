@@ -27,7 +27,7 @@ module GTE {
                 node.type = n.type;
                 node.depth = n.depth;
                 if (node.type === NodeType.OWNED || node.type === NodeType.CHANCE) {
-                    let ownerIndex = tree.players.indexOf(n.owner);
+                    let ownerIndex = tree.players.indexOf(n.player);
                     strippedTree.nodePlayerPair.push({nodeIndex:tree.nodes.indexOf(n),playerIndex:ownerIndex});
                 }
                 if (n.payoffs) {
@@ -100,7 +100,7 @@ module GTE {
             });
 
             strippedTree.nodePlayerPair.forEach(pair=>{
-               clonedTree.nodes[pair.nodeIndex].owner = clonedTree.players[pair.playerIndex];
+               clonedTree.nodes[pair.nodeIndex].player = clonedTree.players[pair.playerIndex];
             });
 
             strippedTree.iSets.forEach(is => {
@@ -109,7 +109,7 @@ module GTE {
                 is.nodeIndexes.forEach(i => {
                     iSet.nodes.push(clonedTree.nodes[i]);
                 });
-                iSet.player = iSet.nodes[0].owner;
+                iSet.player = iSet.nodes[0].player;
                 clonedTree.iSets.push(iSet);
             });
 

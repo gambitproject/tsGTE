@@ -24,15 +24,15 @@ module GTE {
             this.strategicForm = strategicForm;
 
             this.group = this.game.add.group();
-            this.rows = strategicForm.strategies[0];
-            this.cols = strategicForm.strategies[1];
+            this.rows = strategicForm.strategyToString(strategicForm.p1Strategies);
+            this.cols = strategicForm.strategyToString(strategicForm.p2Strategies);
             this.cells = [];
             this.p1Moves = [];
             this.p2Moves = [];
 
 
-            this.group.scale.set(0.35);
-            this.group.position.set(this.game.width * 0.5, this.game.height * 0.5);
+            this.group.scale.set(0.3);
+            this.group.position.set(this.game.width * 0.8, this.game.height * 0.05);
 
             let cellWidth = this.game.width * CELL_WIDTH;
             let cellStroke = cellWidth * CELL_STROKE_WIDTH;

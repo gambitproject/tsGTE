@@ -6,7 +6,7 @@ module GTE {
     /**The types of Node. If a node does not have type, it can be deleted */
     export enum NodeType {DEFAULT = 1, CHANCE, OWNED, LEAF}
 
-    /**The class Node. Each Node has a type, parent, parentMove, children, childrenMoves, iSet, owner, depth and payoff */
+    /**The class Node. Each Node has a type, parent, parentMove, children, childrenMoves, iSet, player, depth and payoff */
     export class Node {
         type: NodeType;
         parent: Node;
@@ -14,7 +14,7 @@ module GTE {
         children: Array<Node>;
         childrenMoves: Array<Move>;
         iSet: ISet;
-        owner: Player;
+        player: Player;
         depth: number;
         payoffs: Payoffs;
         constructor(depth?: number, type?: NodeType, parent?: Node) {
@@ -23,7 +23,7 @@ module GTE {
             this.parent = parent || null;
             this.children = [];
             this.childrenMoves = [];
-            this.owner = null;
+            this.player = null;
             this.iSet = null;
             this.payoffs = new Payoffs();
         }
@@ -53,7 +53,7 @@ module GTE {
         /**Converts the current Node to a default Node */
         convertToDefault() {
             this.type = NodeType.DEFAULT;
-            this.owner = null;
+            this.player = null;
             if (this.iSet) {
                 this.iSet.removeNode(this);
             }
@@ -61,15 +61,15 @@ module GTE {
             this.childrenMoves.forEach(c => c.convertToDefault());
         }
 
-        /**Converts the current Node to a labeled, by setting an owner */
+        /**Converts the current Node to a labeled, by setting an player */
         convertToLabeled(player: Player) {
             if (this.children.length > 0) {
                 this.type = NodeType.OWNED;
-                this.owner = player;
+                this.player = player;
 
                 this.childrenMoves.forEach(c => c.convertToLabeled());
                 if(this.iSet && this.iSet.nodes.length>1) {
-                    this.iSet.changePlayer(this.owner);
+                    this.iSet.changePlayer(this.player);
                 }
             }
         }
@@ -77,19 +77,19 @@ module GTE {
         /**Converts the current Node to a leaf node, by setting payoffs */
         convertToLeaf() {
             this.type = NodeType.LEAF;
-            this.owner = null;
+            this.player = null;
             if (this.iSet) {
                 this.iSet.removeNode(this);
             }
         }
 
-        /**Converts the current Node to a chance Node, setting the owner to the chancePlayer and assigning probabilities to children moves*/
+        /**Converts the current Node to a chance Node, setting the player to the chancePlayer and assigning probabilities to children moves*/
         convertToChance(chancePlayer: Player, probabilities?: Array<number>,) {
             if (this.children.length>0 && this.iSet === null) {
                 this.type = NodeType.CHANCE;
 
                 if (chancePlayer.id === 0) {
-                    this.owner = chancePlayer;
+                    this.player = chancePlayer;
                 }
                 else {
                     throw new Error("Given player is not a chance player");
@@ -127,7 +127,7 @@ module GTE {
         destroy() {
             this.type = null;
             this.depth = null;
-            this.owner = null;
+            this.player = null;
             if (this.parent) {
                 this.parent.children.splice(this.parent.children.indexOf(this), 1);
             }
