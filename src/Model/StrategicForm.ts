@@ -24,7 +24,7 @@ module GTE {
             this.checkStrategicFormPossible();
 
             // The order of information sets is breadth-first. If at some point we wish to change this - swap with dfs.
-            let nodes = this.tree.BFSOnTree();
+            let nodes = this.tree.DFSOnTree();
             let p1InfoSets = [];
             let p2InfoSets = [];
 
@@ -139,6 +139,7 @@ module GTE {
         }
 
         // A helper method for the recursion
+        // noinspection JSMethodCanBeStatic
         private findFirstNonNullIndex(strategy, index) {
             for (let i = index - 1; i >= 0; i--) {
                 if (strategy[i]) {

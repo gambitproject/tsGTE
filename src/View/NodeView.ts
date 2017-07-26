@@ -21,7 +21,9 @@ module GTE {
         private labelHorizontalOffset: number;
 
         constructor(game: Phaser.Game, node: Node, x?: number, y?: number) {
-            super(game, x, y, "");
+            super(game, x, y, game.cache.getBitmapData("node-circle"));
+            this.alpha = 0;
+            this.renderable =  false;
             this.isSelected = false;
             this.anchor.set(0.5, 0.5);
             this.scale.set(OVERLAY_SCALE, OVERLAY_SCALE);
