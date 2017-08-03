@@ -31,8 +31,8 @@ module GTE {
             this.p2Moves = [];
 
 
-            this.group.scale.set(0.3);
-            this.group.position.set(this.game.width * 0.8, this.game.height * 0.05);
+            this.group.scale.set(0.75);
+            this.group.position.set(this.game.width * 0.7, this.game.height * 0.1);
 
             let cellWidth = this.game.width * CELL_WIDTH;
             let cellStroke = cellWidth * CELL_STROKE_WIDTH;
@@ -79,6 +79,8 @@ module GTE {
                 text.anchor.set(1, 0.5);
                 text.fontSize = cellWidth * MOVES_TEXT_SIZE;
                 text.fill = Phaser.Color.getWebRGB(PLAYER_COLORS[0]);
+                text.fontStyle = "italic";
+                text.fontWeight = 200;
                 this.p1Moves.push(text);
             }
             for (let i = 0; i < this.cols.length; i++) {
@@ -86,6 +88,8 @@ module GTE {
                 text.anchor.set(0.5, 0.5);
                 text.fontSize = cellWidth * MOVES_TEXT_SIZE;
                 text.fill = Phaser.Color.getWebRGB(PLAYER_COLORS[1]);
+                text.fontStyle = "italic";
+                text.fontWeight = 200;
                 this.p2Moves.push(text);
             }
 

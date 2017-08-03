@@ -96,15 +96,16 @@ module GTE {
             this.ownerLabel.fontSize = this.circle.width * LABEL_SIZE;
             this.ownerLabel.fill = this.tint;
             this.ownerLabel.anchor.set(0.5, 0.5);
-
             this.ownerLabel.inputEnabled = true;
+            // this.ownerLabel.fontWeight = 100;
             this.ownerLabel.events.onInputDown.dispatch(this);
 
             this.payoffsLabel = this.game.add.text(this.x, this.y + this.width, "", null);
-            this.payoffsLabel.fontSize = this.circle.width * LABEL_SIZE;
+            this.payoffsLabel.fontSize = this.circle.width * PAYOFF_SIZE;
             this.payoffsLabel.anchor.set(0.5, 0);
+            this.payoffsLabel.fontWeight = 100;
             this.payoffsLabel.inputEnabled = true;
-            this.payoffsLabel.lineSpacing = -15;
+            this.payoffsLabel.lineSpacing = -10;
             this.payoffsLabel.align = "center";
             this.payoffsLabel.events.onInputDown.dispatch(this, "payoff");
 

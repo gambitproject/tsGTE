@@ -26,11 +26,9 @@ module GTE {
 
             this.label = this.game.add.text(0,0,this.move.label,null);
             this.label.anchor.set(0.5,0.5);
-            this.label.fontSize = this.from.width*0.44;
-            this.label.fill = this.from.ownerLabel.tint;
-            this.label.fontStyle = "italic";
+            this.label.padding.x = 3;
+            this.label.align = "center";
             this.label.fontWeight = 200;
-
             this.label.inputEnabled = true;
             this.label.events.onInputDown.dispatch(this);
 
@@ -50,7 +48,6 @@ module GTE {
             }
             else if(this.move.from.type===NodeType.OWNED && this.move.label){
                 this.label.text = this.move.label;
-
             }
             else{
                 this.label.text = "";
@@ -58,19 +55,23 @@ module GTE {
             }
             let center = new Phaser.Point(Math.abs((this.from.x+this.to.x)/2),Math.abs((this.from.y+this.to.y)/2));
             if(this.rotation>0){
-                center.x=center.x-this.label.height/2;
+                center.x=center.x-this.label.width*0.6;
             }
             else{
-                center.x = center.x+this.label.height/2;
+                center.x = center.x+this.label.width*0.6+this.label.padding.x;
 
             }
             this.label.x = center.x;
-            this.label.y = center.y-this.label.height*0.33;
+            this.label.y = center.y-this.label.height*0.3;
             if (this.move.from.type===NodeType.OWNED) {
                 this.label.fill = this.from.ownerLabel.fill;
+                this.label.fontStyle = "italic";
+                this.label.fontSize = this.from.width*0.42;
             }
             else if(this.move.from.type===NodeType.CHANCE){
                 this.label.fill = "#000";
+                this.label.fontStyle = "normal";
+                this.label.fontSize = this.from.width*0.35;
             }
         }
 

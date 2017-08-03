@@ -73,6 +73,11 @@ module GTE {
             //         }
             //     });
             // }
+            // if(this.treeController.treeView.moves){
+            //     this.treeController.treeView.moves.forEach(m=>{
+            //        this.game.debug.spriteBounds(m.label,"#00ff00",false) ;
+            //     });
+            // }
         }
     }
 }

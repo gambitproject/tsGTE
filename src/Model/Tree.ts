@@ -118,6 +118,16 @@ module GTE {
             this.moves.push(child.parentMove);
         }
 
+        getMaxDepth(){
+            let maxDepth = 0;
+            this.nodes.forEach(n=>{
+                if(n.depth>maxDepth){
+                    maxDepth=n.depth;
+                }
+            });
+            return maxDepth;
+        }
+
         /**Depth first search on the nodes of the tree*/
         DFSOnTree(){
             this.dfsNodes = [];

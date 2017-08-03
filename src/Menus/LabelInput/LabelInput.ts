@@ -39,11 +39,9 @@ module GTE {
                 this.inputField.addClass("show-label");
                 this.shouldRecalculateOrder = true;
             }
-            else{
+            else {
                 this.shouldRecalculateOrder = false;
             }
-
-
 
             this.inputField.css({
                 "left": label.x,
@@ -56,7 +54,7 @@ module GTE {
             this.active = true;
         }
 
-        hideLabel() {
+        hide() {
             if (this.labelOverlay.hasClass("show-overlay")) {
                 this.labelOverlay.removeClass("show-overlay");
             }
@@ -69,7 +67,7 @@ module GTE {
 
         inputHandler() {
             this.labelOverlay.on("click", () => {
-                this.hideLabel();
+                this.hide();
             });
         }
     }

@@ -148,10 +148,10 @@ module GTE {
             // Change to the next label
             this.tabKey.onDown.add(() => {
                 if(this.shiftKey.isDown) {
-                    this.userActionController.activateLabel(false);
+                    this.userActionController.activateLabelField(false);
                 }
                 else{
-                    this.userActionController.activateLabel(true);
+                    this.userActionController.activateLabelField(true);
                 }
             });
 

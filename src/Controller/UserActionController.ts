@@ -343,8 +343,7 @@ module GTE {
 
         /**If the label input is active, go to the next label
          * If next is false, we go to the previous label*/
-        activateLabel(next: boolean) {
-
+        activateLabelField(next: boolean) {
             if (this.treeController.labelInput.active) {
                 if (this.treeController.labelInput.shouldRecalculateOrder) {
                     this.nodesBFSOrder = this.treeController.tree.BFSOnTree();
@@ -401,7 +400,6 @@ module GTE {
                     this.treeController.treeView.moves.forEach(m => {
                         m.updateLabel(this.treeController.treeViewProperties.fractionOn);
                     });
-                    this.activateLabel(true);
                 }
                 // If we are currently looking at nodes
                 else if (this.treeController.labelInput.currentlySelected instanceof NodeView) {
@@ -409,19 +407,18 @@ module GTE {
                     if ((<NodeView>this.treeController.labelInput.currentlySelected).ownerLabel.alpha === 1) {
                         (<NodeView>this.treeController.labelInput.currentlySelected).node.player.label = this.treeController.labelInput.inputField.val();
                         this.treeController.treeView.nodes.forEach((n: NodeView) => {
+                            //TODO: Fix bug here!
                             n.resetLabelText(this.treeController.treeViewProperties.zeroSumOn);
                         });
-                        this.activateLabel(true);
                     }
                     else {
-
                         (<NodeView>this.treeController.labelInput.currentlySelected).node.payoffs.loadFromString(this.treeController.labelInput.inputField.val());
                         this.treeController.treeView.nodes.forEach((n: NodeView) => {
                             n.resetLabelText(this.treeController.treeViewProperties.zeroSumOn);
                         });
-                        this.activateLabel(true);
                     }
                 }
+                this.activateLabelField(true);
                 this.undoRedoController.saveNewTree();
             }
         }
@@ -429,7 +426,7 @@ module GTE {
         /**Hides then input*/
         hideInputLabel() {
             if (this.treeController.labelInput.active) {
-                this.treeController.labelInput.hideLabel();
+                this.treeController.labelInput.hide();
             }
         }
 

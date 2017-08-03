@@ -117,7 +117,6 @@ module GTE {
             });
             this.zeroSumButton.on("click", () => {
                 let src = this.zeroSumButton.find("img").attr("src");
-                console.log(src);
                 if (src === "src/Assets/Images/TopMenu/zeroSum.png") {
                     this.zeroSumButton.find("img").attr("src", "src/Assets/Images/TopMenu/nonZeroSum.png")
                 }
@@ -129,7 +128,6 @@ module GTE {
 
             this.fractionDecimalButton.on("click", () => {
                 let src = this.fractionDecimalButton.find("img").attr("src");
-                console.log(src);
                 if (src === "src/Assets/Images/TopMenu/fraction.png") {
                     this.fractionDecimalButton.find("img").attr("src", "src/Assets/Images/TopMenu/decimal.png")
                 }
