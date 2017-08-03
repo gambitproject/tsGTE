@@ -51,7 +51,7 @@ module GTE {
             this.tree.addNode();
             this.tree.addChildToNode(this.tree.nodes[0]);
             this.tree.addChildToNode(this.tree.nodes[0]);
-            this.tree.addPlayer(new Player(0, "0", 0x000000));
+            this.tree.addPlayer(new Player(0, "chance", 0x000000));
             this.tree.addPlayer(new Player(1, "1", PLAYER_COLORS[0]));
             this.tree.addPlayer(new Player(2, "2", PLAYER_COLORS[1]));
             this.treeViewProperties = new TreeViewProperties(this.game.height * INITIAL_TREE_HEIGHT, this.game.width * INITIAL_TREE_WIDTH);

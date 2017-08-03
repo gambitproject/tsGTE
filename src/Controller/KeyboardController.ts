@@ -86,83 +86,107 @@ module GTE {
         attachHandlersToKeys() {
             // Children and new file
             this.nKey.onDown.add(() => {
-                if(!this.controlKey.isDown) {
-                    this.userActionController.addNodesHandler();
-                }
-                else{
-                    this.userActionController.createNewTree();
+                if (!this.userActionController.treeController.labelInput.active) {
+                    if (!this.controlKey.isDown) {
+                        this.userActionController.addNodesHandler();
+                    }
+                    else {
+                        this.userActionController.createNewTree();
+                    }
                 }
             });
             // Delete nodes
             this.deleteKey.onDown.add(() => {
-                this.userActionController.deleteNodeHandler();
+                if (!this.userActionController.treeController.labelInput.active) {
+                    this.userActionController.deleteNodeHandler();
+                }
             });
             this.dKey.onDown.add(() => {
-                this.userActionController.deleteNodeHandler();
+                if (!this.userActionController.treeController.labelInput.active) {
+                    this.userActionController.deleteNodeHandler();
+                }
             });
 
             // Assigning players
             this.playersKeys.forEach((k) => {
-                let playerID = this.playersKeys.indexOf(k) + 1;
-                k.onDown.add(() => {
-                    this.userActionController.assignPlayerToNodeHandler(playerID);
-                });
+                if (!this.userActionController.treeController.labelInput.active) {
+                    let playerID = this.playersKeys.indexOf(k) + 1;
+                    k.onDown.add(() => {
+                        this.userActionController.assignPlayerToNodeHandler(playerID);
+                    });
+                }
             });
             this.zeroKey.onDown.add(() => {
-                this.userActionController.assignChancePlayerToNodeHandler();
+                if (!this.userActionController.treeController.labelInput.active) {
+                    this.userActionController.assignChancePlayerToNodeHandler();
+                }
             });
 
             // Create an information set
             this.iKey.onDown.add(() => {
-                if(!this.controlKey.isDown) {
-                    this.userActionController.createISetHandler();
-                }
-                else{
-                    this.userActionController.saveTreeToImage();
+                if (!this.userActionController.treeController.labelInput.active) {
+                    if (!this.controlKey.isDown) {
+                        this.userActionController.createISetHandler();
+                    }
+                    else {
+                        this.userActionController.saveTreeToImage();
+                    }
                 }
             });
 
             // Undo and redo
             this.zKey.onDown.add(() => {
-                if (this.controlKey.isDown && !this.shiftKey.isDown) {
-                    this.userActionController.undoRedoHandler(true);
-                }
-                if (this.controlKey.isDown && this.shiftKey.isDown) {
-                    this.userActionController.undoRedoHandler(false);
+                if (!this.userActionController.treeController.labelInput.active) {
+                    if (this.controlKey.isDown && !this.shiftKey.isDown) {
+                        this.userActionController.undoRedoHandler(true);
+                    }
+                    if (this.controlKey.isDown && this.shiftKey.isDown) {
+                        this.userActionController.undoRedoHandler(false);
+                    }
                 }
             });
 
             // Remove information set
             this.uKey.onDown.add(() => {
-                this.userActionController.removeISetsByNodesHandler();
+                if (!this.userActionController.treeController.labelInput.active) {
+                    this.userActionController.removeISetsByNodesHandler();
+                }
             });
 
             // Cut information set
             this.cKey.onDown.add(() => {
-                let distinctISetsSelected = this.userActionController.treeController.getSelectedISets();
-                if (distinctISetsSelected.length === 1) {
-                    this.userActionController.initiateCutSpriteHandler(this.userActionController.treeController.treeView.findISetView(distinctISetsSelected[0]));
+                if (!this.userActionController.treeController.labelInput.active) {
+                    let distinctISetsSelected = this.userActionController.treeController.getSelectedISets();
+                    if (distinctISetsSelected.length === 1) {
+                        this.userActionController.initiateCutSpriteHandler(this.userActionController.treeController.treeView.findISetView(distinctISetsSelected[0]));
+                    }
                 }
             });
 
             // Change to the next label
             this.tabKey.onDown.add(() => {
-                if(this.shiftKey.isDown) {
-                    this.userActionController.activateLabelField(false);
-                }
-                else{
-                    this.userActionController.activateLabelField(true);
+                if (this.userActionController.treeController.labelInput.active) {
+                    if (this.shiftKey.isDown) {
+                        this.userActionController.activateLabelField(false);
+                    }
+                    else {
+                        this.userActionController.activateLabelField(true);
+                    }
                 }
             });
 
             // Enter value in label
             this.enterKey.onDown.add(()=>{
-                this.userActionController.changeLabel();
+                if (this.userActionController.treeController.labelInput.active) {
+                    this.userActionController.changeLabel();
+                }
             });
 
             // Exit label
             this.escapeKey.onDown.add(()=>{
-                this.userActionController.hideInputLabel();
+                if (this.userActionController.treeController.labelInput.active) {
+                    this.userActionController.hideInputLabel();
+                }
             });
 
             // Save to File
@@ -173,7 +197,9 @@ module GTE {
             });
 
             this.testButton.onDown.add(()=>{
-               this.userActionController.createStrategicForm();
+                // if (!this.userActionController.treeController.labelInput.active) {
+                //     this.userActionController.createStrategicForm();
+                // }
             });
         }
     }

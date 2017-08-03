@@ -31,7 +31,7 @@ module GTE {
             this.p2Moves = [];
 
 
-            this.group.scale.set(0.75);
+            this.group.scale.set(0.3);
             this.group.position.set(this.game.width * 0.7, this.game.height * 0.1);
 
             let cellWidth = this.game.width * CELL_WIDTH;

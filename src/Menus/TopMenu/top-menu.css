@@ -59,12 +59,12 @@
 
 
 #minusP-wrapper{
-    margin-left:10%;
+    margin-left:5%;
     height:40%;
 }
 #plusP-wrapper{
     height:40%;
-    margin-right:10%;
+    margin-right:5%;
 }
 .player-number-wrapper{
     margin:0;
@@ -119,5 +119,16 @@
 }
 
 #random-payoffs-wrapper{
+    margin-left:5%;
+}
+
+#strat-form-wrapper{
     margin-left:10%;
+
+}
+#strat-form-wrapper div{
+    border: 1px solid black;
+    padding-left:5%;
+    padding-right:5%;
+    word-wrap:break-word;
 }

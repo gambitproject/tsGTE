@@ -64,8 +64,8 @@ module GTE {
 
         /**Resets the current Tree*/
         createNewTree() {
-            this.treeController.deleteNodeHandler(this.treeController.tree.root);
-            this.treeController.addNodeHandler(this.treeController.treeView.nodes[0]);
+            this.deleteNodeHandler(this.treeController.treeView.nodes[0]);
+            this.addNodesHandler(this.treeController.treeView.nodes[0]);
         }
 
         /**Saves a tree to a txt file*/
@@ -396,7 +396,8 @@ module GTE {
             if (this.treeController.labelInput.active) {
                 // If we are looking at moves
                 if (this.treeController.labelInput.currentlySelected instanceof MoveView) {
-                    this.treeController.tree.changeMoveLabel((<MoveView>this.treeController.labelInput.currentlySelected).move, this.treeController.labelInput.inputField.val());
+                    let moveV = (<MoveView>this.treeController.labelInput.currentlySelected);
+                    this.treeController.tree.changeMoveLabel(moveV.move, this.treeController.labelInput.inputField.val());
                     this.treeController.treeView.moves.forEach(m => {
                         m.updateLabel(this.treeController.treeViewProperties.fractionOn);
                     });
@@ -404,15 +405,21 @@ module GTE {
                 // If we are currently looking at nodes
                 else if (this.treeController.labelInput.currentlySelected instanceof NodeView) {
 
-                    if ((<NodeView>this.treeController.labelInput.currentlySelected).ownerLabel.alpha === 1) {
-                        (<NodeView>this.treeController.labelInput.currentlySelected).node.player.label = this.treeController.labelInput.inputField.val();
-                        this.treeController.treeView.nodes.forEach((n: NodeView) => {
-                            //TODO: Fix bug here!
-                            n.resetLabelText(this.treeController.treeViewProperties.zeroSumOn);
-                        });
+                    let nodeV = (<NodeView>this.treeController.labelInput.currentlySelected);
+                    if (nodeV.ownerLabel.alpha === 1) {
+                        nodeV.node.player.label = this.treeController.labelInput.inputField.val();
+                        // If the node is in an ISET, reset all nodes in the ISET
+                        if(nodeV.node.iSet){
+                            nodeV.node.iSet.nodes.forEach(n=>{
+                               this.treeController.treeView.findNodeView(n).resetLabelText(this.treeController.treeViewProperties.zeroSumOn)
+                            });
+                        }
+                        else{
+                            nodeV.resetLabelText(this.treeController.treeViewProperties.zeroSumOn);
+                        }
                     }
                     else {
-                        (<NodeView>this.treeController.labelInput.currentlySelected).node.payoffs.loadFromString(this.treeController.labelInput.inputField.val());
+                        nodeV.node.payoffs.loadFromString(this.treeController.labelInput.inputField.val());
                         this.treeController.treeView.nodes.forEach((n: NodeView) => {
                             n.resetLabelText(this.treeController.treeViewProperties.zeroSumOn);
                         });

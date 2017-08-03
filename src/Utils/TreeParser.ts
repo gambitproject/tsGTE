@@ -65,7 +65,6 @@ module GTE {
                     label: null,
                     nodeIndexes: []
                 };
-                iSet.label = is.label;
                 is.nodes.forEach((n) => {
                     iSet.nodeIndexes.push(tree.nodes.indexOf(n));
                 });
@@ -105,7 +104,6 @@ module GTE {
 
             strippedTree.iSets.forEach(is => {
                 let iSet = new ISet();
-                iSet.label = is.label;
                 is.nodeIndexes.forEach(i => {
                     iSet.nodes.push(clonedTree.nodes[i]);
                 });

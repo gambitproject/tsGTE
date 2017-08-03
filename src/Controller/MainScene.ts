@@ -73,9 +73,10 @@ module GTE {
             //         }
             //     });
             // }
-            // if(this.treeController.treeView.moves){
-            //     this.treeController.treeView.moves.forEach(m=>{
-            //        this.game.debug.spriteBounds(m.label,"#00ff00",false) ;
+            // if(this.treeController.treeView.nodes){
+            //     this.treeController.treeView.nodes.forEach(n=>{
+            //        this.game.debug.spriteBounds(n.payoffsLabel,"#00ff00",false);
+            //        this.game.debug.spriteBounds(n.ownerLabel,"#ff0000",false);
             //     });
             // }
         }

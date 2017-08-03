@@ -24,6 +24,7 @@ module GTE {
         zeroSumButton: JQuery;
         fractionDecimalButton: JQuery;
 
+        strategicFormButton:JQuery;
 
         constructor(userActionController: UserActionController) {
             this.userActionController = userActionController;
@@ -43,6 +44,7 @@ module GTE {
                 this.randomPayoffsButton = $("#random-payoffs-wrapper");
                 this.zeroSumButton = $("#zero-sum-wrapper");
                 this.fractionDecimalButton = $("#fraction-decimal-wrapper");
+                this.strategicFormButton = $("#strat-form-wrapper");
                 this.attachEvents();
             }, 300);
 
@@ -135,6 +137,10 @@ module GTE {
                     this.fractionDecimalButton.find("img").attr("src", "src/Assets/Images/TopMenu/fraction.png")
                 }
                 this.userActionController.toggleFractionDecimal();
+            });
+
+            this.strategicFormButton.on("click",()=>{
+               this.userActionController.createStrategicForm();
             });
 
         }
