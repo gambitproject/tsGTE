@@ -95,7 +95,6 @@ module GTE {
                 node.depth = n.depth;
                 node.payoffs.outcomes = n.payoffs.outcomes.slice(0);
                 clonedTree.nodes.push(node);
-
             });
 
             strippedTree.nodePlayerPair.forEach(pair=>{
@@ -106,6 +105,7 @@ module GTE {
                 let iSet = new ISet();
                 is.nodeIndexes.forEach(i => {
                     iSet.nodes.push(clonedTree.nodes[i]);
+                    clonedTree.nodes[i].iSet=iSet;
                 });
                 iSet.player = iSet.nodes[0].player;
                 clonedTree.iSets.push(iSet);

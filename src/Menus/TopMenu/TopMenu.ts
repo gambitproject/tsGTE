@@ -25,6 +25,17 @@ module GTE {
         fractionDecimalButton: JQuery;
 
         strategicFormButton:JQuery;
+        infoButton: JQuery;
+        infoContainer: JQuery;
+        closeInfoButton: JQuery;
+        overlay: JQuery;
+        settingsButton: JQuery;
+        settingsWindow: JQuery;
+        rangeTree: JQuery;
+        rangeLevel: JQuery;
+
+        inputTree: JQuery;
+        inputLevel: JQuery;
 
         constructor(userActionController: UserActionController) {
             this.userActionController = userActionController;
@@ -44,7 +55,19 @@ module GTE {
                 this.randomPayoffsButton = $("#random-payoffs-wrapper");
                 this.zeroSumButton = $("#zero-sum-wrapper");
                 this.fractionDecimalButton = $("#fraction-decimal-wrapper");
-                this.strategicFormButton = $("#strat-form-wrapper");
+                this.strategicFormButton = $("#strat-form-button");
+                this.infoButton = $("#info-button-wrapper");
+                this.infoContainer = $(".info-main-container");
+                this.closeInfoButton = $(".close-info-img");
+                this.overlay = $("#label-overlay");
+                this.settingsButton = $("#settings-button-wrapper");
+                this.settingsWindow = $(".settings-menu-container");
+                this.rangeTree = $('.input-range-tree');
+                this.inputTree = $('.input-field-tree');
+                this.rangeLevel = $('.input-range-level');
+                this.inputLevel = $('.input-field-level');
+
+
                 this.attachEvents();
             }, 300);
 
@@ -141,6 +164,47 @@ module GTE {
 
             this.strategicFormButton.on("click",()=>{
                this.userActionController.createStrategicForm();
+            });
+
+            this.infoButton.on("click", ()=>{
+                    this.infoContainer.addClass("show-container");
+                    this.overlay.addClass("show-overlay");
+
+            });
+
+            this.closeInfoButton.on("click", ()=>{
+                this.infoContainer.removeClass("show-container");
+                this.overlay.removeClass("show-overlay");
+            });
+
+            this.overlay.on("click", ()=>{
+                this.closeInfoButton.click();
+            });
+
+            this.settingsButton.on("click", ()=>{
+               if(this.settingsWindow.hasClass("slide-in")){
+                   this.settingsWindow.removeClass("slide-in");
+               }
+               else{
+                   this.settingsWindow.addClass("slide-in");
+               }
+            });
+
+            this.inputTree.val(this.rangeTree.attr("value"));
+            this.inputLevel.val(this.rangeLevel.attr("value"));
+
+            this.rangeTree.on('input', ()=>{
+                this.inputTree.val(this.rangeTree.val());
+            });
+            this.rangeLevel.on('input', ()=>{
+                this.inputLevel.val(this.rangeLevel.val());
+            });
+
+            this.inputTree.on('input', ()=> {
+                this.rangeTree.val(this.inputTree.val())
+            });
+            this.inputLevel.on('input', ()=> {
+                this.rangeLevel.val(this.inputLevel.val())
             });
 
         }

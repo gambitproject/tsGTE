@@ -409,12 +409,12 @@ module GTE {
                     if (nodeV.ownerLabel.alpha === 1) {
                         nodeV.node.player.label = this.treeController.labelInput.inputField.val();
                         // If the node is in an ISET, reset all nodes in the ISET
-                        if(nodeV.node.iSet){
-                            nodeV.node.iSet.nodes.forEach(n=>{
-                               this.treeController.treeView.findNodeView(n).resetLabelText(this.treeController.treeViewProperties.zeroSumOn)
+                        if (nodeV.node.iSet) {
+                            nodeV.node.iSet.nodes.forEach(n => {
+                                this.treeController.treeView.findNodeView(n).resetLabelText(this.treeController.treeViewProperties.zeroSumOn)
                             });
                         }
-                        else{
+                        else {
                             nodeV.resetLabelText(this.treeController.treeViewProperties.zeroSumOn);
                         }
                     }
@@ -470,6 +470,19 @@ module GTE {
                 }
             }
             return current;
+        }
+
+        /**Moves a node manually and does not move the children*/
+        moveNodeManually(directionX: number, directionY: number, distance: number) {
+            this.treeController.selectedNodes.forEach(node => {
+                node.position.add(directionX * distance, directionY * distance);
+                node.resetNodeDrawing();
+            });
+            this.treeController.treeView.moves.forEach(m => {
+                m.updateMovePosition();
+                m.updateLabel(this.treeController.treeViewProperties.fractionOn);
+            });
+            this.treeController.treeView.drawISets();
         }
 
         //TEST METHOD!

@@ -65,7 +65,7 @@ module GTE {
             this.drawISets();
             this.drawLabels();
 
-            this.treeTweenManager.startTweens(this.nodes, this.moves, this.iSets);
+            this.treeTweenManager.startTweens(this.nodes, this.moves, this.iSets, this.properties.fractionOn);
             // NOTE: All other moves will be updated from the tween manager.
             if (this.moves.length > 0) {
                 this.moves[this.moves.length - 1].updateMovePosition();
@@ -111,7 +111,7 @@ module GTE {
             });
         }
 
-        private drawISets() {
+        drawISets() {
             for (let i = 0; i < this.iSets.length; i++) {
                 // this.iSets[i].destroy();
                 this.removeISetView(this.iSets[i]);

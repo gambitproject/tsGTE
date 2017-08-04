@@ -6,7 +6,7 @@ module GTE {
     /** A class for controlling the input of the application. If there is a confusion over the functionality of each button
      * you can check the attachHandlersToKeysMethod*/
 
-    //TODO: Fix bug with ctrl+s
+        //TODO: Fix bug with ctrl+s
     export class KeyboardController {
         game: Phaser.Game;
         // There is a reference to the User , so that whenever a key is pressed we can call the corresponding method
@@ -23,10 +23,14 @@ module GTE {
         iKey: Phaser.Key;
         uKey: Phaser.Key;
         cKey: Phaser.Key;
-        sKey:Phaser.Key;
+        sKey: Phaser.Key;
         tabKey: Phaser.Key;
         enterKey: Phaser.Key;
         escapeKey: Phaser.Key;
+        upKey: Phaser.Key;
+        downKey: Phaser.Key;
+        leftKey: Phaser.Key;
+        rightKey: Phaser.Key;
 
         constructor(game: Phaser.Game, userActionController: UserActionController) {
             this.game = game;
@@ -55,6 +59,10 @@ module GTE {
             this.tabKey = this.game.input.keyboard.addKey(Phaser.Keyboard.TAB);
             this.enterKey = this.game.input.keyboard.addKey(Phaser.Keyboard.ENTER);
             this.escapeKey = this.game.input.keyboard.addKey(Phaser.Keyboard.ESC);
+            this.upKey = this.game.input.keyboard.addKey(Phaser.Keyboard.UP);
+            this.downKey = this.game.input.keyboard.addKey(Phaser.Keyboard.DOWN);
+            this.leftKey = this.game.input.keyboard.addKey(Phaser.Keyboard.LEFT);
+            this.rightKey = this.game.input.keyboard.addKey(Phaser.Keyboard.RIGHT);
 
             let keys = [Phaser.Keyboard.ONE, Phaser.Keyboard.TWO, Phaser.Keyboard.THREE, Phaser.Keyboard.FOUR];
 
@@ -79,6 +87,11 @@ module GTE {
             this.game.input.keyboard.removeKeyCapture(Phaser.Keyboard.SPACEBAR);
             this.game.input.keyboard.removeKeyCapture(Phaser.Keyboard.CONTROL);
             this.game.input.keyboard.removeKeyCapture(Phaser.Keyboard.DELETE);
+            this.game.input.keyboard.removeKeyCapture(Phaser.Keyboard.UP);
+            this.game.input.keyboard.removeKeyCapture(Phaser.Keyboard.DOWN);
+            this.game.input.keyboard.removeKeyCapture(Phaser.Keyboard.LEFT);
+            this.game.input.keyboard.removeKeyCapture(Phaser.Keyboard.RIGHT);
+
 
         }
 
@@ -143,6 +156,7 @@ module GTE {
                     if (this.controlKey.isDown && this.shiftKey.isDown) {
                         this.userActionController.undoRedoHandler(false);
                     }
+                    console.log(this.userActionController.treeController.tree.nodes[1]);
                 }
             });
 
@@ -176,31 +190,102 @@ module GTE {
             });
 
             // Enter value in label
-            this.enterKey.onDown.add(()=>{
+            this.enterKey.onDown.add(() => {
                 if (this.userActionController.treeController.labelInput.active) {
                     this.userActionController.changeLabel();
                 }
             });
 
             // Exit label
-            this.escapeKey.onDown.add(()=>{
+            this.escapeKey.onDown.add(() => {
                 if (this.userActionController.treeController.labelInput.active) {
                     this.userActionController.hideInputLabel();
                 }
             });
 
             // Save to File
-            this.sKey.onDown.add(()=>{
-                if(this.controlKey.isDown) {
+            this.sKey.onDown.add(() => {
+                if (this.controlKey.isDown) {
                     this.userActionController.saveTreeToFile();
                 }
             });
 
-            this.testButton.onDown.add(()=>{
+            this.upKey.onDown.add(() => {
+                if (!this.userActionController.treeController.labelInput.active) {
+                    let verticalDistance = this.userActionController.treeController.treeViewProperties.levelHeight * NODES_VERTICAL_STEP_POSIONING;
+
+                    if(!this.controlKey.isDown){
+                        this.userActionController.moveNodeManually(0, -1, verticalDistance);
+                    }
+                }
+            });
+
+            this.downKey.onDown.add(() => {
+                if (!this.userActionController.treeController.labelInput.active) {
+                    let verticalDistance = this.userActionController.treeController.treeViewProperties.levelHeight * NODES_VERTICAL_STEP_POSIONING;
+
+                    if(!this.controlKey.isDown){
+                        this.userActionController.moveNodeManually(0, 1, verticalDistance);
+                    }
+                }
+            });
+
+            this.leftKey.onDown.add(() => {
+                if (!this.userActionController.treeController.labelInput.active) {
+                    let horizontalDistance = this.userActionController.treeController.treeViewProperties.treeWidth / this.userActionController.treeController.tree.getLeaves().length * NODES_HORIZONTAL_STEP_POSITIONING;
+
+                    if(!this.controlKey.isDown){
+                        this.userActionController.moveNodeManually(-1, 0, horizontalDistance);
+                    }
+                }
+            });
+            this.rightKey.onDown.add(() => {
+                if (!this.userActionController.treeController.labelInput.active) {
+                    let horizontalDistance = this.userActionController.treeController.treeViewProperties.treeWidth / this.userActionController.treeController.tree.getLeaves().length * NODES_HORIZONTAL_STEP_POSITIONING;
+
+                    if(!this.controlKey.isDown){
+                        this.userActionController.moveNodeManually(1, 0, horizontalDistance);
+                    }
+                }
+            });
+
+            this.upKey.onHoldCallback = function(){
+                if (this.controlKey.isDown && !this.userActionController.treeController.labelInput.active) {
+                    this.userActionController.moveNodeManually(0, -1, 1);
+                }
+            };
+
+            this.downKey.onHoldCallback = function(){
+                if(this.controlKey.isDown && !this.userActionController.treeController.labelInput.active){
+                    this.userActionController.moveNodeManually(0, 1, 1);
+                }
+            };
+
+            this.leftKey.onHoldCallback = function(){
+                if (this.controlKey.isDown && !this.userActionController.treeController.labelInput.active) {
+                    this.userActionController.moveNodeManually(-1, 0, 1);
+                }
+            };
+
+            this.rightKey.onHoldCallback = function(){
+                if(this.controlKey.isDown && !this.userActionController.treeController.labelInput.active){
+                    this.userActionController.moveNodeManually(1, 0, 1);
+                }
+            };
+
+            this.upKey.onHoldContext = this;
+            this.downKey.onHoldContext = this;
+            this.leftKey.onHoldContext = this;
+            this.rightKey.onHoldContext = this;
+
+
+            this.testButton.onDown.add(() => {
                 // if (!this.userActionController.treeController.labelInput.active) {
                 //     this.userActionController.createStrategicForm();
                 // }
             });
         }
+
+
     }
 }

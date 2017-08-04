@@ -12,7 +12,7 @@ module GTE {
             this.game = game;
         }
 
-        startTweens(nodes: Array<NodeView>, moves: Array<MoveView>, iSets: Array<ISetView>) {
+        startTweens(nodes: Array<NodeView>, moves: Array<MoveView>, iSets: Array<ISetView>, fractionOn:boolean) {
             let animationTimer = TREE_TWEEN_DURATION;
 
             if(!this.oldCoordinates[1].x){
@@ -42,18 +42,18 @@ module GTE {
                     this.game.add.tween(iSet).to({alpha:0.15}, animationTimer, Phaser.Easing.Cubic.Out, true);
                 });
             }
-            // this.game.time.events.add(animationTimer+1, () => {
-            //     nodes.forEach(n => {
-            //         This if is a bug fixer if you click undo too quickly.
-                    // if(n && n.node) {
-                    //     n.updateLabelPosition();
-                    // }
-                // });
-                // moves.forEach(m => {
-                //     m.updateMovePosition();
-                //     m.updateLabel(true);
-                // });
-            // });
+            this.game.time.events.add(animationTimer+1, () => {
+                nodes.forEach(n => {
+                    // This if is a bug fixer if you click undo too quickly.
+                    if(n && n.node) {
+                        n.resetNodeDrawing();
+                    }
+                });
+                moves.forEach(m => {
+                    m.updateMovePosition();
+                    m.updateLabel(true);
+                });
+            });
         }
     }
 }

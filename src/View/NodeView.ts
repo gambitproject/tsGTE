@@ -178,7 +178,7 @@ module GTE {
 
         /** A method which sets the label text as the player label*/
         resetLabelText(zeroSumOn:boolean) {
-            if (this.node.player) {
+            if (this.node.player && !this.node.iSet) {
                 this.ownerLabel.alpha = 1;
                 this.ownerLabel.setText(this.node.player.getLabel(), true);
                 let colorRGB = Phaser.Color.getRGB(this.node.player.color);
@@ -188,6 +188,7 @@ module GTE {
             else {
                 this.ownerLabel.alpha = 0;
             }
+
             if(this.node.player && this.node.type === NodeType.CHANCE){
                 this.ownerLabel.scale.set(0.5);
             }
