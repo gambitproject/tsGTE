@@ -19,6 +19,11 @@ module GTE {
         p1Moves: Array<Phaser.Text>;
         p2Moves: Array<Phaser.Text>;
 
+        background: Phaser.Sprite;
+        zoomInIcon: Phaser.Sprite;
+        zoomOutIcon: Phaser.Sprite;
+        closeIcon: Phaser.Sprite;
+
         constructor(game: Phaser.Game, strategicForm: StrategicForm) {
             this.game = game;
             this.strategicForm = strategicForm;
@@ -41,6 +46,7 @@ module GTE {
             this.drawDiagonalLine(cellWidth, cellStroke);
             this.createPlayerTexts(cellWidth);
             this.createStrategiesTexts(cellWidth, cellStroke);
+            this.createControlSprites();
         }
 
         generateGrid(cellWidth: number, cellStroke: number) {
@@ -109,20 +115,54 @@ module GTE {
             if (shouldRotate) {
                 this.p2Moves.forEach((m: Phaser.Text) => {
                     m.rotation = -maxAngle;
-                    m.y=-m.width*0.5*Math.sin(maxAngle) - m.height*0.3;
+                    m.y = -m.width * 0.5 * Math.sin(maxAngle) - m.height * 0.3;
                 });
             }
-            else{
-                this.p2Moves.forEach((m:Phaser.Text)=>{
-                   m.y=-m.height*0.5;
+            else {
+                this.p2Moves.forEach((m: Phaser.Text) => {
+                    m.y = -m.height * 0.5;
                 });
             }
         }
 
-        destroy(){
+        createControlSprites() {
+            this.background = this.game.add.sprite(this.group.x, this.group.y, this.game.cache.getBitmapData("line"));
+            this.background.width = this.cols.length*this.cells[0].width*this.group.scale.x;
+            this.background.height = this.rows.length*this.cells[0].height*this.group.scale.x;
+            this.background.inputEnabled = true;
+            this.background.input.draggable = true;
+            this.background.events.onDragUpdate.add(()=>{
+               this.group.position = this.background.position;
+            });
+
+            this.zoomInIcon = this.game.add.sprite((this.cols.length-0.5)*this.cells[0].width*0.5,(this.rows.length+0.2)*this.cells[0].height,"zoomIn",null, this.group );
+            this.zoomInIcon.scale.set(0.2);
+            this.zoomInIcon.anchor.set(0.5,0.5);
+            this.zoomInIcon.inputEnabled = true;
+            this.zoomInIcon.events.onInputDown.add(()=>{
+                this.group.scale.set(this.group.scale.x*1.25);
+            });
+            this.zoomOutIcon = this.game.add.sprite((this.cols.length+0.5)*this.cells[0].width*0.5,(this.rows.length+0.2)*this.cells[0].height,"zoomOut",null, this.group);
+            this.zoomOutIcon.scale.set(0.2);
+            this.zoomOutIcon.anchor.set(0.5,0.5);
+            this.zoomOutIcon.inputEnabled = true;
+            this.zoomOutIcon.events.onInputDown.add(()=>{
+                this.group.scale.set(this.group.scale.x*0.8);
+            });
+            this.closeIcon = this.game.add.sprite((this.cols.length)*this.cells[0].width,(this.rows.length+0.2)*this.cells[0].height,"close",null, this.group);
+            this.closeIcon.scale.set(0.2);
+            this.closeIcon.anchor.set(1,0.5);
+            this.closeIcon.inputEnabled = true;
+
+            this.game.world.bringToTop(this.group);
+
+        }
+
+        destroy() {
             this.rows = null;
             this.cols = null;
-            this.group.destroy(true,false);
+            this.group.destroy(true, false);
+            this.background.destroy();
             this.p1Moves = null;
             this.p2Moves = null;
         }

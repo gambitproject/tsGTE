@@ -314,7 +314,9 @@ module GTE {
                 }
             });
 
-            this.tree.addISet(player, iSetNodes);
+            let iSet = this.tree.addISet(player, iSetNodes);
+            let iSetV = this.treeView.addISetView(iSet);
+            this.attachHandlersToISet(iSetV);
             this.resetTree();
         }
 
@@ -394,10 +396,6 @@ module GTE {
 
             if (this.tree.nodes.length > 1) {
                 this.treeView.drawTree();
-
-                this.treeView.iSets.forEach(iSetV => {
-                    this.attachHandlersToISet(iSetV);
-                });
             }
         }
 

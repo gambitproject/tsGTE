@@ -6,6 +6,7 @@
 ///<reference path="../Model/Node.ts"/>
 ///<reference path="ISetView.ts"/>
 ///<reference path="../Utils/TreeTweenManager.ts"/>
+///<reference path="../Model/ISet.ts"/>
 
 module GTE {
     /** A class for the graphical representation of the tree. The main algorithm for drawing and repositioning
@@ -41,6 +42,9 @@ module GTE {
                     let parent = this.findNodeView(n.parent);
                     this.moves.push(new MoveView(this.game, parent, nodeView));
                 }
+            });
+            this.tree.iSets.forEach(iSet=>{
+               this.addISetView(iSet);
             });
             this.drawTree();
             // NOTE: Moves positions are only updated on initial drawing
@@ -112,23 +116,8 @@ module GTE {
         }
 
         drawISets() {
-            for (let i = 0; i < this.iSets.length; i++) {
-                // this.iSets[i].destroy();
-                this.removeISetView(this.iSets[i]);
-                i--;
-            }
-            this.tree.iSets.forEach((iSet) => {
-                let iSetNodes = [];
-                let maxDepth = 0;
-                iSet.nodes.forEach(node => {
-                    if (node.depth > maxDepth) {
-                        maxDepth = node.depth;
-                    }
-                    iSetNodes.push(this.findNodeView(node));
-                });
-
-                this.iSets.push(new ISetView(this.game, iSet, iSetNodes));
-                //DFS branch children and increase by maxDepth - parentDepth
+            this.iSets.forEach(is=>{
+                is.resetISet();
             });
         }
 
@@ -184,6 +173,17 @@ module GTE {
             }
         }
 
+        /**A method for adding an iSetView*/
+        addISetView(iSet:ISet){
+            let nodes = [];
+            iSet.nodes.forEach(n=>{
+               nodes.push(this.findNodeView(n));
+            });
+            let iSetV = new ISetView(this.game, iSet,nodes);
+            this.iSets.push(iSetV);
+            return iSetV
+        }
+
         /**A helper method for finding the iSetView, given iSet*/
         findISetView(iSet: ISet) {
             for (let i = 0; i < this.iSets.length; i++) {
@@ -198,7 +198,23 @@ module GTE {
         removeISetView(iSetView: ISetView) {
             if (this.iSets.indexOf(iSetView) !== -1) {
                 this.iSets.splice(this.iSets.indexOf(iSetView), 1);
+                iSetView.nodes.forEach(n=>{
+                    if(n.node && n.node.player){
+                        n.ownerLabel.alpha = 1;
+                    }
+                });
                 iSetView.destroy();
+            }
+        }
+
+        /**A method which removes broken iSets*/
+        cleanISets(){
+            for (let i = 0; i < this.iSets.length; i++) {
+                let iSetV = this.iSets[i];
+                if(!iSetV.iSet || !iSetV.iSet.nodes){
+                    this.removeISetView(iSetV);
+                    i--;
+                }
             }
         }
 
@@ -217,7 +233,6 @@ module GTE {
                         n.resetLabelText(this.properties.zeroSumOn);
                     }
                 });
-                console.log(this.moves[0].label);
             }
             else {
                 this.tree.removeLabels();

@@ -139,17 +139,21 @@ module GTE {
             }
             if (this.iSet) {
                 this.iSet.removeNode(this);
+                this.iSet=null;
             }
             if (this.payoffs) {
                 this.payoffs.destroy();
+                this.payoffs = null;
             }
             if (this.children.length > 0) {
                 this.children.forEach((c) => c.destroy());
+                this.children = null;
             }
             if (this.childrenMoves.length > 0) {
                 this.childrenMoves.forEach((m) => {
                     m.destroy()
                 });
+                this.childrenMoves = null;
             }
         }
     }

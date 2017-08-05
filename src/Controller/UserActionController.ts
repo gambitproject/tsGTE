@@ -151,12 +151,13 @@ module GTE {
                     this.treeController.addNodeHandler(n);
                 });
             }
+            this.treeController.tree.cleanISets();
+            this.treeController.treeView.cleanISets();
             this.undoRedoController.saveNewTree();
         }
 
         /** A method for deleting nodes (keyboard DELETE).*/
         deleteNodeHandler(nodeV?: NodeView) {
-
             if (nodeV) {
                 this.treeController.deleteNodeHandler(nodeV.node);
             }
@@ -177,6 +178,8 @@ module GTE {
             deletedNodes.forEach(n => {
                 this.treeController.selectedNodes.splice(this.treeController.selectedNodes.indexOf(n), 1);
             });
+            this.treeController.tree.cleanISets();
+            this.treeController.treeView.cleanISets();
             this.undoRedoController.saveNewTree();
         }
 
@@ -485,7 +488,6 @@ module GTE {
             this.treeController.treeView.drawISets();
         }
 
-        //TEST METHOD!
         createStrategicForm() {
             if (this.strategicForm) {
                 this.strategicForm.destroy();
@@ -496,6 +498,10 @@ module GTE {
             try {
                 this.strategicForm = new StrategicForm(this.treeController.tree);
                 this.strategicFormView = new StrategicFormView(this.game, this.strategicForm);
+                this.strategicFormView.closeIcon.events.onInputDown.add(()=>{
+                   this.strategicForm.destroy();
+                   this.strategicFormView.destroy();
+                });
             }
             catch (err) {
                 this.treeController.errorPopUp.show(err.message);

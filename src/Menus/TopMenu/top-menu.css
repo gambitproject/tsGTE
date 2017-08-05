@@ -289,19 +289,25 @@
     width: 10%;
 }
 #esc .section-hotkey{
-    width: 4%
+    width: 4%;
 }
-#ctrl-n .section-hotkey{
-    width: 7%
+#alt-n .section-hotkey{
+    width: 7%;
 }
-#ctrl-i .section-hotkey{
-    width: 7%
+#alt-s .section-hotkey{
+    width: 7%;
+}
+#alt-i .section-hotkey{
+    width: 7%;
 }
 #ctrl-z .section-hotkey{
-    width: 7%
+    width: 7%;
 }
 #ctrl-shift-z .section-hotkey{
-    width: 13%
+    width: 13%;
+}
+#arrow-keys .section-hotkey{
+    width: 7%;
 }
 
 

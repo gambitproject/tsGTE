@@ -3,36 +3,25 @@
 module GTE {
     export class LabelInput {
 
-        game:Phaser.Game;
-        active:boolean;
-        shouldRecalculateOrder:boolean;
-        currentlySelected:Phaser.Sprite;
-        labelOverlay:JQuery;
-        inputField:JQuery;
-        constructor(game:Phaser.Game) {
+        game: Phaser.Game;
+        active: boolean;
+        shouldRecalculateOrder: boolean;
+        currentlySelected: Phaser.Sprite;
+        labelOverlay: JQuery;
+        inputField: JQuery;
+
+        constructor(game: Phaser.Game) {
             this.game = game;
-            this.appendElements();
             this.shouldRecalculateOrder = true;
             this.active = false;
-            setTimeout(()=>{
-                this.labelOverlay = $('#label-overlay');
-                this.inputField = $("#input-label");
-                this.inputHandler();
-            },500);
+            this.labelOverlay = $('#label-overlay');
+            this.inputField = $("#input-label");
+            this.inputHandler();
         }
 
-        appendElements() {
-            $.get("src/Menus/LabelInput/label-input.html", function (data) {
-                $('body').append(data);
-            });
-
-            let css = `<link rel="stylesheet" href="src/Menus/LabelInput/label-input.css" type="text/css"/>`;
-            $('head').append(css);
-        }
-
-        show(label:Phaser.Text, sprite:Phaser.Sprite) {
+        show(label: Phaser.Text, sprite: Phaser.Sprite) {
             this.currentlySelected = sprite;
-            this.inputField.val(label.text.replace(/\n/g," "));
+            this.inputField.val(label.text.replace(/\n/g, " "));
             // this.inputField.click();
             if (!this.active) {
                 this.labelOverlay.addClass("show-overlay");
@@ -47,9 +36,9 @@ module GTE {
                 "left": label.x,
                 "top": label.y,
             });
-            setTimeout(()=>{
+            setTimeout(() => {
                 this.inputField.select();
-            },100);
+            }, 100);
 
             this.active = true;
         }

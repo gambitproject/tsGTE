@@ -19,7 +19,7 @@ module GTE {
     export const NODE_SELECTED_COLOR = 0x004991;
     export const PLAYER_COLORS = [0xff0000, 0x0000ff,0x00ff00,0xff00ff];
     export const NODES_MANUAL_POS_ERROR_TEXT = "Only a single selected node can be moved!";
-    export const NODES_VERTICAL_STEP_POSIONING = 0.25;
+    export const NODES_VERTICAL_STEP_POSITIONING = 0.25;
     export const NODES_HORIZONTAL_STEP_POSITIONING = 0.25;
 
     //Selection Rectangle Constants
@@ -58,6 +58,7 @@ module GTE {
     export const MOVES_OFFSET = 0.1;
     export const MOVES_TEXT_SIZE = 0.25;
     export const STRATEGIC_PLAYERS_ERROR_TEXT = "Strategic form only available for 2 players!";
+    export const STRATEGIC_NOT_LABELED_ERROR_TEXT = "Not all nodes are owned or chance!";
 
 
 

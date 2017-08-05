@@ -17,8 +17,10 @@ module GTE {
             this.game = game;
             this.iSet = iSet;
             this.nodes = nodes;
+
+            this.bmd = this.game.make.bitmapData(this.game.width, this.game.height);
             this.sortNodesLeftToRight();
-            this.createSimpleISet();
+            this.createISetBMD();
             this.createLabel();
 
             this.inputEnabled = true;
@@ -34,6 +36,23 @@ module GTE {
             }
         }
 
+        resetISet(){
+            this.sortNodesLeftToRight();
+            this.createISetBMD();
+            let rightNodePosition = this.nodes[Math.floor(this.nodes.length / 2)].position;
+            let leftNodePosition = this.nodes[Math.floor(this.nodes.length / 2) - 1].position;
+            this.label.position.set((rightNodePosition.x + leftNodePosition.x) * 0.5, (rightNodePosition.y + leftNodePosition.y) * 0.5);
+            if(this.nodes[0].node.player){
+                this.label.setText(this.nodes[0].node.player.getLabel());
+            }
+            if(!this.iSet.player){
+                this.label.alpha = 0;
+            }
+            else{
+                this.label.fill = Phaser.Color.getWebRGB(this.iSet.player.color);
+            }
+        }
+
         /**Sorts the nodes left to right before drawing*/
         private sortNodesLeftToRight() {
             this.nodes.sort((n1, n2) => {
@@ -42,8 +61,8 @@ module GTE {
         }
 
         /**Create e very thick line that goes through all the points*/
-        private createSimpleISet() {
-            this.bmd = this.game.make.bitmapData(this.game.width, this.game.height);
+        private createISetBMD() {
+            this.bmd.clear();
             this.bmd.ctx.lineWidth = this.game.height * ISET_LINE_WIDTH;
             this.bmd.ctx.lineCap = "round";
             this.bmd.ctx.lineJoin = "round";
@@ -85,7 +104,6 @@ module GTE {
             else{
                 this.label.fill = Phaser.Color.getWebRGB(this.iSet.player.color);
             }
-            this.label.bringToTop();
         }
 
         destroy() {
@@ -94,6 +112,10 @@ module GTE {
             this.nodes = [];
             this.nodes = null;
             this.label.destroy();
+            if(this.iSet && this.iSet.nodes) {
+                this.iSet.destroy();
+                this.iSet = null;
+            }
             super.destroy(true);
         }
     }

@@ -2,6 +2,7 @@
 ///<reference path="../Model/Node.ts"/>
 ///<reference path="TreeController.ts"/>
 ///<reference path="UserActionController.ts"/>
+///<reference path="../Utils/Constants.ts"/>
 module GTE {
     /** A class for controlling the input of the application. If there is a confusion over the functionality of each button
      * you can check the attachHandlersToKeysMethod*/
@@ -13,6 +14,7 @@ module GTE {
         userActionController: UserActionController;
         shiftKey: Phaser.Key;
         controlKey: Phaser.Key;
+        altKey: Phaser.Key;
         nKey: Phaser.Key;
         playersKeys: Array<Phaser.Key>;
         zeroKey: Phaser.Key;
@@ -47,6 +49,7 @@ module GTE {
         addKeys() {
             this.shiftKey = this.game.input.keyboard.addKey(Phaser.Keyboard.SHIFT);
             this.controlKey = this.game.input.keyboard.addKey(Phaser.Keyboard.CONTROL);
+            this.altKey = this.game.input.keyboard.addKey(Phaser.Keyboard.ALT);
             this.nKey = this.game.input.keyboard.addKey(Phaser.Keyboard.N);
             this.zeroKey = this.game.input.keyboard.addKey(Phaser.Keyboard.ZERO);
             this.iKey = this.game.input.keyboard.addKey(Phaser.Keyboard.I);
@@ -86,6 +89,8 @@ module GTE {
             this.game.input.keyboard.removeKeyCapture(Phaser.Keyboard.FOUR);
             this.game.input.keyboard.removeKeyCapture(Phaser.Keyboard.SPACEBAR);
             this.game.input.keyboard.removeKeyCapture(Phaser.Keyboard.CONTROL);
+            this.game.input.keyboard.removeKeyCapture(Phaser.Keyboard.SHIFT);
+            this.game.input.keyboard.removeKeyCapture(Phaser.Keyboard.ALT);
             this.game.input.keyboard.removeKeyCapture(Phaser.Keyboard.DELETE);
             this.game.input.keyboard.removeKeyCapture(Phaser.Keyboard.UP);
             this.game.input.keyboard.removeKeyCapture(Phaser.Keyboard.DOWN);
@@ -100,10 +105,10 @@ module GTE {
             // Children and new file
             this.nKey.onDown.add(() => {
                 if (!this.userActionController.treeController.labelInput.active) {
-                    if (!this.controlKey.isDown) {
+                    if (!this.controlKey.isDown && !this.altKey.isDown) {
                         this.userActionController.addNodesHandler();
                     }
-                    else {
+                    else if (!this.controlKey.isDown && this.altKey.isDown) {
                         this.userActionController.createNewTree();
                     }
                 }
@@ -138,10 +143,10 @@ module GTE {
             // Create an information set
             this.iKey.onDown.add(() => {
                 if (!this.userActionController.treeController.labelInput.active) {
-                    if (!this.controlKey.isDown) {
+                    if (!this.controlKey.isDown && !this.altKey.isDown) {
                         this.userActionController.createISetHandler();
                     }
-                    else {
+                    else if (!this.controlKey.isDown && this.altKey.isDown) {
                         this.userActionController.saveTreeToImage();
                     }
                 }
@@ -205,16 +210,17 @@ module GTE {
 
             // Save to File
             this.sKey.onDown.add(() => {
-                if (this.controlKey.isDown) {
+                if (!this.controlKey.isDown && this.altKey.isDown) {
                     this.userActionController.saveTreeToFile();
                 }
             });
 
+
             this.upKey.onDown.add(() => {
                 if (!this.userActionController.treeController.labelInput.active) {
-                    let verticalDistance = this.userActionController.treeController.treeViewProperties.levelHeight * NODES_VERTICAL_STEP_POSIONING;
+                    let verticalDistance = this.userActionController.treeController.treeViewProperties.levelHeight * NODES_VERTICAL_STEP_POSITIONING;
 
-                    if(!this.controlKey.isDown){
+                    if (!this.controlKey.isDown) {
                         this.userActionController.moveNodeManually(0, -1, verticalDistance);
                     }
                 }
@@ -222,9 +228,9 @@ module GTE {
 
             this.downKey.onDown.add(() => {
                 if (!this.userActionController.treeController.labelInput.active) {
-                    let verticalDistance = this.userActionController.treeController.treeViewProperties.levelHeight * NODES_VERTICAL_STEP_POSIONING;
+                    let verticalDistance = this.userActionController.treeController.treeViewProperties.levelHeight * NODES_VERTICAL_STEP_POSITIONING;
 
-                    if(!this.controlKey.isDown){
+                    if (!this.controlKey.isDown) {
                         this.userActionController.moveNodeManually(0, 1, verticalDistance);
                     }
                 }
@@ -234,7 +240,7 @@ module GTE {
                 if (!this.userActionController.treeController.labelInput.active) {
                     let horizontalDistance = this.userActionController.treeController.treeViewProperties.treeWidth / this.userActionController.treeController.tree.getLeaves().length * NODES_HORIZONTAL_STEP_POSITIONING;
 
-                    if(!this.controlKey.isDown){
+                    if (!this.controlKey.isDown) {
                         this.userActionController.moveNodeManually(-1, 0, horizontalDistance);
                     }
                 }
@@ -243,32 +249,32 @@ module GTE {
                 if (!this.userActionController.treeController.labelInput.active) {
                     let horizontalDistance = this.userActionController.treeController.treeViewProperties.treeWidth / this.userActionController.treeController.tree.getLeaves().length * NODES_HORIZONTAL_STEP_POSITIONING;
 
-                    if(!this.controlKey.isDown){
+                    if (!this.controlKey.isDown) {
                         this.userActionController.moveNodeManually(1, 0, horizontalDistance);
                     }
                 }
             });
 
-            this.upKey.onHoldCallback = function(){
+            this.upKey.onHoldCallback = function () {
                 if (this.controlKey.isDown && !this.userActionController.treeController.labelInput.active) {
                     this.userActionController.moveNodeManually(0, -1, 1);
                 }
             };
 
-            this.downKey.onHoldCallback = function(){
-                if(this.controlKey.isDown && !this.userActionController.treeController.labelInput.active){
+            this.downKey.onHoldCallback = function () {
+                if (this.controlKey.isDown && !this.userActionController.treeController.labelInput.active) {
                     this.userActionController.moveNodeManually(0, 1, 1);
                 }
             };
 
-            this.leftKey.onHoldCallback = function(){
+            this.leftKey.onHoldCallback = function () {
                 if (this.controlKey.isDown && !this.userActionController.treeController.labelInput.active) {
                     this.userActionController.moveNodeManually(-1, 0, 1);
                 }
             };
 
-            this.rightKey.onHoldCallback = function(){
-                if(this.controlKey.isDown && !this.userActionController.treeController.labelInput.active){
+            this.rightKey.onHoldCallback = function () {
+                if (this.controlKey.isDown && !this.userActionController.treeController.labelInput.active) {
                     this.userActionController.moveNodeManually(1, 0, 1);
                 }
             };
@@ -280,9 +286,6 @@ module GTE {
 
 
             this.testButton.onDown.add(() => {
-                // if (!this.userActionController.treeController.labelInput.active) {
-                //     this.userActionController.createStrategicForm();
-                // }
             });
         }
 
