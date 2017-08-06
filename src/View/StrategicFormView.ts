@@ -136,21 +136,21 @@ module GTE {
             });
 
             this.zoomInIcon = this.game.add.sprite((this.cols.length-0.5)*this.cells[0].width*0.5,(this.rows.length+0.2)*this.cells[0].height,"zoomIn",null, this.group );
-            this.zoomInIcon.scale.set(0.2);
+            this.zoomInIcon.scale.set(0.15);
             this.zoomInIcon.anchor.set(0.5,0.5);
             this.zoomInIcon.inputEnabled = true;
             this.zoomInIcon.events.onInputDown.add(()=>{
                 this.group.scale.set(this.group.scale.x*1.25);
             });
             this.zoomOutIcon = this.game.add.sprite((this.cols.length+0.5)*this.cells[0].width*0.5,(this.rows.length+0.2)*this.cells[0].height,"zoomOut",null, this.group);
-            this.zoomOutIcon.scale.set(0.2);
+            this.zoomOutIcon.scale.set(0.15);
             this.zoomOutIcon.anchor.set(0.5,0.5);
             this.zoomOutIcon.inputEnabled = true;
             this.zoomOutIcon.events.onInputDown.add(()=>{
                 this.group.scale.set(this.group.scale.x*0.8);
             });
             this.closeIcon = this.game.add.sprite((this.cols.length)*this.cells[0].width,(this.rows.length+0.2)*this.cells[0].height,"close",null, this.group);
-            this.closeIcon.scale.set(0.2);
+            this.closeIcon.scale.set(0.15);
             this.closeIcon.anchor.set(1,0.5);
             this.closeIcon.inputEnabled = true;
 
