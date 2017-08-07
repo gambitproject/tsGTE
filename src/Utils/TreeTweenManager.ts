@@ -3,12 +3,15 @@
 ///<reference path="../View/ISetView.ts"/>
 ///<reference path="../View/MoveView.ts"/>
 ///<reference path="Constants.ts"/>
+///<reference path="../View/TreeViewProperties.ts"/>
 module GTE {
     export class TreeTweenManager {
         game: Phaser.Game;
         oldCoordinates: Array<{x, y}>;
+        properties:TreeViewProperties;
 
-        constructor(game: Phaser.Game) {
+        constructor(game: Phaser.Game, properties:TreeViewProperties) {
+            this.properties = properties;
             this.game = game;
         }
 
@@ -51,7 +54,7 @@ module GTE {
                 });
                 moves.forEach(m => {
                     m.updateMovePosition();
-                    m.updateLabel(true);
+                    m.updateLabel(this.properties.fractionOn,this.properties.levelHeight);
                 });
             });
         }

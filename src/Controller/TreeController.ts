@@ -65,7 +65,7 @@ module GTE {
         /**The update method is built-into Phaser and is called 60 times a second.
          * It handles the selection of nodes, while holding the mouse button*/
         update() {
-            if (this.game.input.activePointer.isDown) {
+            if (this.game.input.activePointer.isDown && this.selectionRectangle.active) {
                 this.treeView.nodes.forEach((n: NodeView) => {
                     if (this.selectionRectangle.overlap(n) && this.selectedNodes.indexOf(n) === -1) {
                         // n.setColor(NODE_SELECTED_COLOR);

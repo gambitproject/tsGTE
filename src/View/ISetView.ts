@@ -51,6 +51,9 @@ module GTE {
             else{
                 this.label.fill = Phaser.Color.getWebRGB(this.iSet.player.color);
             }
+            this.nodes.forEach(n=>{
+               n.ownerLabel.alpha = 0;
+            });
         }
 
         /**Sorts the nodes left to right before drawing*/

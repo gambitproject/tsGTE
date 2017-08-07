@@ -161,7 +161,6 @@ module GTE {
                     if (this.controlKey.isDown && this.shiftKey.isDown) {
                         this.userActionController.undoRedoHandler(false);
                     }
-                    console.log(this.userActionController.treeController.tree.nodes[1]);
                 }
             });
 

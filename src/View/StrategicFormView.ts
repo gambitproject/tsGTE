@@ -135,12 +135,21 @@ module GTE {
                this.group.position = this.background.position;
             });
 
+            this.background.events.onInputOver.add(()=>{
+                this.game.canvas.style.cursor = "move";
+            });
+            this.background.events.onInputOut.add(()=>{
+                this.game.canvas.style.cursor = "default";
+            });
+
             this.zoomInIcon = this.game.add.sprite((this.cols.length-0.5)*this.cells[0].width*0.5,(this.rows.length+0.2)*this.cells[0].height,"zoomIn",null, this.group );
             this.zoomInIcon.scale.set(0.15);
             this.zoomInIcon.anchor.set(0.5,0.5);
             this.zoomInIcon.inputEnabled = true;
             this.zoomInIcon.events.onInputDown.add(()=>{
                 this.group.scale.set(this.group.scale.x*1.25);
+                this.background.width = this.cols.length*this.cells[0].width*this.group.scale.x;
+                this.background.height = this.rows.length*this.cells[0].height*this.group.scale.x;
             });
             this.zoomOutIcon = this.game.add.sprite((this.cols.length+0.5)*this.cells[0].width*0.5,(this.rows.length+0.2)*this.cells[0].height,"zoomOut",null, this.group);
             this.zoomOutIcon.scale.set(0.15);
@@ -148,6 +157,8 @@ module GTE {
             this.zoomOutIcon.inputEnabled = true;
             this.zoomOutIcon.events.onInputDown.add(()=>{
                 this.group.scale.set(this.group.scale.x*0.8);
+                this.background.width = this.cols.length*this.cells[0].width*this.group.scale.x;
+                this.background.height = this.rows.length*this.cells[0].height*this.group.scale.x;
             });
             this.closeIcon = this.game.add.sprite((this.cols.length)*this.cells[0].width,(this.rows.length+0.2)*this.cells[0].height,"close",null, this.group);
             this.closeIcon.scale.set(0.15);

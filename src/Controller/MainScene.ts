@@ -45,8 +45,8 @@ module GTE {
 
         /** This is used for testing purposes - displays a text 60 times a second in the app*/
         render() {
-            this.game.debug.text(this.game.time.fps.toString(), 20,60, "#000000", "20px Arial");
-            this.game.debug.text(this.game.world.children.length.toString(), 20,20, "#ff0000", "20px Arial");
+            // this.game.debug.text(this.game.time.fps.toString(), 20,60, "#000000", "20px Arial");
+            // this.game.debug.text(this.game.world.children.length.toString(), 20,20, "#ff0000", "20px Arial");
             // if(this.treeController) {
             //     this.game.debug.text("undoTrees: "+this.treeController.undoRedoController.treesList.length,20,80,"#000000","20px Arial");
                 // this.game.debug.text("index: "+this.treeController.undoRedoController.currentTreeIndex,20,100,"#000000","20px Arial");

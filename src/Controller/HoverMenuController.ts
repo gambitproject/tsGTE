@@ -38,7 +38,6 @@ module GTE {
             this.createButtonSprites();
             this.setButtonFunctionality();
 
-            console.log(this.plusButton.width);
             this.buttonWidth = this.plusButton.width;
 
             let nodeWidth = this.userActionController.treeController.treeView.nodes[0].width;

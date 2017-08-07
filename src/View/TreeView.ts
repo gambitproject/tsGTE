@@ -23,7 +23,7 @@ module GTE {
 
         constructor(game: Phaser.Game, tree: Tree, properties: TreeViewProperties) {
             this.game = game;
-            this.treeTweenManager = new TreeTweenManager(this.game);
+            this.treeTweenManager = new TreeTweenManager(this.game, properties);
             this.tree = tree;
             this.properties = properties;
             this.nodes = [];
@@ -43,22 +43,22 @@ module GTE {
                     this.moves.push(new MoveView(this.game, parent, nodeView));
                 }
             });
-            this.tree.iSets.forEach(iSet=>{
-               this.addISetView(iSet);
+            this.tree.iSets.forEach(iSet => {
+                this.addISetView(iSet);
             });
             this.drawTree();
             // NOTE: Moves positions are only updated on initial drawing
             this.moves.forEach(m => {
                 m.updateMovePosition();
-                m.updateLabel(this.properties.fractionOn);
+                m.updateLabel(this.properties.fractionOn, this.properties.levelHeight);
             });
         }
 
         /**This method draws the tree by recursively calling the drawNode method*/
         drawTree() {
             let maxDepth = this.tree.getMaxDepth();
-            if(maxDepth*this.properties.levelHeight>this.game.height*0.75){
-                this.properties.levelHeight *=0.8;
+            if (maxDepth * this.properties.levelHeight > this.game.height * 0.75) {
+                this.properties.levelHeight *= 0.8;
             }
             this.treeTweenManager.oldCoordinates = this.getOldCoordinates();
 
@@ -73,7 +73,7 @@ module GTE {
             // NOTE: All other moves will be updated from the tween manager.
             if (this.moves.length > 0) {
                 this.moves[this.moves.length - 1].updateMovePosition();
-                this.moves[this.moves.length - 1].updateLabel(this.properties.fractionOn);
+                this.moves[this.moves.length - 1].updateLabel(this.properties.fractionOn, this.properties.levelHeight);
             }
         }
 
@@ -95,7 +95,7 @@ module GTE {
         /**Update the leaves' x coordinate first*/
         private updateLeavesPositions() {
             let leaves = this.tree.getLeaves();
-            let widthPerNode = this.properties.treeWidth/leaves.length;
+            let widthPerNode = this.properties.treeWidth / leaves.length;
 
             for (let i = 0; i < leaves.length; i++) {
                 let nodeView = this.findNodeView(leaves[i]);
@@ -116,7 +116,7 @@ module GTE {
         }
 
         drawISets() {
-            this.iSets.forEach(is=>{
+            this.iSets.forEach(is => {
                 is.resetISet();
             });
         }
@@ -174,12 +174,12 @@ module GTE {
         }
 
         /**A method for adding an iSetView*/
-        addISetView(iSet:ISet){
+        addISetView(iSet: ISet) {
             let nodes = [];
-            iSet.nodes.forEach(n=>{
-               nodes.push(this.findNodeView(n));
+            iSet.nodes.forEach(n => {
+                nodes.push(this.findNodeView(n));
             });
-            let iSetV = new ISetView(this.game, iSet,nodes);
+            let iSetV = new ISetView(this.game, iSet, nodes);
             this.iSets.push(iSetV);
             return iSetV
         }
@@ -198,8 +198,8 @@ module GTE {
         removeISetView(iSetView: ISetView) {
             if (this.iSets.indexOf(iSetView) !== -1) {
                 this.iSets.splice(this.iSets.indexOf(iSetView), 1);
-                iSetView.nodes.forEach(n=>{
-                    if(n.node && n.node.player){
+                iSetView.nodes.forEach(n => {
+                    if (n.node && n.node.player) {
                         n.ownerLabel.alpha = 1;
                     }
                 });
@@ -208,10 +208,10 @@ module GTE {
         }
 
         /**A method which removes broken iSets*/
-        cleanISets(){
+        cleanISets() {
             for (let i = 0; i < this.iSets.length; i++) {
                 let iSetV = this.iSets[i];
-                if(!iSetV.iSet || !iSetV.iSet.nodes){
+                if (!iSetV.iSet || !iSetV.iSet.nodes) {
                     this.removeISetView(iSetV);
                     i--;
                 }
@@ -224,7 +224,7 @@ module GTE {
                 this.tree.resetLabels();
                 this.moves.forEach(m => {
                     m.label.alpha = 1;
-                    m.updateLabel(this.properties.fractionOn);
+                    m.updateLabel(this.properties.fractionOn, this.properties.levelHeight);
                 });
                 this.nodes.forEach(n => {
                     if (n.node.children.length === 0) {

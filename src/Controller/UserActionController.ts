@@ -90,7 +90,6 @@ module GTE {
 
         /**A method which loads the tree from a selected file*/
         private loadTreeFromFile(text: string) {
-            console.log("handler");
             try {
                 this.treeController.deleteNodeHandler(this.treeController.tree.root);
                 this.treeController.treeView.nodes[0].destroy();
@@ -402,7 +401,7 @@ module GTE {
                     let moveV = (<MoveView>this.treeController.labelInput.currentlySelected);
                     this.treeController.tree.changeMoveLabel(moveV.move, this.treeController.labelInput.inputField.val());
                     this.treeController.treeView.moves.forEach(m => {
-                        m.updateLabel(this.treeController.treeViewProperties.fractionOn);
+                        m.updateLabel(this.treeController.treeViewProperties.fractionOn, this.treeController.treeViewProperties.levelHeight);
                     });
                 }
                 // If we are currently looking at nodes
@@ -411,22 +410,20 @@ module GTE {
                     let nodeV = (<NodeView>this.treeController.labelInput.currentlySelected);
                     if (nodeV.ownerLabel.alpha === 1) {
                         nodeV.node.player.label = this.treeController.labelInput.inputField.val();
-                        // If the node is in an ISET, reset all nodes in the ISET
-                        if (nodeV.node.iSet) {
-                            nodeV.node.iSet.nodes.forEach(n => {
-                                this.treeController.treeView.findNodeView(n).resetLabelText(this.treeController.treeViewProperties.zeroSumOn)
-                            });
-                        }
-                        else {
-                            nodeV.resetLabelText(this.treeController.treeViewProperties.zeroSumOn);
-                        }
+                        this.treeController.treeView.nodes.forEach(n=>{
+                            if(n.node.player) {
+                                n.ownerLabel.setText(n.node.player.getLabel(), true);
+                            }
+                        });
+
                     }
                     else {
                         nodeV.node.payoffs.loadFromString(this.treeController.labelInput.inputField.val());
-                        this.treeController.treeView.nodes.forEach((n: NodeView) => {
+                        this.treeController.treeView.nodes.forEach(n=>{
                             n.resetLabelText(this.treeController.treeViewProperties.zeroSumOn);
                         });
                     }
+
                 }
                 this.activateLabelField(true);
                 this.undoRedoController.saveNewTree();
@@ -483,7 +480,7 @@ module GTE {
             });
             this.treeController.treeView.moves.forEach(m => {
                 m.updateMovePosition();
-                m.updateLabel(this.treeController.treeViewProperties.fractionOn);
+                m.updateLabel(this.treeController.treeViewProperties.fractionOn, this.treeController.treeViewProperties.levelHeight);
             });
             this.treeController.treeView.drawISets();
         }
@@ -498,6 +495,14 @@ module GTE {
             try {
                 this.strategicForm = new StrategicForm(this.treeController.tree);
                 this.strategicFormView = new StrategicFormView(this.game, this.strategicForm);
+                this.strategicFormView.background.events.onDragStart.add(()=>{
+                    this.game.canvas.style.cursor = "move";
+                   this.treeController.selectionRectangle.active = false;
+                });
+                this.strategicFormView.background.events.onDragStop.add(()=>{
+                    this.game.canvas.style.cursor = "move";
+                    this.treeController.selectionRectangle.active = true;
+                });
                 this.strategicFormView.closeIcon.events.onInputDown.add(()=>{
                    this.strategicForm.destroy();
                    this.strategicFormView.destroy();
