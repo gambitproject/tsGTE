@@ -244,7 +244,7 @@ module GTE {
                 n.resetNodeDrawing();
                 n.resetLabelText(this.treeController.treeViewProperties.zeroSumOn);
             });
-            this.treeController.treeView.drawTree();
+            this.treeController.resetTree(true);
             this.destroyStrategicForm();
             this.undoRedoController.saveNewTree();
         }
@@ -294,13 +294,13 @@ module GTE {
         toggleZeroSum() {
             this.treeController.treeViewProperties.zeroSumOn = !this.treeController.treeViewProperties.zeroSumOn;
             this.destroyStrategicForm();
-            this.treeController.treeView.drawTree();
+            this.treeController.resetTree(true);
         }
 
         /**A method which toggles the fractional or decimal view of chance moves*/
         toggleFractionDecimal() {
             this.treeController.treeViewProperties.fractionOn = !this.treeController.treeViewProperties.fractionOn;
-            this.treeController.treeView.drawTree();
+            this.treeController.resetTree(true);
         }
 
         /**Starts the "Cut" state for an Information set*/
@@ -328,6 +328,7 @@ module GTE {
                 this.cutSprite.alpha = 0;
 
                 this.treeController.cutInformationSet(this.cutInformationSet, this.cutSprite.x, this.cutSprite.y);
+                this.treeController.resetTree(true);
                 this.undoRedoController.saveNewTree();
             }, this);
 

@@ -252,7 +252,7 @@ module GTE {
             n.resetNodeDrawing();
             n.resetLabelText(this.treeViewProperties.zeroSumOn);
 
-            this.resetTree();
+            this.resetTree(true);
         }
 
         /**A method for assigning chance player to a given node*/
@@ -260,7 +260,7 @@ module GTE {
             n.node.convertToChance(this.tree.players[0]);
             n.resetNodeDrawing();
             n.resetLabelText(this.treeViewProperties.zeroSumOn);
-            this.resetTree();
+            this.resetTree(true);
 
         }
 
@@ -317,14 +317,14 @@ module GTE {
             let iSet = this.tree.addISet(player, iSetNodes);
             let iSetV = this.treeView.addISetView(iSet);
             this.attachHandlersToISet(iSetV);
-            this.resetTree();
+            this.resetTree(true);
         }
 
         /**A method for deleting an iSet*/
         removeISetHandler(iSet: ISet) {
             this.tree.removeISet(iSet);
             this.treeView.removeISetView(this.treeView.findISetView(iSet));
-            this.resetTree();
+            this.resetTree(true);
         }
 
         /**A method which removes all isets from the selected nodes*/
@@ -379,7 +379,7 @@ module GTE {
                     this.createISet(rightNodes);
                 }
             }
-            this.resetTree();
+            this.resetTree(true);
         }
 
         /**A method for assigning random payoffs to nodes*/
@@ -392,9 +392,15 @@ module GTE {
         }
 
         /**A method for resetting the tree after each action on the tree*/
-        resetTree() {
+        resetTree(soft?:boolean) {
             if (this.tree.nodes.length > 1) {
-                this.treeView.drawTree();
+                if(!soft) {
+                    this.treeView.drawTree();
+                }
+                else{
+                    this.treeView.drawISets();
+                    this.treeView.drawLabels(true);
+                }
             }
         }
 

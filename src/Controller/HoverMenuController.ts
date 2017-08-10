@@ -29,6 +29,8 @@ module GTE {
         private previouslyHoveredSprite: Phaser.Sprite;
         selectedNodesSprites: Array<NodeView>;
 
+        //TODO: Fix bug when creating iSet from right to left
+        //TODO: On cutting information set, refresh owners?
         constructor(game: Phaser.Game, userActionController: UserActionController) {
             this.game = game;
             this.userActionController = userActionController;
@@ -123,6 +125,7 @@ module GTE {
                     }
                     else if (this.previouslyHoveredSprite instanceof ISetView) {
                         //A hack in order not to break the information set.
+                        this.userActionController.treeController.emptySelectedNodes();
                         this.userActionController.treeController.selectedNodes = (<ISetView>this.previouslyHoveredSprite).nodes.slice(0);
                         this.userActionController.addNodesHandler();
                         this.userActionController.treeController.emptySelectedNodes();
@@ -148,6 +151,7 @@ module GTE {
 
                             });
                             // Same hack as above
+                            this.userActionController.treeController.emptySelectedNodes();
                             this.userActionController.treeController.selectedNodes = nodesToDelete.slice(0);
                             this.userActionController.deleteNodeHandler();
                             this.userActionController.treeController.emptySelectedNodes();

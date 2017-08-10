@@ -190,7 +190,7 @@ module GTE {
                 if (scale && scale >= 0 && scale <= 2) {
                     this.userActionController.treeController.treeViewProperties.treeWidth = scale * this.userActionController.game.width * INITIAL_TREE_WIDTH;
                 }
-                this.userActionController.treeController.treeView.drawTree();
+                this.userActionController.treeController.resetTree();
 
             });
             this.rangeLevel.on('input', () => {
@@ -199,7 +199,7 @@ module GTE {
                 if (scale && scale >= 0 && scale <= 2) {
                     this.userActionController.treeController.treeViewProperties.levelHeight = scale * this.userActionController.game.height * INITIAL_TREE_HEIGHT;
                 }
-                this.userActionController.treeController.treeView.drawTree();
+                this.userActionController.treeController.resetTree();
             });
 
             this.inputTree.on('input', () => {
@@ -208,7 +208,7 @@ module GTE {
                 if (scale && scale >= 0 && scale <= 2) {
                     this.userActionController.treeController.treeViewProperties.treeWidth = scale * this.userActionController.game.width * INITIAL_TREE_WIDTH;
                 }
-                this.userActionController.treeController.treeView.drawTree();
+                this.userActionController.treeController.resetTree();
             });
             this.inputLevel.on('input', () => {
                 this.rangeLevel.val(this.inputLevel.val());
@@ -216,7 +216,7 @@ module GTE {
                 if (scale && scale >= 0 && scale <= 2) {
                     this.userActionController.treeController.treeViewProperties.levelHeight = scale * this.userActionController.game.height * INITIAL_TREE_HEIGHT;
                 }
-                this.userActionController.treeController.treeView.drawTree();
+                this.userActionController.treeController.resetTree();
             });
 
         }

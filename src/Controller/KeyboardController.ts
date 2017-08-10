@@ -7,7 +7,6 @@ module GTE {
     /** A class for controlling the input of the application. If there is a confusion over the functionality of each button
      * you can check the attachHandlersToKeysMethod*/
 
-        //TODO: Fix bug with ctrl+s
     export class KeyboardController {
         game: Phaser.Game;
         // There is a reference to the User , so that whenever a key is pressed we can call the corresponding method
