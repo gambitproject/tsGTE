@@ -40,6 +40,7 @@ module GTE {
 
             //2. Change it with the corresponding one in treelist
             // this.treeController.tree = this.treesList[this.currentTreeIndex].clone();
+            //TODO: When undo, refresh information sets
             this.treeController.tree = this.treeParser.parse(this.treeParser.stringify(this.treesList[this.currentTreeIndex]));
             this.treeController.treeView = new TreeView(this.treeController.game, this.treeController.tree, this.treeController.treeViewProperties);
             this.treeController.emptySelectedNodes();
@@ -49,6 +50,9 @@ module GTE {
             });
             this.treeController.treeView.drawLabels(true);
             this.treeController.attachHandlersToNodes();
+            this.treeController.treeView.iSets.forEach((iSet)=>{
+                this.treeController.attachHandlersToISet(iSet);
+            });
         }
 
         saveNewTree() {

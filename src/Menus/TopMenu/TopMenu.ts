@@ -91,10 +91,13 @@ module GTE {
                 if (playersCount > 1) {
                     this.userActionController.removeLastPlayerHandler();
                     this.playerNumber.html((playersCount - 1).toString());
-                    this.playerPlusButton.css({opacity: 1});
+                    this.playerPlusButton.css("opacity","1");
                 }
                 if (playersCount === 2) {
-                    this.playerMinusButton.css({opacity: 0.3});
+                    this.playerMinusButton.css("opacity","0.3");
+                }
+                if(playersCount === 3){
+                    this.zeroSumButton.css("opacity","1");
                 }
 
                 console.log(this.playerNumber);
@@ -126,14 +129,17 @@ module GTE {
                 this.userActionController.randomPayoffsHandler();
             });
             this.zeroSumButton.on("click", () => {
-                let src = this.zeroSumButton.find("img").attr("src");
-                if (src === "src/Assets/Images/TopMenu/zeroSum.png") {
-                    this.zeroSumButton.find("img").attr("src", "src/Assets/Images/TopMenu/nonZeroSum.png")
+                let opacity = this.zeroSumButton.css("opacity");
+                if (opacity!=="0.3") {
+                    let src = this.zeroSumButton.find("img").attr("src");
+                    if (src === "src/Assets/Images/TopMenu/zeroSum.png") {
+                        this.zeroSumButton.find("img").attr("src", "src/Assets/Images/TopMenu/nonZeroSum.png")
+                    }
+                    else if (src === "src/Assets/Images/TopMenu/nonZeroSum.png") {
+                        this.zeroSumButton.find("img").attr("src", "src/Assets/Images/TopMenu/zeroSum.png")
+                    }
+                    this.userActionController.toggleZeroSum();
                 }
-                else if (src === "src/Assets/Images/TopMenu/nonZeroSum.png") {
-                    this.zeroSumButton.find("img").attr("src", "src/Assets/Images/TopMenu/zeroSum.png")
-                }
-                this.userActionController.toggleZeroSum();
             });
 
             this.fractionDecimalButton.on("click", () => {

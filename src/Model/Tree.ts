@@ -4,6 +4,7 @@
 ///<reference path="Player.ts"/>
 ///<reference path="../Utils/Constants.ts"/>
 ///<reference path="LabelSetter.ts"/>
+///<reference path="../../lib/mathjs.d.ts"/>
 
 module GTE {
     /**The class which stores all the needed information for the tree - lists of nodes, moves, isets, players and the root */
@@ -239,6 +240,9 @@ module GTE {
         }
 
         checkAllNodesLabeled() {
+            if(this.nodes.length===1){
+                return false;
+            }
             for (let i = 0; i < this.nodes.length; i++) {
                 if (this.nodes[i].children.length !== 0 && this.players.indexOf(this.nodes[i].player) === -1) {
                     return false;
@@ -349,7 +353,8 @@ module GTE {
         /** A method which sets the probabilities of a chance node, once a new probability is set externally*/
 
         private chanceNodesSetProbabilities(move: Move, text: string) {
-            let newProb = parseFloat(text);
+            let frac = math.fraction(text);
+            let newProb = <number>math.number(<any>(math.fraction(text)));
             if (newProb >= 0 && newProb <= 1) {
                 move.probability = newProb;
                 let probabilities = [];

@@ -207,9 +207,6 @@ module GTE {
                 let child1 = this.treeView.addChildToNode(nodeV);
                 this.attachHandlersToNode(child1);
             }
-            this.tree.cleanISets();
-            this.treeView.cleanISets();
-            this.resetTree();
         }
 
         /**A method for deleting a node - 2 step deletion.*/
@@ -230,9 +227,6 @@ module GTE {
                 this.nodesToDelete = [];
                 node.convertToDefault();
             }
-            this.tree.cleanISets();
-            this.treeView.cleanISets();
-            this.resetTree();
         }
 
         /** A method for assigning a player to a given node.*/
@@ -280,6 +274,7 @@ module GTE {
             if (playerID > this.tree.players.length - 1) {
                 this.tree.addPlayer(new Player(playerID, playerID.toString(), PLAYER_COLORS[playerID - 1]));
                 $("#player-number").html((this.tree.players.length - 1).toString());
+                $("#zero-sum-wrapper").css("opacity",0.3);
                 this.treeView.drawLabels(true);
             }
         }
@@ -397,8 +392,7 @@ module GTE {
         }
 
         /**A method for resetting the tree after each action on the tree*/
-        private resetTree() {
-
+        resetTree() {
             if (this.tree.nodes.length > 1) {
                 this.treeView.drawTree();
             }

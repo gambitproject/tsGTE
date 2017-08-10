@@ -33,7 +33,7 @@ module GTE {
             // });
 
            // The line below is used for fps testing purposes
-           this.game.time.advancedTiming = true;
+           // this.game.time.advancedTiming = true;
 
         }
 
