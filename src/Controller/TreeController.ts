@@ -313,7 +313,6 @@ module GTE {
                     player = n.node.player;
                 }
             });
-
             let iSet = this.tree.addISet(player, iSetNodes);
             let iSetV = this.treeView.addISetView(iSet);
             this.attachHandlersToISet(iSetV);

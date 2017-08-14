@@ -459,7 +459,12 @@ module GTE {
                             n.resetLabelText(this.treeController.treeViewProperties.zeroSumOn);
                         });
                         if(this.treeController.tree.players.length===3){
-                            this.createStrategicForm();
+                            try{
+                                this.createStrategicForm();
+                            }
+                            catch(err){
+                                //Handle error
+                            }
                         }
                     }
 
@@ -469,7 +474,7 @@ module GTE {
             }
         }
 
-        /**Hides then input*/
+        /**Hides the input*/
         hideInputLabel() {
             if (this.treeController.labelInput.active) {
                 this.treeController.labelInput.hide();

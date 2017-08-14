@@ -52,12 +52,30 @@ module GTE {
             this.treeController.treeView.iSets.forEach((iSet)=>{
                 this.treeController.attachHandlersToISet(iSet);
             });
+            this.resetUndoReddoButtons();
         }
 
         saveNewTree() {
             this.treesList.splice(this.currentTreeIndex+1, this.treesList.length);
             this.treesList.push(this.treeParser.parse(this.treeParser.stringify(this.treeController.tree)));
             this.currentTreeIndex++;
+            this.resetUndoReddoButtons();
+        }
+
+        /**A method which resets the top-menu undo-redo buttons*/
+        private resetUndoReddoButtons() {
+            if (this.currentTreeIndex === 0) {
+                $("#undo-wrapper").css({opacity: 0.3});
+            }
+            else {
+                $("#undo-wrapper").css({opacity: 1});
+            }
+            if (this.currentTreeIndex === this.treesList.length - 1) {
+                $("#redo-wrapper").css({opacity: 0.3});
+            }
+            else {
+                $("#redo-wrapper").css({opacity: 1});
+            }
         }
     }
 }

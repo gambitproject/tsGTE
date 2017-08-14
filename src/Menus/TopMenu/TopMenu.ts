@@ -64,6 +64,8 @@ module GTE {
             this.inputTree = $('.input-field-tree');
             this.rangeLevel = $('.input-range-level');
             this.inputLevel = $('.input-field-level');
+            this.undoButton.css("opacity",0.3);
+            this.redoButton.css("opacity", 0.3);
             this.attachEvents();
         }
 
@@ -117,12 +119,10 @@ module GTE {
 
             this.undoButton.on("click", () => {
                 this.userActionController.undoRedoHandler(true);
-                this.resetUndoReddoButtons();
             });
 
             this.redoButton.on("click", () => {
                 this.userActionController.undoRedoHandler(false);
-                this.resetUndoReddoButtons();
             });
 
             this.randomPayoffsButton.on("click", () => {
@@ -220,21 +220,5 @@ module GTE {
             });
 
         }
-
-        resetUndoReddoButtons() {
-            if (this.userActionController.undoRedoController.currentTreeIndex === 0) {
-                this.undoButton.css({opacity: 0.3});
-            }
-            else {
-                this.undoButton.css({opacity: 1});
-            }
-            if (this.userActionController.undoRedoController.currentTreeIndex === this.userActionController.undoRedoController.treesList.length - 1) {
-                this.redoButton.css({opacity: 0.3});
-            }
-            else {
-                this.redoButton.css({opacity: 1});
-            }
-        }
-
     }
 }
