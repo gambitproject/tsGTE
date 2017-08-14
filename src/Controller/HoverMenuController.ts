@@ -29,8 +29,6 @@ module GTE {
         private previouslyHoveredSprite: Phaser.Sprite;
         selectedNodesSprites: Array<NodeView>;
 
-        //TODO: Fix bug when creating iSet from right to left
-        //TODO: On cutting information set, refresh owners?
         constructor(game: Phaser.Game, userActionController: UserActionController) {
             this.game = game;
             this.userActionController = userActionController;
@@ -306,7 +304,7 @@ module GTE {
                         this.linkButton.setInactive();
                     }
                     // If one among the selected nodes is a leaf, disable all but the plus and minus buttons
-                    for (var i = 0; i < this.selectedNodesSprites.length; i++) {
+                    for (let i = 0; i < this.selectedNodesSprites.length; i++) {
                         if (this.selectedNodesSprites[i].node.children.length === 0) {
                             this.buttonsArray.forEach((btn: HoverButton) => {
                                 btn.setHidden();
