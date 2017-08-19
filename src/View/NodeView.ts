@@ -75,9 +75,9 @@ module GTE {
          * The signal itself returns a reference to the triggered node and the specific action.
          * The TreeController class will listen for these signals and act accordingly.*/
         private attachSignals() {
-            this.events.onInputOver.dispatch();
-            this.events.onInputOut.dispatch();
-            this.events.onInputDown.dispatch();
+            // this.events.onInputOver.dispatch();
+            // this.events.onInputOut.dispatch();
+            // this.events.onInputDown.dispatch();
         }
 
         /** A method which creates the label for the Node*/

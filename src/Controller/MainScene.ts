@@ -29,7 +29,6 @@ module GTE {
             this.hoverManager = new HoverMenuController(this.game, this.userActionController);
             this.topMenu = new TopMenu(this.userActionController);
 
-
            // The line below is used for fps testing purposes
            // this.game.time.advancedTiming = true;
 

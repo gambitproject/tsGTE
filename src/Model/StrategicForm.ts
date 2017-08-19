@@ -8,7 +8,6 @@ module GTE {
     export class StrategicForm {
         tree: Tree;
 
-        strategies: Array<Array<string>>;
         p1Strategies: Array<Array<Move>>;
         p2Strategies: Array<Array<Move>>;
         payoffsMatrix: Array<Array<Payoffs>>;
@@ -22,9 +21,6 @@ module GTE {
 
         constructor(tree: Tree) {
             this.tree = tree;
-            this.strategies = [];
-            this.strategies[0] = [];
-            this.strategies[1] = [];
 
             this.generateStrategicForm();
         }
@@ -173,6 +169,9 @@ module GTE {
 
         private checkTwoNodesReachable(from: Node, to: Node) {
             // current is the node of the move we start from
+            if(from===to){
+                return true;
+            }
             let current: Node = from;
             while (current.parent) {
                 if (current.parent === to) {
@@ -362,7 +361,6 @@ module GTE {
         destroy() {
             this.p1Strategies = null;
             this.p2Strategies = null;
-            this.strategies = null;
         }
     }
 }

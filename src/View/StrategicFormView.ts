@@ -24,6 +24,7 @@ module GTE {
         zoomOutIcon: Phaser.Sprite;
         closeIcon: Phaser.Sprite;
 
+
         constructor(game: Phaser.Game, strategicForm: StrategicForm) {
             this.game = game;
             this.strategicForm = strategicForm;
@@ -31,6 +32,18 @@ module GTE {
             this.group = this.game.add.group();
             this.rows = strategicForm.strategyToString(strategicForm.p1Strategies);
             this.cols = strategicForm.strategyToString(strategicForm.p2Strategies);
+            //--------------------------------//
+            // this.rows = ["X P","X Q","Y P","Y Q","Z P","Z Q"];
+            // this.cols = ["a d","a e","b d","b e","c d","c e"];
+            // this.newPayoff = [
+            //     [[3,4],[3,4],[2,5],[2,5],[4,5],[4,5]],
+            //     [[3,4],[3,4],[2,5],[2,5],[4,5],[4,5]],
+            //     [[2,3],[2,3],[2,3],[2,3],[2,3],[2,3]],
+            //     [[2,3],[2,3],[2,3],[2,3],[2,3],[2,3]],
+            //     [[1,3],[0,5],[1,3],[0,5],[1,3],[0,5]],
+            //     [[1,3],[4,2],[1,3],[4,2],[1,3],[4,2]],
+            // ];
+            //------------------------------//
             this.cells = [];
             this.p1Moves = [];
             this.p2Moves = [];

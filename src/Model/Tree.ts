@@ -199,6 +199,49 @@ module GTE {
             }
         }
 
+        /**Checks if all nodes have the required number of children*/
+        private checkNumberOfChildren(nodes: Array < Node >): boolean {
+            if (nodes[nodes.length - 1].children.length === 0) {
+                return false;
+            }
+            for (let i = 0; i < nodes.length - 1; i++) {
+                if (nodes[i].children.length !== nodes[i + 1].children.length || nodes[i].children.length === 0) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        /**Checks if selected nodes have the same player assigned*/
+
+        private checkIfNodesHaveTheSamePlayer(nodes: Array < Node >): boolean {
+            let players = [];
+            for (let i = 0; i < nodes.length; i++) {
+                let node = nodes[i];
+                if (node.player && players.indexOf(node.player) === -1) {
+                    players.push(node.player);
+                }
+            }
+            return players.length <= 1;
+        }
+
+        /**Checks whether any 2 nodes of an array share a path to the root.*/
+
+        private checkIfNodesSharePathToRoot(nodes: Array < Node >): boolean {
+            for (let i = 0; i < nodes.length; i++) {
+                let n1 = nodes[i];
+                let path1 = n1.getPathToRoot();
+                for (let j = i + 1; j < nodes.length; j++) {
+                    let n2 = nodes[j];
+                    let path2 = n2.getPathToRoot();
+                    if (path1.indexOf(n2) !== -1 || path2.indexOf(n1) !== -1) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
         cleanISets() {
             for (let i = 0; i < this.iSets.length; i++) {
                 if (this.iSets[i].nodes.length<=1 || !this.checkNumberOfChildren(this.iSets[i].nodes)) {
@@ -304,50 +347,6 @@ module GTE {
             this.nodes.forEach(n => {
                 n.payoffs.setPlayersCount(this.players.length - 1);
             });
-        }
-
-        /**Checks if all nodes have the required number of children*/
-
-        private checkNumberOfChildren(nodes: Array < Node >): boolean {
-            if (nodes[nodes.length - 1].children.length === 0) {
-                return false;
-            }
-            for (let i = 0; i < nodes.length - 1; i++) {
-                if (nodes[i].children.length !== nodes[i + 1].children.length || nodes[i].children.length === 0) {
-                    return false;
-                }
-            }
-            return true;
-        }
-
-        /**Checks if selected nodes have the same player assigned*/
-
-        private checkIfNodesHaveTheSamePlayer(nodes: Array < Node >): boolean {
-            let players = [];
-            for (let i = 0; i < nodes.length; i++) {
-                let node = nodes[i];
-                if (node.player && players.indexOf(node.player) === -1) {
-                    players.push(node.player);
-                }
-            }
-            return players.length <= 1;
-        }
-
-        /**Checks whether any 2 nodes of an array share a path to the root.*/
-
-        private checkIfNodesSharePathToRoot(nodes: Array < Node >): boolean {
-            for (let i = 0; i < nodes.length; i++) {
-                let n1 = nodes[i];
-                let path1 = n1.getPathToRoot();
-                for (let j = i + 1; j < nodes.length; j++) {
-                    let n2 = nodes[j];
-                    let path2 = n2.getPathToRoot();
-                    if (path1.indexOf(n2) !== -1 || path2.indexOf(n1) !== -1) {
-                        return true;
-                    }
-                }
-            }
-            return false;
         }
 
         /** A method which sets the probabilities of a chance node, once a new probability is set externally*/
