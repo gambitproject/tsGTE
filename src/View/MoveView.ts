@@ -30,7 +30,7 @@ module GTE {
             this.label.align = "center";
             this.label.fontWeight = 200;
             this.label.inputEnabled = true;
-            this.label.events.onInputDown.dispatch(this);
+            // this.label.events.onInputDown.dispatch(this);
 
             this.game.add.existing(this);
             this.game.world.sendToBack(this);

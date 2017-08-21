@@ -1,5 +1,6 @@
 ///<reference path="../../../lib/jquery.d.ts"/>
 ///<reference path="../../Controller/UserActionController.ts"/>
+///<reference path="../../Utils/Constants.ts"/>
 
 
 module GTE {
@@ -34,8 +35,14 @@ module GTE {
         rangeTree: JQuery;
         rangeLevel: JQuery;
 
+        videoButton: JQuery;
+        videoContainer: JQuery;
+        closeVideoButton: JQuery;
+        youtubeVideo: JQuery;
+
         inputTree: JQuery;
         inputLevel: JQuery;
+
 
         constructor(userActionController: UserActionController) {
             this.userActionController = userActionController;
@@ -55,8 +62,12 @@ module GTE {
             this.fractionDecimalButton = $("#fraction-decimal-wrapper");
             this.strategicFormButton = $("#strat-form-button");
             this.infoButton = $("#info-button-wrapper");
-            this.infoContainer = $(".info-main-container");
-            this.closeInfoButton = $(".close-info-img");
+            this.infoContainer = $("#info-container");
+            this.closeInfoButton = $("#close-info");
+            this.videoButton = $("#video-button-wrapper");
+            this.videoContainer = $("#video-container");
+            this.closeVideoButton = $("#close-video");
+            this.youtubeVideo = $("#youtube-video");
             this.overlay = $("#label-overlay");
             this.settingsButton = $("#settings-button-wrapper");
             this.settingsWindow = $(".settings-menu-container");
@@ -64,7 +75,7 @@ module GTE {
             this.inputTree = $('.input-field-tree');
             this.rangeLevel = $('.input-range-level');
             this.inputLevel = $('.input-field-level');
-            this.undoButton.css("opacity",0.3);
+            this.undoButton.css("opacity", 0.3);
             this.redoButton.css("opacity", 0.3);
             this.attachEvents();
         }
@@ -93,13 +104,13 @@ module GTE {
                 if (playersCount > 1) {
                     this.userActionController.removeLastPlayerHandler();
                     this.playerNumber.html((playersCount - 1).toString());
-                    this.playerPlusButton.css("opacity","1");
+                    this.playerPlusButton.css("opacity", "1");
                 }
                 if (playersCount === 2) {
-                    this.playerMinusButton.css("opacity","0.3");
+                    this.playerMinusButton.css("opacity", "0.3");
                 }
-                if(playersCount === 3){
-                    this.zeroSumButton.css("opacity","1");
+                if (playersCount === 3) {
+                    this.zeroSumButton.css("opacity", "1");
                 }
 
                 console.log(this.playerNumber);
@@ -130,7 +141,7 @@ module GTE {
             });
             this.zeroSumButton.on("click", () => {
                 let opacity = this.zeroSumButton.css("opacity");
-                if (opacity!=="0.3") {
+                if (opacity !== "0.3") {
                     let src = this.zeroSumButton.find("img").attr("src");
                     if (src === "src/Assets/Images/TopMenu/zeroSum.png") {
                         this.zeroSumButton.find("img").attr("src", "src/Assets/Images/TopMenu/nonZeroSum.png")
@@ -166,6 +177,18 @@ module GTE {
             this.closeInfoButton.on("click", () => {
                 this.infoContainer.removeClass("show-container");
                 this.overlay.removeClass("show-overlay");
+            });
+
+            this.videoButton.on("click", () => {
+                this.youtubeVideo.attr("src", YOUTUBE_VIDEO_URL);
+                this.videoContainer.addClass("show-container");
+                this.overlay.addClass("show-overlay");
+            });
+
+            this.closeVideoButton.on("click", () => {
+                this.videoContainer.removeClass("show-container");
+                this.overlay.removeClass("show-overlay");
+                this.youtubeVideo.attr("src", "");
             });
 
             this.overlay.on("click", () => {

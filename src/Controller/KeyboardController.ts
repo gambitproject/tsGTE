@@ -213,6 +213,24 @@ module GTE {
                 }
             });
 
+            // Arrow Keys Moving nodes
+            //----------------------------------------------------------------------------------------------------------
+            this.upKey.onUp.add(()=>{
+                this.userActionController.undoRedoController.saveNewTree(true);
+            });
+
+            this.downKey.onUp.add(()=>{
+                this.userActionController.undoRedoController.saveNewTree(true);
+            });
+
+            this.leftKey.onUp.add(()=>{
+                this.userActionController.undoRedoController.saveNewTree(true);
+            });
+
+            this.rightKey.onUp.add(()=>{
+                this.userActionController.undoRedoController.saveNewTree(true);
+            });
+
 
             this.upKey.onDown.add(() => {
                 if (!this.userActionController.treeController.labelInput.active) {
@@ -285,8 +303,7 @@ module GTE {
 
             this.testButton.onDown.add(() => {
             });
+            //----------------------------------------------------------------------------------------------------------
         }
-
-
     }
 }
