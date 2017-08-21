@@ -89,7 +89,6 @@ module GTE {
             this.ownerLabel.anchor.set(0.5, 0.5);
             this.ownerLabel.inputEnabled = true;
             // this.ownerLabel.fontWeight = 100;
-            // this.ownerLabel.events.onInputDown.dispatch(this);
 
             this.payoffsLabel = this.game.add.text(this.x, this.y + this.width, "", null);
             this.payoffsLabel.position = this.position;
@@ -99,8 +98,6 @@ module GTE {
             this.payoffsLabel.inputEnabled = true;
             this.payoffsLabel.lineSpacing = -10;
             this.payoffsLabel.align = "right";
-            // this.payoffsLabel.events.onInputDown.dispatch(this, "payoff");
-
         }
 
         /** A method which sets the position of the node to a specific x and y coordinate*/
