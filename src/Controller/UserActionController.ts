@@ -448,7 +448,7 @@ module GTE {
                         nodeV.node.player.label = this.treeController.labelInput.inputField.val();
                         this.treeController.treeView.nodes.forEach(n => {
                             if (n.node.player) {
-                                n.ownerLabel.setText(n.node.player.getLabel(), true);
+                                n.ownerLabel.setText(n.node.player.label, true);
                             }
                         });
 

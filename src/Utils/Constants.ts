@@ -61,6 +61,8 @@ module GTE {
     export const STRATEGIC_NOT_LABELED_ERROR_TEXT = "Not all nodes are owned or chance!";
     export const STRATEGIC_FORM_DELIMITER = " ";
 
+    //Other constants
+    export const MAX_RANDOM_PAYOFFS = 21;
     export const YOUTUBE_VIDEO_URL = "https://www.youtube.com/embed/kurQfjPXfic";
 
 

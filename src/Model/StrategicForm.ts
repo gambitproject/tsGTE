@@ -25,6 +25,7 @@ module GTE {
             this.generateStrategicForm();
         }
 
+        //region Generate strategies
         /**Generates the strategic form, which is stored in two arrays of strategies for P1 and P2*/
         generateStrategicForm() {
             this.checkStrategicFormPossible();
@@ -36,6 +37,7 @@ module GTE {
 
             //Get all P1 and P2 information sets and singletons separated from the DFS order.
             nodes.forEach(n => {
+                //TODO: Refactor repetition
                 if (n.player === this.tree.players[1]) {
                     if (n.iSet && p1InfoSets.indexOf(n.iSet) === -1) {
                         p1InfoSets.push(n.iSet);
@@ -61,21 +63,33 @@ module GTE {
             this.generatePayoffs();
         }
 
-        /**A method which generates the strategies for a specific player, given his collection of iSets*/
-        generateStrategies(infoSets: Array<any>) {
-            let currentStrategy = [];
-            this.recurseStrategies(infoSets, 0, currentStrategy);
+        /**A method which checks whether the conditions for generating a strategic form are kept*/
+        private checkStrategicFormPossible() {
+            if (this.tree.players.length !== 3) {
+                throw new Error(STRATEGIC_PLAYERS_ERROR_TEXT);
+            }
+            if (!this.tree.checkAllNodesLabeled()) {
+                throw new Error(STRATEGIC_NOT_LABELED_ERROR_TEXT);
+            }
+            this.tree.perfectRecallCheck();
         }
 
+        /**A method which generates the strategies for a specific player, given his collection of iSets*/
+        generateStrategies(iSets: Array<any>) {
+            let currentStrategy = [];
+            this.recurseStrategies(iSets, 0, currentStrategy);
+        }
+
+        /**A method for the recursive generation of strategies*/
         // We create combinations of all moves, given their specific slot (index) which corresponds to the current
         // node or an information set we are looking at. "Strategy" stores the moves that are played in the recursion.
-        private recurseStrategies(infoSets, index, strategy) {
+        private recurseStrategies(iSets, index, strategy) {
             // If we have reached the last slot for the combinations, save it and go back in the recursion.
-            if (index === infoSets.length) {
-                if (infoSets[0] && infoSets[0].player === this.tree.players[1]) {
+            if (index === iSets.length) {
+                if (iSets[0] && iSets[0].player === this.tree.players[1]) {
                     this.p1Strategies.push(strategy.slice(0));
                 }
-                else if (infoSets[0] && infoSets[0].player === this.tree.players[2]) {
+                else if (iSets[0] && iSets[0].player === this.tree.players[2]) {
                     this.p2Strategies.push(strategy.slice(0));
                 }
                 return;
@@ -86,12 +100,12 @@ module GTE {
             let currentISet;
             let moves = [];
 
-            if (infoSets[index] instanceof Node) {
-                currentISet = [infoSets[index]];
+            if (iSets[index] instanceof Node) {
+                currentISet = [iSets[index]];
                 moves = currentISet[0].childrenMoves;
             }
-            else if (infoSets[index] instanceof ISet) {
-                currentISet = infoSets[index].nodes;
+            else if (iSets[index] instanceof ISet) {
+                currentISet = iSets[index].nodes;
                 moves = currentISet[0].childrenMoves;
             }
 
@@ -118,20 +132,19 @@ module GTE {
             if (this.isFirstMove(currentISet[0]) || isReachable) {
                 for (let i = 0; i < moves.length; i++) {
                     strategy.push(moves[i]);
-                    this.recurseStrategies(infoSets, index + 1, strategy);
+                    this.recurseStrategies(iSets, index + 1, strategy);
                     strategy.pop();
                 }
             }
             // If the move is not reachable, we push "null" which will later be transformed into a "*"
             else {
                 strategy.push(null);
-                this.recurseStrategies(infoSets, index + 1, strategy);
+                this.recurseStrategies(iSets, index + 1, strategy);
                 strategy.pop();
             }
         }
 
-
-        // A helper method for the recursion
+        /**A helper method for the recursion*/
         private isFirstMove(node: Node) {
             let current = node.parent;
             while (current) {
@@ -143,7 +156,7 @@ module GTE {
             return true;
         }
 
-        // A helper method for the recursion
+        /**A helper method for the recursion*/
         private findFirstNonNullIndex(strategy, index) {
             for (let i = index - 1; i >= 0; i--) {
                 if (strategy[i]) {
@@ -153,8 +166,9 @@ module GTE {
             return 0;
         }
 
-        // From is the "lower" (in terms of the tree) move
-        isReachable(from: Array<Node>, to: Array<Node>) {
+        /**A helper method to check whether a collection of nodes is reachable from another collection*/
+        // "From" is the lower (in terms of the tree) move
+        private isReachable(from: Array<Node>, to: Array<Node>) {
             for (let i = 0; i < from.length; i++) {
                 let fromNode = from[i];
                 for (let j = 0; j < to.length; j++) {
@@ -167,9 +181,10 @@ module GTE {
             return false;
         }
 
+        /**A helper method which checks whether a given node is reachable from another given node (used above)*/
         private checkTwoNodesReachable(from: Node, to: Node) {
             // current is the node of the move we start from
-            if(from===to){
+            if (from === to) {
                 return true;
             }
             let current: Node = from;
@@ -181,14 +196,17 @@ module GTE {
             }
             return false;
         }
+        //endregion
 
+        //region Payoff matrices generation
+        /**A method for generating the payoffs matrices, to be used in the View. Called after strat form is done*/
         generatePayoffs() {
             let rows = this.p1Strategies.length;
             let cols = this.p2Strategies.length;
-            if(rows===0){
+            if (rows === 0) {
                 rows++;
             }
-            if(cols===0){
+            if (cols === 0) {
                 cols++;
             }
             this.payoffsMatrix = [];
@@ -216,24 +234,24 @@ module GTE {
                 // this.currentPathToString(leaf);
                 let rowsLength = this.reachableRows.length;
                 let colsLength = this.reachableCols.length;
-                if(rowsLength === 0){
+                if (rowsLength === 0) {
                     rowsLength++;
                 }
-                if(colsLength === 0){
+                if (colsLength === 0) {
                     colsLength++;
                 }
                 for (let i = 0; i < rowsLength; i++) {
                     for (let j = 0; j < colsLength; j++) {
-                        if(this.reachableRows.length!==0 && this.reachableCols.length!==0) {
+                        if (this.reachableRows.length !== 0 && this.reachableCols.length !== 0) {
                             this.payoffsMatrix[this.reachableRows[i]][this.reachableCols[j]].add(payoffsToAdd);
                         }
-                        else if(this.reachableRows.length!==0 && this.reachableCols.length===0){
+                        else if (this.reachableRows.length !== 0 && this.reachableCols.length === 0) {
                             this.payoffsMatrix[this.reachableRows[i]][j].add(payoffsToAdd);
                         }
-                        else if(this.reachableRows.length===0 && this.reachableCols.length!==0){
+                        else if (this.reachableRows.length === 0 && this.reachableCols.length !== 0) {
                             this.payoffsMatrix[i][this.reachableCols[j]].add(payoffsToAdd);
                         }
-                        else{
+                        else {
                             this.payoffsMatrix[i][j].add(payoffsToAdd);
                         }
                     }
@@ -246,21 +264,7 @@ module GTE {
             }
         }
 
-        // For debugging purposes
-        private currentPathToString(leaf: Node) {
-            let result = "" + leaf.payoffs.outcomes + "-> ";
-            this.movesToReachLeafP1.forEach(m => {
-                result += m.label + " "
-            });
-            result += "|| ";
-            this.movesToReachLeafP2.forEach(m => {
-                result += m.label + " ";
-            });
-            result += "\nReachable Rows: " + this.reachableRows.join(",");
-            result += "\nReachable Cols: " + this.reachableCols.join(",");
-            console.log(result);
-        }
-
+        /**A helper method for the generation of payoffs matrices*/
         private getMovesPathToRoot(leaf: Node) {
             this.movesToReachLeafP1 = [];
             this.movesToReachLeafP2 = [];
@@ -282,6 +286,7 @@ module GTE {
             }
         }
 
+        /**A helper method for the generation of payoffs matrices*/
         private getReachableVectors(vector: Array<number>, allStrategies: Array<Array<Move>>, strategiesOnPath: Array<Move>) {
             for (let i = 0; i < allStrategies.length; i++) {
                 let currentStrategy = allStrategies[i];
@@ -305,7 +310,7 @@ module GTE {
             }
         }
 
-        //Checks if reachable in information sets also
+        /**A helper method for the getReachableVectors method*/
         private checkUnreachableMove(strategy: Array<Move>, move: Move) {
             if (strategy.indexOf(move) !== -1) {
                 return false;
@@ -324,20 +329,11 @@ module GTE {
                 return true;
             }
         }
-
-        checkStrategicFormPossible() {
-            if (this.tree.players.length !== 3) {
-                throw new Error(STRATEGIC_PLAYERS_ERROR_TEXT);
-            }
-            if (!this.tree.checkAllNodesLabeled()) {
-                throw new Error(STRATEGIC_NOT_LABELED_ERROR_TEXT);
-            }
-            this.tree.perfectRecallCheck();
-        }
+        //endregion
 
 
-        strategyToString(strategies:Array<Array<Move>>) {
-            if(strategies.length===0){
+        strategyToString(strategies: Array<Array<Move>>) {
+            if (strategies.length === 0) {
                 return [" "];
             }
             let strategyAsString = [];
@@ -356,6 +352,21 @@ module GTE {
                 strategyAsString.push(str.substring(0, str.length - 1));
             }
             return strategyAsString;
+        }
+
+        // For debugging purposes
+        private currentPathToString(leaf: Node) {
+            let result = "" + leaf.payoffs.outcomes + "-> ";
+            this.movesToReachLeafP1.forEach(m => {
+                result += m.label + " "
+            });
+            result += "|| ";
+            this.movesToReachLeafP2.forEach(m => {
+                result += m.label + " ";
+            });
+            result += "\nReachable Rows: " + this.reachableRows.join(",");
+            result += "\nReachable Cols: " + this.reachableCols.join(",");
+            console.log(result);
         }
 
         destroy() {

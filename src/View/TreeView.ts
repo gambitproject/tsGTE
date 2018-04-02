@@ -237,7 +237,7 @@ module GTE {
                 });
             }
             else {
-                this.tree.removeLabels();
+                this.tree.removeMoveLabels();
                 this.moves.forEach(m => {
                     m.label.alpha = 0;
                 });

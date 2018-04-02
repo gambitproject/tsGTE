@@ -25,6 +25,128 @@ module GTE {
             this.labelSetter = new LabelSetter();
         }
 
+        //region Nodes
+        /** Adds node to the tree and checks if it should be the root*/
+        addNode(node?: Node) {
+            node = node || new Node();
+            if (this.nodes.length == 0) {
+                node.depth = 0;
+                this.root = node;
+            }
+
+            this.nodes.push(node);
+        }
+
+        /**Removes a given node from the tree.*/
+        removeNode(node: Node) {
+            if (this.nodes.indexOf(node) !== -1) {
+                //Remove the parent move from the tree
+                if (this.moves.indexOf(node.parentMove) !== -1) {
+                    this.moves.splice(this.moves.indexOf(node.parentMove), 1);
+                    node.parentMove.destroy();
+                }
+
+                this.nodes.splice(this.nodes.indexOf(node), 1);
+                node.destroy();
+            }
+        }
+
+        /** Adds a child to a given node*/
+        addChildToNode(node: Node, child?: Node) {
+            if (this.nodes.indexOf(node) === -1) {
+                throw new Error("Node not found in tree");
+            }
+
+            child = child || new Node();
+            node.addChild(child);
+            this.nodes.push(child);
+            this.moves.push(child.parentMove);
+        }
+
+        //endregion
+
+        //region Information Sets
+        /** Adds an iSet to the list of isets */
+        addISet(player: Player, nodes?: Array<Node>) {
+            let iSet = new ISet(player, nodes);
+            this.iSets.push(iSet);
+            return iSet;
+        }
+
+        /** Removes an iSet from the list of isets*/
+        removeISet(iSet: ISet) {
+            if (this.iSets.indexOf(iSet) !== -1) {
+                this.iSets.splice(this.iSets.indexOf(iSet), 1);
+                iSet.destroy();
+            }
+        }
+
+        /**A method which checks whether an information set can be created from a list of nodes.
+         * If not, throws errors which are handled in the controller. Uses 4 helper methods.*/
+        canCreateISet(nodes: Array<Node>) {
+            // NOTE: Marked as not needed - iSets can be created without players
+            // if(!this.checkIfNodesHavePlayers(nodes)){
+            //     throw new Error(NODES_MISSING_PLAYERS_ERROR_TEXT);
+            // }
+
+            if (!this.checkNumberOfChildren(nodes)) {
+                throw new Error(NODES_NUMBER_OF_CHILDREN_ERROR_TEXT);
+            }
+
+            // The below method will throw an error when there are 2 different players among the nodes
+            // but will not throw an error if there is 1 player and some nodes without a player
+            if (!this.checkIfNodesHaveTheSamePlayer(nodes)) {
+                throw new Error(NODES_DIFFERENT_PLAYERS_ERROR_TEXT);
+            }
+
+            if (this.checkIfNodesSharePathToRoot(nodes)) {
+                throw new Error(SAME_PATH_ON_ROOT_ERROR_TEXT);
+            }
+        }
+
+        /**Checks whether any 2 nodes of an array share a path to the root.*/
+        private checkIfNodesSharePathToRoot(nodes: Array<Node>): boolean {
+            for (let i = 0; i < nodes.length; i++) {
+                let n1 = nodes[i];
+                let path1 = n1.getPathToRoot();
+                for (let j = i + 1; j < nodes.length; j++) {
+                    let n2 = nodes[j];
+                    let path2 = n2.getPathToRoot();
+                    if (path1.indexOf(n2) !== -1 || path2.indexOf(n1) !== -1) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        /**A method for removing information sets if the corresponding conditions are not met*/
+        cleanISets() {
+            for (let i = 0; i < this.iSets.length; i++) {
+                if (this.iSets[i].nodes.length <= 1 || !this.checkNumberOfChildren(this.iSets[i].nodes)) {
+                    this.removeISet(this.iSets[i]);
+                    i--;
+                }
+
+            }
+        }
+
+        /**Checks if all nodes have the required number of children*/
+        private checkNumberOfChildren(nodes: Array<Node>): boolean {
+            if (nodes[nodes.length - 1].children.length === 0) {
+                return false;
+            }
+            for (let i = 0; i < nodes.length - 1; i++) {
+                if (nodes[i].children.length !== nodes[i + 1].children.length || nodes[i].children.length === 0) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        //endregion
+
+        //region Player
         /** Adds a player to the list of players*/
         addPlayer(player: Player) {
             if (this.players.indexOf(player) === -1) {
@@ -61,69 +183,22 @@ module GTE {
             console.log("Player not found! ");
         }
 
-        /** Adds an iSet to the list of isets */
-        addISet(player: Player, nodes?: Array<Node>) {
-            let iSet = new ISet(player, nodes);
-            this.iSets.push(iSet);
-            return iSet;
-        }
-
-        /** Removes an iSet from the list of isets*/
-        removeISet(iSet: ISet) {
-            if (this.iSets.indexOf(iSet) !== -1) {
-                this.iSets.splice(this.iSets.indexOf(iSet), 1);
-                iSet.destroy();
-            }
-        }
-
-        /** Adds node to the tree and checks if it should be the root*/
-        addNode(node?: Node) {
-            node = node || new Node();
-            if (this.nodes.length == 0) {
-                node.depth = 0;
-                this.root = node;
-            }
-
-            this.nodes.push(node);
-        }
-
-        /**Removes a given node from the tree.*/
-        removeNode(node: Node) {
-            if (this.nodes.indexOf(node) !== -1) {
-                //Remove the parent move from the tree
-                if (this.moves.indexOf(node.parentMove) !== -1) {
-                    this.moves.splice(this.moves.indexOf(node.parentMove), 1);
-                    node.parentMove.destroy();
+        /**Checks if selected nodes have the same player assigned*/
+        private checkIfNodesHaveTheSamePlayer(nodes: Array<Node>): boolean {
+            let players = [];
+            for (let i = 0; i < nodes.length; i++) {
+                let node = nodes[i];
+                if (node.player && players.indexOf(node.player) === -1) {
+                    players.push(node.player);
                 }
-                this.nodes.splice(this.nodes.indexOf(node), 1);
-
-                // if (node.parent && node.parent.iSet) {
-                //     if (node.parent.iSet.nodes.length <= 2) {
-                //         this.iSets.splice(this.iSets.indexOf(node.parent.iSet), 1);
-                //         node.parent.iSet.destroy();
-                //     }
-                //     else {
-                //         node.parent.iSet.removeNode(node.parent);
-                //     }
-                //
-                // }
-                node.destroy();
             }
+            return players.length <= 1;
         }
 
-        /** Adds a child to a given node*/
-        addChildToNode(node: Node, child?: Node) {
+        //endregion
 
-            if (this.nodes.indexOf(node) === -1) {
-                throw new Error("Node not found in tree");
-            }
-
-            child = child || new Node();
-            node.addChild(child);
-            this.nodes.push(child);
-            this.moves.push(child.parentMove);
-        }
-
+        //region Traversing Algorithms
+        /**Gets the number of levels of the tree*/
         getMaxDepth() {
             let maxDepth = 0;
             this.nodes.forEach(n => {
@@ -176,114 +251,12 @@ module GTE {
             return leaves;
         }
 
-        /**A method which checks whether an information set can be created from a list of nodes.
-         * If not, throws errors which are handled in the controller. Uses 4 helper methods.*/
-        canCreateISet(nodes: Array<Node>) {
-            // NOTE: Marked as not needed - iSets can be created without players
-            // if(!this.checkIfNodesHavePlayers(nodes)){
-            //     throw new Error(NODES_MISSING_PLAYERS_ERROR_TEXT);
-            // }
+        //endregion
 
-            if (!this.checkNumberOfChildren(nodes)) {
-                throw new Error(NODES_NUMBER_OF_CHILDREN_ERROR_TEXT);
-            }
-
-            // The below method will throw an error when there are 2 different players among the nodes
-            // but will not throw an error if there is 1 player and some nodes without a player
-            if (!this.checkIfNodesHaveTheSamePlayer(nodes)) {
-                throw new Error(NODES_DIFFERENT_PLAYERS_ERROR_TEXT);
-            }
-
-            if (this.checkIfNodesSharePathToRoot(nodes)) {
-                throw new Error(SAME_PATH_ON_ROOT_ERROR_TEXT);
-            }
-        }
-
-        /**Checks if all nodes have the required number of children*/
-        private checkNumberOfChildren(nodes: Array < Node >): boolean {
-            if (nodes[nodes.length - 1].children.length === 0) {
-                return false;
-            }
-            for (let i = 0; i < nodes.length - 1; i++) {
-                if (nodes[i].children.length !== nodes[i + 1].children.length || nodes[i].children.length === 0) {
-                    return false;
-                }
-            }
-            return true;
-        }
-
-        /**Checks if selected nodes have the same player assigned*/
-
-        private checkIfNodesHaveTheSamePlayer(nodes: Array < Node >): boolean {
-            let players = [];
-            for (let i = 0; i < nodes.length; i++) {
-                let node = nodes[i];
-                if (node.player && players.indexOf(node.player) === -1) {
-                    players.push(node.player);
-                }
-            }
-            return players.length <= 1;
-        }
-
-        /**Checks whether any 2 nodes of an array share a path to the root.*/
-
-        private checkIfNodesSharePathToRoot(nodes: Array < Node >): boolean {
-            for (let i = 0; i < nodes.length; i++) {
-                let n1 = nodes[i];
-                let path1 = n1.getPathToRoot();
-                for (let j = i + 1; j < nodes.length; j++) {
-                    let n2 = nodes[j];
-                    let path2 = n2.getPathToRoot();
-                    if (path1.indexOf(n2) !== -1 || path2.indexOf(n1) !== -1) {
-                        return true;
-                    }
-                }
-            }
-            return false;
-        }
-
-        cleanISets() {
-            for (let i = 0; i < this.iSets.length; i++) {
-                if (this.iSets[i].nodes.length<=1 || !this.checkNumberOfChildren(this.iSets[i].nodes)) {
-                    this.removeISet(this.iSets[i]);
-                    i--;
-                }
-
-            }
-        }
-
-
-        /**A method for checking whether the game has perfect recall.*/
-        perfectRecallCheck() {
-            for (let i = 0; i < this.iSets.length; i++) {
-                let iSet = this.iSets[i];
-                let iSetReachability = [];
-                iSet.nodes.forEach((n: Node) => {
-                    let current = n.parent;
-                    let currentMove = n.parentMove;
-                    while (current) {
-                        if (current.player === n.player) {
-                            iSetReachability.push({node: current, move: currentMove});
-                        }
-                        currentMove = current.parentMove;
-                        current = current.parent;
-                    }
-                });
-                console.log(iSetReachability);
-                for (let j = 0; j < iSetReachability.length; j++) {
-                    let pair1 = iSetReachability[j];
-                    for (let k = j + 1; k < iSetReachability.length; k++) {
-                        let pair2 = iSetReachability[k];
-                        if (pair1.node === pair2.node && pair1.move !== pair2.move) {
-                            throw new Error(IMPERFECT_RECALL_ERROR_TEXT);
-                        }
-                    }
-                }
-            }
-        }
-
+        //region Node/Moves Labels and Probabilities
+        /**A method which checks whether all nodes have been assigned a player*/
         checkAllNodesLabeled() {
-            if(this.nodes.length===1){
+            if (this.nodes.length === 1) {
                 return false;
             }
             for (let i = 0; i < this.nodes.length; i++) {
@@ -294,16 +267,20 @@ module GTE {
             return true;
         }
 
-        removeLabels() {
-            this.labelSetter.removeLabels(this.moves);
+        /**A method which deletes the move labels*/
+        removeMoveLabels() {
+            this.moves.forEach(m => {
+                m.label = "";
+            });
         }
 
+        /**A method which recalculates the move labels*/
         resetLabels() {
             this.labelSetter.calculateLabels(this.BFSOnTree(), this.players);
             this.resetChanceProbabilities();
         }
 
-
+        /**A method which resets the probabilities of chance moves*/
         private resetChanceProbabilities() {
             // Find all chance moves
             this.nodes.forEach(node => {
@@ -328,6 +305,7 @@ module GTE {
             });
         }
 
+        /**A method for modifying move labels - either chance or player labels*/
         changeMoveLabel(move: Move, text: string) {
             if (move.from.type === NodeType.CHANCE) {
                 this.chanceNodesSetProbabilities(move, text);
@@ -343,6 +321,7 @@ module GTE {
             }
         }
 
+        /**A method which resets the payoffs nodes*/
         resetPayoffsPlayers() {
             this.nodes.forEach(n => {
                 n.payoffs.setPlayersCount(this.players.length - 1);
@@ -350,9 +329,7 @@ module GTE {
         }
 
         /** A method which sets the probabilities of a chance node, once a new probability is set externally*/
-
         private chanceNodesSetProbabilities(move: Move, text: string) {
-            let frac = math.fraction(text);
             let newProb = <number>math.number(<any>(math.fraction(text)));
             if (newProb >= 0 && newProb <= 1) {
                 move.probability = newProb;
@@ -398,5 +375,37 @@ module GTE {
                 }
             }
         }
+        //endregion
+
+        //region Other Algorithms
+        /**A method for checking whether the game has perfect recall.*/
+        perfectRecallCheck() {
+            for (let i = 0; i < this.iSets.length; i++) {
+                let iSet = this.iSets[i];
+                let iSetReachability = [];
+                iSet.nodes.forEach((n: Node) => {
+                    let current = n.parent;
+                    let currentMove = n.parentMove;
+                    while (current) {
+                        if (current.player === n.player) {
+                            iSetReachability.push({node: current, move: currentMove});
+                        }
+                        currentMove = current.parentMove;
+                        current = current.parent;
+                    }
+                });
+                console.log(iSetReachability);
+                for (let j = 0; j < iSetReachability.length; j++) {
+                    let pair1 = iSetReachability[j];
+                    for (let k = j + 1; k < iSetReachability.length; k++) {
+                        let pair2 = iSetReachability[k];
+                        if (pair1.node === pair2.node && pair1.move !== pair2.move) {
+                            throw new Error(IMPERFECT_RECALL_ERROR_TEXT);
+                        }
+                    }
+                }
+            }
+        }
+        //endregion
     }
 }

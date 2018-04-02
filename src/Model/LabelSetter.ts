@@ -11,17 +11,12 @@ module GTE {
             this.player2Labels = "abcdefghijklmnopqrstuvwxyz".split("");
         }
 
-        removeLabels(moves:Array<Move>) {
-            moves.forEach(m => {
-                m.label = "";
-            });
-        }
-
-        calculateLabels(bfsNodes: Array<Node>, players:Array<Player>) {
+        /** Calculates and sets the labels for moves in a BFS order*/
+        calculateLabels(bfsNodes: Array<Node>, players: Array<Player>) {
             let p1Labels = this.player1Labels.slice(0);
             let p2Labels = this.player2Labels.slice(0);
 
-            bfsNodes.forEach(n=>{
+            bfsNodes.forEach(n => {
                 if (n.type === NodeType.OWNED) {
                     // reference the labels depending on the player
                     let labels = n.player === players[1] ? p1Labels : p2Labels;
@@ -47,7 +42,6 @@ module GTE {
                     }
                 }
             });
-
         }
     }
 }

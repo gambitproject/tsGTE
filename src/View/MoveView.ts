@@ -67,7 +67,6 @@ module GTE {
             this.label.x = labelPosition.x;
             this.label.y = labelPosition.y - this.label.height * 0.3;
             if (this.move.from.type === NodeType.OWNED) {
-                // this.label.fill = this.from.ownerLabel.fill;
                 let colorRGB = Phaser.Color.getRGB(this.from.node.player.color);
                 this.label.fill = Phaser.Color.RGBtoString(colorRGB.r, colorRGB.g, colorRGB.b);
                 this.label.fontStyle = "italic";

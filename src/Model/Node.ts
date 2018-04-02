@@ -17,6 +17,7 @@ module GTE {
         player: Player;
         depth: number;
         payoffs: Payoffs;
+
         constructor(depth?: number, type?: NodeType, parent?: Node) {
             this.depth = depth || 0;
             this.type = type || NodeType.DEFAULT;
@@ -42,7 +43,7 @@ module GTE {
             this.childrenMoves.push(move);
         }
 
-        /**The method removes a given child from the Node */
+        /**The method removes a given child from the Node (currently not used anywhere)*/
         removeChild(node: Node) {
             if (this.children.indexOf(node) !== -1) {
                 this.children.splice(this.children.indexOf(node), 1);
@@ -64,15 +65,15 @@ module GTE {
         /**Converts the current Node to a labeled, by setting an player */
         convertToLabeled(player: Player) {
             if (this.children.length > 0) {
-                if(this.iSet && this.iSet.nodes){
+                if (this.iSet && this.iSet.nodes) {
                     this.iSet.player = player;
-                    this.iSet.nodes.forEach(n=>{
-                       n.type = NodeType.OWNED;
-                       n.player = player;
-                       n.childrenMoves.forEach(c => c.convertToLabeled());
+                    this.iSet.nodes.forEach(n => {
+                        n.type = NodeType.OWNED;
+                        n.player = player;
+                        n.childrenMoves.forEach(c => c.convertToLabeled());
                     });
                 }
-                else{
+                else {
                     this.type = NodeType.OWNED;
                     this.player = player;
                     this.childrenMoves.forEach(c => c.convertToLabeled());
@@ -91,7 +92,7 @@ module GTE {
 
         /**Converts the current Node to a chance Node, setting the player to the chancePlayer and assigning probabilities to children moves*/
         convertToChance(chancePlayer: Player, probabilities?: Array<number>,) {
-            if (this.children.length>0 && this.iSet === null) {
+            if (this.children.length > 0 && this.iSet === null) {
                 this.type = NodeType.CHANCE;
 
                 if (chancePlayer.id === 0) {
@@ -139,7 +140,7 @@ module GTE {
             }
             if (this.iSet) {
                 this.iSet.removeNode(this);
-                this.iSet=null;
+                this.iSet = null;
             }
             if (this.payoffs) {
                 this.payoffs.destroy();

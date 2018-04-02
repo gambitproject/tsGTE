@@ -77,7 +77,7 @@ module GTE {
                 this.y - this.circle.width, "", null);
 
             if (this.node.player) {
-                this.ownerLabel.setText(this.node.player.getLabel(), true);
+                this.ownerLabel.setText(this.node.player.label, true);
             }
             else {
                 this.ownerLabel.text = "";
@@ -168,7 +168,7 @@ module GTE {
         resetLabelText(zeroSumOn:boolean) {
             if (this.node.player && !this.node.iSet) {
                 this.ownerLabel.alpha = 1;
-                this.ownerLabel.setText(this.node.player.getLabel(), true);
+                this.ownerLabel.setText(this.node.player.label, true);
                 let colorRGB = Phaser.Color.getRGB(this.node.player.color);
                 this.ownerLabel.fill = Phaser.Color.RGBtoString(colorRGB.r, colorRGB.g, colorRGB.b);
                 this.ownerLabel.scale.set(1);

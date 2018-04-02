@@ -1,65 +1,72 @@
-
-module GTE{
+///<reference path="../Utils/Constants.ts"/>
+module GTE {
     /**The class Payoff which is an array of numbers*/
-    export class Payoffs{
+    export class Payoffs {
 
-        outcomes:Array<number>;
-        private playersCount:number;
+        outcomes: Array<number>;
+        private playersCount: number;
 
 
-        constructor(payoffs?:Array<number>){
+        constructor(payoffs?: Array<number>) {
             this.playersCount = 2;
 
-            if(payoffs){
+            if (payoffs) {
                 this.outcomes = payoffs.slice(0);
             }
-            else{
-                this.outcomes = [0,0,0,0];
+            else {
+                this.outcomes = [0, 0, 0, 0];
             }
         }
 
-        saveFromString(payoffs:string){
+        /**A method converting text payoffs from the input field, and placing them to the corresponding leaves*/
+        saveFromString(payoffs: string) {
             let payoffsAsStringArray = payoffs.split(" ");
             for (let i = 0; i < payoffsAsStringArray.length; i++) {
-                if(i>3){
+                if (i > 3) {
                     return;
                 }
                 let currentPayoff = parseFloat(payoffsAsStringArray[i]);
-                if(currentPayoff){
+                if (currentPayoff) {
                     this.outcomes[i] = currentPayoff;
                 }
             }
         }
 
-        setRandomPayoffs(){
+        /**A method for setting random payoffs to leaves*/
+        setRandomPayoffs() {
             for (let i = 0; i < this.outcomes.length; i++) {
-                this.outcomes[i] = Math.floor(Math.random()*21);
+                this.outcomes[i] = Math.floor(Math.random() * MAX_RANDOM_PAYOFFS);
             }
         }
 
-        setPlayersCount(playersCount:number){
+        /**A method for changing the number of players in the game*/
+        setPlayersCount(playersCount: number) {
             this.playersCount = playersCount;
         }
 
-        convertToZeroSum(){
-            if(this.playersCount === 2){
-                this.outcomes[1]=-this.outcomes[0];
+        /**A method for converting the game into a zero-sum game*/
+        convertToZeroSum() {
+            if (this.playersCount === 2) {
+                this.outcomes[1] = -this.outcomes[0];
             }
         }
 
-        add(payoffsToAdd:Array<number>){
+        /**A helper method for the functionality of the strategic form*/
+        add(payoffsToAdd: Array<number>) {
             for (let i = 0; i < this.outcomes.length; i++) {
-                this.outcomes[i]+=payoffsToAdd[i];
+                this.outcomes[i] += payoffsToAdd[i];
             }
         }
 
-        round(){
+        /**A helper method for the visual representation of outcomes. Uses an external library mathjs.*/
+        round() {
             for (let i = 0; i < this.outcomes.length; i++) {
-                this.outcomes[i] = parseFloat(math.format(math.round(this.outcomes[i],2)));
+                this.outcomes[i] = parseFloat(math.format(math.round(this.outcomes[i], 2)));
             }
         }
 
-        toString(){
+        /**A method for printing and visualizing payoffs*/
+        toString() {
             let numbersToShow = [];
             for (let i = 0; i < this.playersCount; i++) {
                 numbersToShow.push(this.outcomes[i]);
@@ -67,7 +74,7 @@ module GTE{
             return numbersToShow.join(" ");
         }
 
-        destroy(){
+        destroy() {
             this.outcomes = null;
         }
     }

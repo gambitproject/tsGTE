@@ -42,7 +42,7 @@ module GTE {
             let leftNodePosition = this.nodes[Math.floor(this.nodes.length / 2) - 1].position;
             this.label.position.set((rightNodePosition.x + leftNodePosition.x) * 0.5, (rightNodePosition.y + leftNodePosition.y) * 0.5);
             if(this.nodes[0].node.player){
-                this.label.setText(this.nodes[0].node.player.getLabel());
+                this.label.setText(this.nodes[0].node.player.label);
             }
             if(!this.iSet.player){
                 this.label.alpha = 0;
@@ -97,7 +97,7 @@ module GTE {
 
             this.label = this.game.add.text((rightNodePosition.x + leftNodePosition.x) * 0.5, (rightNodePosition.y + leftNodePosition.y) * 0.5, "", null);
             if(this.nodes[0].node.player){
-                this.label.setText(this.nodes[0].node.player.getLabel());
+                this.label.setText(this.nodes[0].node.player.label);
             }
             this.label.fontSize = this.nodes[0].width * LABEL_SIZE / OVERLAY_SCALE;
             this.label.anchor.set(0.5, 0.5);
