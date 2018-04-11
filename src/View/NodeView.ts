@@ -9,7 +9,7 @@ module GTE {
         game: Phaser.Game;
         node: Node;
 
-        //The input handler will fire signals when the node is pressed, hovered and unhovered on
+        //The input handler will fire signals when the node is pressed, hovered and hovered-out
         ownerLabel: Phaser.Text;
         payoffsLabel: Phaser.Text;
         isSelected: boolean;
@@ -23,7 +23,7 @@ module GTE {
         constructor(game: Phaser.Game, node: Node, x?: number, y?: number) {
             super(game, x, y, game.cache.getBitmapData("node-circle"));
             this.alpha = 0;
-            this.renderable =  false;
+            this.renderable = false;
             this.isSelected = false;
             this.anchor.set(0.5, 0.5);
             this.scale.set(OVERLAY_SCALE, OVERLAY_SCALE);
@@ -70,7 +70,6 @@ module GTE {
             this.previewSelected.anchor.set(0.5, 0.5);
         }
 
-
         /** A method which creates the label for the Node*/
         private createLabels() {
             this.ownerLabel = this.game.add.text(this.x + this.labelHorizontalOffset * this.circle.width,
@@ -98,12 +97,6 @@ module GTE {
             this.payoffsLabel.inputEnabled = true;
             this.payoffsLabel.lineSpacing = -10;
             this.payoffsLabel.align = "right";
-        }
-
-        /** A method which sets the position of the node to a specific x and y coordinate*/
-        setPosition(x: number, y: number) {
-            this.position.set(x, y);
-            // this.updateLabelPosition();
         }
 
         private updateLabelPosition() {
@@ -165,7 +158,7 @@ module GTE {
         }
 
         /** A method which sets the label text as the player label*/
-        resetLabelText(zeroSumOn:boolean) {
+        resetLabelText(zeroSumOn: boolean) {
             if (this.node.player && !this.node.iSet) {
                 this.ownerLabel.alpha = 1;
                 this.ownerLabel.setText(this.node.player.label, true);
@@ -177,12 +170,12 @@ module GTE {
                 this.ownerLabel.alpha = 0;
             }
 
-            if(this.node.player && this.node.type === NodeType.CHANCE){
+            if (this.node.player && this.node.type === NodeType.CHANCE) {
                 this.ownerLabel.scale.set(0.5);
             }
 
             if (this.node.children.length === 0) {
-                if(zeroSumOn){
+                if (zeroSumOn) {
                     this.node.payoffs.convertToZeroSum();
                 }
                 let payoffsString = this.node.payoffs.toString();

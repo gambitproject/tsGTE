@@ -41,7 +41,8 @@ module GTE {
             this.height = Phaser.Point.distance(this.from.position, this.to.position);
         }
 
-        updateLabel(fractionOn: boolean, levelHeight: number) {
+        updateLabel(fractionOn: boolean) {
+            let levelHeight = this.to.y - this.from.y;
             if (this.move.from.type === NodeType.CHANCE && this.move.probability !== null) {
                 this.label.text = this.move.getProbabilityText(fractionOn);
             }
@@ -53,10 +54,10 @@ module GTE {
                 this.label.alpha = 0;
             }
             let labelPosition = this.from.position.clone();
-            let direction = new Phaser.Point(this.to.position.x-this.from.position.x, this.to.position.y-this.from.position.y);
+            let direction = new Phaser.Point(this.to.position.x - this.from.position.x, this.to.position.y - this.from.position.y);
             direction.normalize();
-            direction.setMagnitude(levelHeight*0.6);
-            labelPosition.add(direction.x,direction.y);
+            direction.setMagnitude(levelHeight * 0.6);
+            labelPosition.add(direction.x, direction.y);
             if (this.rotation > 0) {
                 labelPosition.x = labelPosition.x - this.label.width * 0.6;
             }

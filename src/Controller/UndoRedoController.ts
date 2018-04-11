@@ -52,19 +52,22 @@ module GTE {
                n.resetLabelText(this.treeController.treeViewProperties.zeroSumOn);
             });
 
-            this.treeController.treeView.drawLabels(true);
+            this.treeController.treeView.showOrHideLabels(true);
             this.treeController.attachHandlersToNodes();
             this.treeController.treeView.iSets.forEach((iSet)=>{
                 this.treeController.attachHandlersToISet(iSet);
             });
 
             if(this.treeCoordinates[this.currentTreeIndex]){
+
+
                 for (let i = 0; i < this.treeController.treeView.nodes.length; i++) {
                     this.treeController.treeView.nodes[i].position.x = this.treeCoordinates[this.currentTreeIndex][i].x;
                     this.treeController.treeView.nodes[i].position.y = this.treeCoordinates[this.currentTreeIndex][i].y;
                 }
                 this.treeController.treeView.drawISets()
             }
+            this.treeController.resetTree(false, false);
 
             this.resetUndoReddoButtons();
         }

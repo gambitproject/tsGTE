@@ -49,17 +49,14 @@ module GTE {
         createInitialTree() {
             this.tree = new Tree();
             this.tree.addNode();
-            this.tree.addChildToNode(this.tree.nodes[0]);
-            this.tree.addChildToNode(this.tree.nodes[0]);
             this.tree.addPlayer(new Player(0, "chance", 0x000000));
             this.tree.addPlayer(new Player(1, "1", PLAYER_COLORS[0]));
             this.tree.addPlayer(new Player(2, "2", PLAYER_COLORS[1]));
+
             this.treeViewProperties = new TreeViewProperties(this.game.height * INITIAL_TREE_HEIGHT, this.game.width * INITIAL_TREE_WIDTH);
             this.treeView = new TreeView(this.game, this.tree, this.treeViewProperties);
-            this.treeView.nodes[0].ownerLabel.text = "A";
-            this.treeView.nodes[1].ownerLabel.text = "B";
-
-            this.treeView.nodes[2].ownerLabel.text = "C";
+            this.addNodeHandler(this.treeView.nodes[0]);
+            this.resetTree(true, true);
         }
 
         /**The update method is built-into Phaser and is called 60 times a second.
@@ -68,13 +65,11 @@ module GTE {
             if (this.game.input.activePointer.isDown && this.selectionRectangle.active) {
                 this.treeView.nodes.forEach((n: NodeView) => {
                     if (this.selectionRectangle.overlap(n) && this.selectedNodes.indexOf(n) === -1) {
-                        // n.setColor(NODE_SELECTED_COLOR);
                         n.isSelected = true;
                         n.resetNodeDrawing();
                         this.selectedNodes.push(n);
                     }
                     if (!this.selectionRectangle.overlap(n) && this.selectedNodes.indexOf(n) !== -1 && !this.game.input.keyboard.isDown(Phaser.Keyboard.SHIFT)) {
-
                         n.isSelected = false;
                         n.resetNodeDrawing();
                         this.selectedNodes.splice(this.selectedNodes.indexOf(n), 1);
@@ -252,7 +247,7 @@ module GTE {
             n.resetNodeDrawing();
             n.resetLabelText(this.treeViewProperties.zeroSumOn);
 
-            this.resetTree(true);
+            this.resetTree(false, false);
         }
 
         /**A method for assigning chance player to a given node*/
@@ -260,7 +255,7 @@ module GTE {
             n.node.convertToChance(this.tree.players[0]);
             n.resetNodeDrawing();
             n.resetLabelText(this.treeViewProperties.zeroSumOn);
-            this.resetTree(true);
+            this.resetTree(false, false);
 
         }
 
@@ -274,8 +269,8 @@ module GTE {
             if (playerID > this.tree.players.length - 1) {
                 this.tree.addPlayer(new Player(playerID, playerID.toString(), PLAYER_COLORS[playerID - 1]));
                 $("#player-number").html((this.tree.players.length - 1).toString());
-                $("#zero-sum-wrapper").css("opacity",0.3);
-                this.treeView.drawLabels(true);
+                $("#zero-sum-wrapper").css("opacity", 0.3);
+                this.treeView.showOrHideLabels(true);
             }
         }
 
@@ -316,14 +311,14 @@ module GTE {
             let iSet = this.tree.addISet(player, iSetNodes);
             let iSetV = this.treeView.addISetView(iSet);
             this.attachHandlersToISet(iSetV);
-            this.resetTree(true);
+            this.resetTree(true, true);
         }
 
         /**A method for deleting an iSet*/
         removeISetHandler(iSet: ISet) {
             this.tree.removeISet(iSet);
             this.treeView.removeISetView(this.treeView.findISetView(iSet));
-            this.resetTree(true);
+            this.resetTree(true, true);
         }
 
         /**A method which removes all isets from the selected nodes*/
@@ -378,7 +373,7 @@ module GTE {
                     this.createISet(rightNodes);
                 }
             }
-            this.resetTree(true);
+            this.resetTree(false, false);
         }
 
         /**A method for assigning random payoffs to nodes*/
@@ -387,19 +382,14 @@ module GTE {
             leaves.forEach((n: Node) => {
                 n.payoffs.setRandomPayoffs();
             });
-            this.resetTree();
+            this.resetTree(false, false);
         }
 
-        /**A method for resetting the tree after each action on the tree*/
-        resetTree(soft?:boolean) {
+        /**A method for resetting the tree after each action on the tree,
+         * soft=true means only changing labels and isets, false redraws the full tree*/
+        resetTree(fullReset: boolean, startAnimations: boolean) {
             if (this.tree.nodes.length > 1) {
-                if(!soft) {
-                    this.treeView.drawTree();
-                }
-                else{
-                    this.treeView.drawISets();
-                    this.treeView.drawLabels(true);
-                }
+                this.treeView.drawTree(fullReset, startAnimations);
             }
         }
 

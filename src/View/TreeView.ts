@@ -29,15 +29,17 @@ module GTE {
             this.nodes = [];
             this.moves = [];
             this.iSets = [];
-            this.drawInitialTree();
-            this.centerGroupOnScreen()
+            this.initializeTree();
+            // this.drawTree();
+            // this.centerGroupOnScreen()
         }
 
-        private drawInitialTree() {
+        private initializeTree() {
             this.tree.nodes.forEach(n => {
                 let nodeView = new NodeView(this.game, n);
 
                 this.nodes.push(nodeView);
+
                 if (n !== this.tree.root) {
                     let parent = this.findNodeView(n.parent);
                     this.moves.push(new MoveView(this.game, parent, nodeView));
@@ -46,34 +48,39 @@ module GTE {
             this.tree.iSets.forEach(iSet => {
                 this.addISetView(iSet);
             });
-            this.drawTree();
+            this.drawTree(true, false);
             // NOTE: Moves positions are only updated on initial drawing
             this.moves.forEach(m => {
                 m.updateMovePosition();
-                m.updateLabel(this.properties.fractionOn, this.properties.levelHeight);
+                m.updateLabel(this.properties.fractionOn);
             });
         }
 
-        /**This method draws the tree by recursively calling the drawNode method*/
-        drawTree() {
+        /**This method contains the algorithm for drawing the tree in different scenarios*/
+        drawTree(fullReset:boolean, startAnimations:boolean) {
             let maxDepth = this.tree.getMaxDepth();
             if (maxDepth * this.properties.levelHeight > this.game.height * 0.75) {
                 this.properties.levelHeight *= 0.8;
             }
+
             this.treeTweenManager.oldCoordinates = this.getOldCoordinates();
 
-            this.setYCoordinates();
-            this.updateLeavesPositions();
-            this.centerParents();
-            this.centerGroupOnScreen();
-            this.drawISets();
-            this.drawLabels(true);
+            if(fullReset){
+                this.setYCoordinates();
+                this.updateLeavesPositions();
+                this.centerParents();
+                this.centerGroupOnScreen();
+            }
 
-            this.treeTweenManager.startTweens(this.nodes, this.moves, this.iSets, this.properties.fractionOn);
-            // NOTE: All other moves will be updated from the tween manager.
-            if (this.moves.length > 0) {
-                this.moves[this.moves.length - 1].updateMovePosition();
-                this.moves[this.moves.length - 1].updateLabel(this.properties.fractionOn, this.properties.levelHeight);
+            this.drawISets();
+            // this.updateMoves();
+            this.resetNodeLabels();
+            this.showOrHideLabels(true);
+            if(startAnimations){
+                this.treeTweenManager.startTweens(this.nodes, this.moves);
+            }
+            else{
+                this.updateMoves();
             }
         }
 
@@ -115,6 +122,20 @@ module GTE {
             });
         }
 
+        updateMoves(){
+            this.moves.forEach((m:MoveView)=>{
+                m.updateMovePosition();
+                m.updateLabel(this.properties.fractionOn);
+            });
+        }
+
+        resetNodeLabels(){
+            this.nodes.forEach((nV:NodeView)=>{
+                nV.resetLabelText(this.properties.zeroSumOn);
+                nV.resetNodeDrawing();
+            });
+        }
+
         drawISets() {
             this.iSets.forEach(is => {
                 is.resetISet();
@@ -132,7 +153,6 @@ module GTE {
 
             this.nodes.push(childV);
             this.moves.push(move);
-            // this.drawTree();
             return childV;
         }
 
@@ -219,14 +239,14 @@ module GTE {
         }
 
         /** A method which decides whether to show the labels or not*/
-        drawLabels(shouldResetLabels: boolean) {
+        showOrHideLabels(shouldResetLabels: boolean) {
             if (this.tree.checkAllNodesLabeled()) {
                 if (shouldResetLabels) {
                     this.tree.resetLabels();
                 }
                 this.moves.forEach(m => {
                     m.label.alpha = 1;
-                    m.updateLabel(this.properties.fractionOn, this.properties.levelHeight);
+                    m.updateLabel(this.properties.fractionOn);
                 });
                 this.nodes.forEach(n => {
                     if (n.node.children.length === 0) {
@@ -286,7 +306,7 @@ module GTE {
             let offsetY = (this.game.height / 2 - treeCenterY);
 
             this.nodes.forEach(n => {
-                n.setPosition(n.x + offsetX, n.y + offsetY);
+                n.position.set(n.x + offsetX, n.y + offsetY);
             });
         }
     }

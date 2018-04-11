@@ -21,6 +21,7 @@ module GTE {
         //The label input field which appears when you click on a label
         labelInput:LabelInput;
 
+        /** The create method is built-into the engine for every state. It acts as a constructor.*/
         create() {
             this.labelInput = new LabelInput(this.game);
             this.treeController = new TreeController(this.game, this.labelInput);
@@ -28,10 +29,6 @@ module GTE {
             this.keyboardController = new KeyboardController(this.game, this.userActionController);
             this.hoverManager = new HoverMenuController(this.game, this.userActionController);
             this.topMenu = new TopMenu(this.userActionController);
-
-           // The line below is used for fps testing purposes
-           // this.game.time.advancedTiming = true;
-
         }
 
         /** The update method is built-into the engine for every state. It executes at most 60 times a second*/
@@ -82,6 +79,10 @@ module GTE {
             //     this.game.debug.text(this.userActionController.undoRedoController.treesList.length+" "+this.userActionController.undoRedoController.treeCoordinates.length, 20,40, "#ff0000", "20px Arial");
             //
             // }
+            // if(this.treeController.treeView && this.treeController.treeView.treeTweenManager){
+            //     this.game.debug.text("n: "+this.treeController.treeView.nodes.length + " o: "+this.treeController.treeView.treeTweenManager.oldCoordinates.length, 20,40, "#ff0000", "20px Arial");
+            // }
+
         }
     }
 }

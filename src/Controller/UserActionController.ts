@@ -126,7 +126,7 @@ module GTE {
                         n.resetNodeDrawing();
                         n.resetLabelText(this.treeController.treeViewProperties.zeroSumOn);
                     });
-                    this.treeController.treeView.drawLabels(false);
+                    this.treeController.treeView.showOrHideLabels(false);
                     this.treeController.attachHandlersToNodes();
                     this.treeController.treeView.iSets.forEach(iSetV => {
                         this.treeController.attachHandlersToISet(iSetV);
@@ -174,7 +174,7 @@ module GTE {
             }
             this.treeController.tree.cleanISets();
             this.treeController.treeView.cleanISets();
-            this.treeController.resetTree();
+            this.treeController.resetTree(true, true);
             this.destroyStrategicForm();
             this.undoRedoController.saveNewTree();
         }
@@ -204,7 +204,7 @@ module GTE {
 
             this.treeController.tree.cleanISets();
             this.treeController.treeView.cleanISets();
-            this.treeController.resetTree();
+            this.treeController.resetTree(true, true);
 
             this.destroyStrategicForm();
             this.undoRedoController.saveNewTree();
@@ -244,7 +244,7 @@ module GTE {
                 n.resetNodeDrawing();
                 n.resetLabelText(this.treeController.treeViewProperties.zeroSumOn);
             });
-            this.treeController.resetTree(true);
+            this.treeController.resetTree(false, false);
             this.destroyStrategicForm();
             this.undoRedoController.saveNewTree();
         }
@@ -294,13 +294,13 @@ module GTE {
         toggleZeroSum() {
             this.treeController.treeViewProperties.zeroSumOn = !this.treeController.treeViewProperties.zeroSumOn;
             this.destroyStrategicForm();
-            this.treeController.resetTree(true);
+            this.treeController.resetTree(false, false);
         }
 
         /**A method which toggles the fractional or decimal view of chance moves*/
         toggleFractionDecimal() {
             this.treeController.treeViewProperties.fractionOn = !this.treeController.treeViewProperties.fractionOn;
-            this.treeController.resetTree(true);
+            this.treeController.resetTree(false, false);
         }
 
         /**Starts the "Cut" state for an Information set*/
@@ -328,7 +328,7 @@ module GTE {
                 this.cutSprite.alpha = 0;
 
                 this.treeController.cutInformationSet(this.cutInformationSet, this.cutSprite.x, this.cutSprite.y);
-                this.treeController.resetTree(true);
+                this.treeController.resetTree(true, true);
                 this.undoRedoController.saveNewTree();
             }, this);
 
@@ -437,7 +437,7 @@ module GTE {
                     let moveV = (<MoveView>this.treeController.labelInput.currentlySelected);
                     this.treeController.tree.changeMoveLabel(moveV.move, this.treeController.labelInput.inputField.val());
                     this.treeController.treeView.moves.forEach(m => {
-                        m.updateLabel(this.treeController.treeViewProperties.fractionOn, this.treeController.treeViewProperties.levelHeight);
+                        m.updateLabel(this.treeController.treeViewProperties.fractionOn);
                     });
                 }
                 // If we are currently looking at nodes
@@ -458,11 +458,11 @@ module GTE {
                         this.treeController.treeView.nodes.forEach(n => {
                             n.resetLabelText(this.treeController.treeViewProperties.zeroSumOn);
                         });
-                        if(this.treeController.tree.players.length===3){
-                            try{
+                        if (this.treeController.tree.players.length === 3) {
+                            try {
                                 this.createStrategicForm();
                             }
-                            catch(err){
+                            catch (err) {
                                 //Handle error
                             }
                         }
@@ -524,7 +524,7 @@ module GTE {
             });
             this.treeController.treeView.moves.forEach(m => {
                 m.updateMovePosition();
-                m.updateLabel(this.treeController.treeViewProperties.fractionOn, this.treeController.treeViewProperties.levelHeight);
+                m.updateLabel(this.treeController.treeViewProperties.fractionOn);
             });
             this.treeController.treeView.drawISets();
         }
@@ -532,30 +532,25 @@ module GTE {
         createStrategicForm() {
             this.destroyStrategicForm();
 
-            if(this.treeController.tree.checkAllNodesLabeled()){
-                // try {
-                    this.strategicForm = new StrategicForm(this.treeController.tree);
-                    this.strategicFormView = new StrategicFormView(this.game, this.strategicForm);
-                    this.strategicFormView.background.events.onDragStart.add(() => {
-                        this.game.canvas.style.cursor = "move";
-                        this.treeController.selectionRectangle.active = false;
-                    });
-                    this.strategicFormView.background.events.onDragStop.add(() => {
-                        this.game.canvas.style.cursor = "move";
-                        this.treeController.selectionRectangle.active = true;
-                    });
-                    this.strategicFormView.closeIcon.events.onInputDown.add(() => {
-                        this.strategicForm.destroy();
-                        this.strategicFormView.destroy();
-                    });
-                // }
-                // catch (err) {
-                //     this.treeController.errorPopUp.show(err.message);
-                // }
+            if (this.treeController.tree.checkAllNodesLabeled()) {
+                this.strategicForm = new StrategicForm(this.treeController.tree);
+                this.strategicFormView = new StrategicFormView(this.game, this.strategicForm);
+                this.strategicFormView.background.events.onDragStart.add(() => {
+                    this.game.canvas.style.cursor = "move";
+                    this.treeController.selectionRectangle.active = false;
+                });
+                this.strategicFormView.background.events.onDragStop.add(() => {
+                    this.game.canvas.style.cursor = "move";
+                    this.treeController.selectionRectangle.active = true;
+                });
+                this.strategicFormView.closeIcon.events.onInputDown.add(() => {
+                    this.strategicForm.destroy();
+                    this.strategicFormView.destroy();
+                });
             }
         }
 
-        destroyStrategicForm(){
+        destroyStrategicForm() {
             if (this.strategicForm) {
                 this.strategicForm.destroy();
             }
