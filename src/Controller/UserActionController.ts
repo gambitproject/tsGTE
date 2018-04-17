@@ -221,6 +221,7 @@ module GTE {
                 });
             }
             this.undoRedoController.saveNewTree();
+            this.treeController.resetTree(false,false);
         }
 
         /**A method for assigning chance player to a node (keyboard 0)*/
@@ -234,6 +235,7 @@ module GTE {
                 });
             }
             this.undoRedoController.saveNewTree();
+            this.treeController.resetTree(false,false);
         }
 
         /**A method which removes the last player from the list of players*/
@@ -286,7 +288,7 @@ module GTE {
 
         /**A method for assigning random payoffs*/
         randomPayoffsHandler() {
-            this.treeController.randomPayoffs();
+            this.treeController.assignRandomPayoffs();
             this.destroyStrategicForm();
         }
 
@@ -550,7 +552,7 @@ module GTE {
             }
         }
 
-        destroyStrategicForm() {
+         destroyStrategicForm() {
             if (this.strategicForm) {
                 this.strategicForm.destroy();
             }

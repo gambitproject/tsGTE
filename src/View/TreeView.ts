@@ -30,16 +30,13 @@ module GTE {
             this.moves = [];
             this.iSets = [];
             this.initializeTree();
-            // this.drawTree();
-            // this.centerGroupOnScreen()
         }
 
+        /**Given a tree from the Model, we initialize the treeView by adding the corresponding sprites*/
         private initializeTree() {
             this.tree.nodes.forEach(n => {
                 let nodeView = new NodeView(this.game, n);
-
                 this.nodes.push(nodeView);
-
                 if (n !== this.tree.root) {
                     let parent = this.findNodeView(n.parent);
                     this.moves.push(new MoveView(this.game, parent, nodeView));
@@ -49,15 +46,14 @@ module GTE {
                 this.addISetView(iSet);
             });
             this.drawTree(true, false);
-            // NOTE: Moves positions are only updated on initial drawing
-            this.moves.forEach(m => {
-                m.updateMovePosition();
-                m.updateLabel(this.properties.fractionOn);
-            });
+
+            this.updateMoves();
         }
 
+
+        //region Tree Drawing Algorithm
         /**This method contains the algorithm for drawing the tree in different scenarios*/
-        drawTree(fullReset:boolean, startAnimations:boolean) {
+        drawTree(fullReset: boolean, startAnimations: boolean) {
             let maxDepth = this.tree.getMaxDepth();
             if (maxDepth * this.properties.levelHeight > this.game.height * 0.75) {
                 this.properties.levelHeight *= 0.8;
@@ -65,7 +61,7 @@ module GTE {
 
             this.treeTweenManager.oldCoordinates = this.getOldCoordinates();
 
-            if(fullReset){
+            if (fullReset) {
                 this.setYCoordinates();
                 this.updateLeavesPositions();
                 this.centerParents();
@@ -73,17 +69,17 @@ module GTE {
             }
 
             this.drawISets();
-            // this.updateMoves();
             this.resetNodeLabels();
             this.showOrHideLabels(true);
-            if(startAnimations){
+            if (startAnimations) {
                 this.treeTweenManager.startTweens(this.nodes, this.moves);
             }
-            else{
+            else {
                 this.updateMoves();
             }
         }
 
+        /**In order to tween the nodes, we need to save the old coordinates for each node*/
         private getOldCoordinates() {
             let oldCoordinates = [];
             this.nodes.forEach(n => {
@@ -112,36 +108,113 @@ module GTE {
 
         /**Update the parents' x coordinate*/
         private centerParents() {
-            this.tree.BFSOnTree().reverse().forEach(node => {
-                if (node.children.length !== 0) {
-                    let currentNodeView = this.findNodeView(node);
-                    let leftChildNodeView = this.findNodeView(node.children[0]);
-                    let rightChildNodeView = this.findNodeView(node.children[node.children.length - 1]);
+            this.tree.BFSOnTree().reverse().forEach((n: Node) => {
+                if (n.children.length !== 0) {
+                    let currentNodeView = this.findNodeView(n);
+                    let leftChildNodeView = this.findNodeView(n.children[0]);
+                    let rightChildNodeView = this.findNodeView(n.children[n.children.length - 1]);
                     currentNodeView.x = (leftChildNodeView.x + rightChildNodeView.x) / 2;
                 }
             });
         }
 
-        updateMoves(){
-            this.moves.forEach((m:MoveView)=>{
-                m.updateMovePosition();
-                m.updateLabel(this.properties.fractionOn);
+        /**A method which updates the rotation and position of the moves with regards to the parent and child nodes*/
+        updateMoves() {
+            this.moves.forEach((mV: MoveView) => {
+                mV.updateMovePosition();
+                mV.updateLabel(this.properties.fractionOn);
             });
         }
 
-        resetNodeLabels(){
-            this.nodes.forEach((nV:NodeView)=>{
+        /** Resets the drawing of each node, depending on the node type*/
+        resetNodeLabels() {
+            this.nodes.forEach((nV: NodeView) => {
                 nV.resetLabelText(this.properties.zeroSumOn);
                 nV.resetNodeDrawing();
             });
         }
 
+        /**ISets need to be redrawn at each step*/
         drawISets() {
             this.iSets.forEach(is => {
                 is.resetISet();
             });
         }
 
+        /** A method which decides whether to show the labels or not*/
+        showOrHideLabels(shouldResetLabels: boolean) {
+            if (this.tree.checkAllNodesLabeled()) {
+                if (shouldResetLabels) {
+                    this.tree.resetLabels();
+                }
+                this.moves.forEach(m => {
+                    m.label.alpha = 1;
+                    m.updateLabel(this.properties.fractionOn);
+                });
+                this.nodes.forEach(n => {
+                    if (n.node.children.length === 0) {
+                        n.node.convertToLeaf();
+                        n.resetNodeDrawing();
+                        n.resetLabelText(this.properties.zeroSumOn);
+                    }
+                });
+            }
+            else {
+                this.tree.removeMoveLabels();
+                this.moves.forEach(m => {
+                    m.label.alpha = 0;
+                });
+                this.nodes.forEach(n => {
+                    n.resetLabelText(this.properties.zeroSumOn);
+                    n.payoffsLabel.alpha = 0;
+                    if (n.node.type === NodeType.LEAF) {
+                        n.node.convertToDefault();
+                        n.resetNodeDrawing();
+                    }
+                });
+            }
+        }
+
+        /**Re-centers the tree on the screen*/
+        private centerGroupOnScreen() {
+            let left = this.game.width * 5;
+            let right = -this.game.width * 5;
+            let top = this.game.height * 5;
+            let bottom = -this.game.height * 5;
+
+            this.nodes.forEach(n => {
+                if (n.x < left) {
+                    left = n.x;
+                }
+                if (n.x > right) {
+                    right = n.x;
+                }
+                if (n.y < top) {
+                    top = n.y;
+                }
+                if (n.y > bottom) {
+                    bottom = n.y;
+                }
+            });
+
+            let width = right - left;
+            let height = bottom - top;
+
+
+            let treeCenterX = left + width / 2;
+            let treeCenterY = top + height / 2;
+
+            let offsetX = (this.game.width / 2 - treeCenterX);
+            let offsetY = (this.game.height / 2 - treeCenterY);
+
+            this.nodes.forEach(n => {
+                n.position.set(n.x + offsetX, n.y + offsetY);
+            });
+        }
+
+        //endregion
+
+        //region Nodes
         /** Adds a child to a specified node*/
         addChildToNode(nodeV: NodeView) {
             let node = nodeV.node;
@@ -193,6 +266,9 @@ module GTE {
             }
         }
 
+        //endregion
+
+        //region ISets
         /**A method for adding an iSetView*/
         addISetView(iSet: ISet) {
             let nodes = [];
@@ -238,76 +314,6 @@ module GTE {
             }
         }
 
-        /** A method which decides whether to show the labels or not*/
-        showOrHideLabels(shouldResetLabels: boolean) {
-            if (this.tree.checkAllNodesLabeled()) {
-                if (shouldResetLabels) {
-                    this.tree.resetLabels();
-                }
-                this.moves.forEach(m => {
-                    m.label.alpha = 1;
-                    m.updateLabel(this.properties.fractionOn);
-                });
-                this.nodes.forEach(n => {
-                    if (n.node.children.length === 0) {
-                        n.node.convertToLeaf();
-                        n.resetNodeDrawing();
-                        n.resetLabelText(this.properties.zeroSumOn);
-                    }
-                });
-            }
-            else {
-                this.tree.removeMoveLabels();
-                this.moves.forEach(m => {
-                    m.label.alpha = 0;
-                });
-                this.nodes.forEach(n => {
-                    n.resetLabelText(this.properties.zeroSumOn);
-                    n.payoffsLabel.alpha = 0;
-                    if (n.node.type === NodeType.LEAF) {
-                        n.node.convertToDefault();
-                        n.resetNodeDrawing();
-                    }
-                });
-            }
-        }
-
-        /**Re-centers the tree on the screen*/
-        private centerGroupOnScreen() {
-
-            let left = this.game.width * 5;
-            let right = -this.game.width * 5;
-            let top = this.game.height * 5;
-            let bottom = -this.game.height * 5;
-
-            this.nodes.forEach(n => {
-                if (n.x < left) {
-                    left = n.x;
-                }
-                if (n.x > right) {
-                    right = n.x;
-                }
-                if (n.y < top) {
-                    top = n.y;
-                }
-                if (n.y > bottom) {
-                    bottom = n.y;
-                }
-            });
-
-            let width = right - left;
-            let height = bottom - top;
-
-
-            let treeCenterX = left + width / 2;
-            let treeCenterY = top + height / 2;
-
-            let offsetX = (this.game.width / 2 - treeCenterX);
-            let offsetY = (this.game.height / 2 - treeCenterY);
-
-            this.nodes.forEach(n => {
-                n.position.set(n.x + offsetX, n.y + offsetY);
-            });
-        }
+        //endregion
     }
 }

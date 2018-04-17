@@ -12,7 +12,7 @@
 ///<reference path="../Menus/LabelInput/LabelInput.ts"/>
 module GTE {
     /**A class which connects the TreeView and the Tree Model.
-     * Depending on the level of abstraction, some properties can be moved to different classes*/
+     * This class is used mainly through UserActionController.ts*/
     export class TreeController {
         game: Phaser.Game;
         bmd: Phaser.BitmapData;
@@ -27,17 +27,14 @@ module GTE {
         private nodesToDelete: Array<Node>;
         selectedNodes: Array<NodeView>;
         hoverSignal: Phaser.Signal;
-
         labelInput: LabelInput;
 
-        constructor(game: Phaser.Game, labelInput: LabelInput) {
+        constructor(game: Phaser.Game) {
             this.game = game;
-            this.labelInput = labelInput;
-
             this.setCircleBitmapData(1);
-
             this.nodesToDelete = [];
             this.selectedNodes = [];
+            this.labelInput = new LabelInput(this.game);
             this.selectionRectangle = new SelectionRectangle(this.game);
             this.createInitialTree();
             this.attachHandlersToNodes();
@@ -59,6 +56,16 @@ module GTE {
             this.resetTree(true, true);
         }
 
+        /**A method for creating the circle for the nodes.
+         * This method will imitate the zoom-in/zoom-out functionality*/
+        setCircleBitmapData(scale: number) {
+            this.bmd = this.game.make.bitmapData(this.game.height * NODE_RADIUS * scale, this.game.height * NODE_RADIUS * scale, "node-circle", true);
+            this.bmd.ctx.fillStyle = "#ffffff";
+            this.bmd.ctx.beginPath();
+            this.bmd.ctx.arc(this.bmd.width / 2, this.bmd.width / 2, this.bmd.width * 0.45, 0, Math.PI * 2);
+            this.bmd.ctx.fill();
+        }
+
         /**The update method is built-into Phaser and is called 60 times a second.
          * It handles the selection of nodes, while holding the mouse button*/
         update() {
@@ -78,28 +85,12 @@ module GTE {
             }
         }
 
-        /**A method for creating the circle for the nodes.
-         * This method will imitate the zoom-in/zoom-out functionality*/
-        setCircleBitmapData(scale: number) {
-            this.bmd = this.game.make.bitmapData(this.game.height * NODE_RADIUS * scale, this.game.height * NODE_RADIUS * scale, "node-circle", true);
-            this.bmd.ctx.fillStyle = "#ffffff";
-            this.bmd.ctx.beginPath();
-            this.bmd.ctx.arc(this.bmd.width / 2, this.bmd.width / 2, this.bmd.width * 0.45, 0, Math.PI * 2);
-            this.bmd.ctx.fill();
-        }
-
+        //region Input Handlers and Signals
         /**Attaching listeners, that will listen for specific actions from the user*/
         attachHandlersToNodes() {
             this.treeView.nodes.forEach(n => {
                 this.attachHandlersToNode(n);
             });
-        }
-
-        /** Empties the selected nodes in a better way*/
-        emptySelectedNodes() {
-            while (this.selectedNodes.length !== 0) {
-                this.selectedNodes.pop();
-            }
         }
 
         /** The node specific method for attaching handlers
@@ -115,6 +106,7 @@ module GTE {
                 this.handleInputOutNode(n);
             });
 
+            // arguments[0] is transferred via a signal from Nodeview
             n.ownerLabel.events.onInputDown.add(function () {
                 let nodeLabel = arguments[0];
                 this.handleInputDownNodeLabel(nodeLabel, n);
@@ -151,7 +143,7 @@ module GTE {
 
         /**Handler for the signal HOVER_OUT on a Node*/
         private handleInputOutNode(nodeV?: NodeView) {
-
+            // ADD Hover Out logic here
         }
 
         /**Handler for the signal CLICK on a Node*/
@@ -187,8 +179,9 @@ module GTE {
                 this.labelInput.show(label, node);
             }
         }
+        //endregion
 
-
+        //region Nodes Logic
         /**Adding child or children to a node*/
         addNodeHandler(nodeV: NodeView) {
             this.handleInputOutNode(nodeV);
@@ -224,6 +217,15 @@ module GTE {
             }
         }
 
+        /** Empties the selected nodes in a better way*/
+        emptySelectedNodes() {
+            while (this.selectedNodes.length !== 0) {
+                this.selectedNodes.pop();
+            }
+        }
+        //endregion
+
+        //region Players Logic
         /** A method for assigning a player to a given node.*/
         assignPlayerToNode(playerID: number, n: NodeView) {
             //if someone adds player 4 before adding player 3, we will add player 3 instead.
@@ -246,8 +248,6 @@ module GTE {
             }
             n.resetNodeDrawing();
             n.resetLabelText(this.treeViewProperties.zeroSumOn);
-
-            this.resetTree(false, false);
         }
 
         /**A method for assigning chance player to a given node*/
@@ -255,8 +255,6 @@ module GTE {
             n.node.convertToChance(this.tree.players[0]);
             n.resetNodeDrawing();
             n.resetLabelText(this.treeViewProperties.zeroSumOn);
-            this.resetTree(false, false);
-
         }
 
         /**A method for adding a new player if there isn't one created already*/
@@ -273,7 +271,9 @@ module GTE {
                 this.treeView.showOrHideLabels(true);
             }
         }
+        //endregion
 
+        //region ISets Logic
         /**Creates an iSet with the corresponding checks*/
         createISet(nodesV: Array<NodeView>) {
             let nodes = [];
@@ -375,9 +375,10 @@ module GTE {
             }
             this.resetTree(false, false);
         }
+        //endregion
 
         /**A method for assigning random payoffs to nodes*/
-        randomPayoffs() {
+        assignRandomPayoffs() {
             let leaves = this.tree.getLeaves();
             leaves.forEach((n: Node) => {
                 n.payoffs.setRandomPayoffs();

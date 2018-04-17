@@ -25,14 +25,18 @@ module GTE {
 
         /** The create method is built-into the engine for every state. It acts as a constructor.*/
         create() {
-            this.labelInput = new LabelInput(this.game);
-            this.treeController = new TreeController(this.game, this.labelInput);
+
+            this.treeController = new TreeController(this.game);
             this.userActionController = new UserActionController(this.game, this.treeController);
             this.keyboardController = new KeyboardController(this.game, this.userActionController);
             this.hoverManager = new HoverMenuController(this.game, this.userActionController);
             this.topMenu = new TopMenu(this.userActionController);
 
             this.resizeLocked = false;
+            this.gameResize();
+        }
+
+        private gameResize() {
             window.onresize = () => {
                 if (!this.resizeLocked) {
                     this.resizeLocked = true;
