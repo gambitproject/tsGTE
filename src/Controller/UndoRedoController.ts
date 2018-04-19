@@ -11,12 +11,12 @@ module GTE {
         treesList: Array<Tree>;
         currentTreeIndex: number;
         treeParser: TreeParser;
-        treeCoordinates: Array<Array<{ x: number, y: number }>>;
+        treeCoordinatesList: Array<Array<{ x: number, y: number }>>;
 
         constructor(treeController: TreeController) {
             this.treeController = treeController;
             this.treesList = [];
-            this.treeCoordinates = [];
+            this.treeCoordinatesList = [];
             this.currentTreeIndex = 0;
             this.treeParser = new TreeParser();
             this.treesList.push(this.treeParser.parse(this.treeParser.stringify(this.treeController.tree)));
@@ -34,41 +34,9 @@ module GTE {
             else {
                 return;
             }
+            let newTree = this.treeParser.parse(this.treeParser.stringify(this.treesList[this.currentTreeIndex]));
 
-            //1. Delete the current Tree and ISets in tree controller
-            this.treeController.deleteNodeHandler(this.treeController.tree.root);
-            this.treeController.treeView.nodes[0].destroy();
-            this.treeController.treeView.iSets.forEach((iSet: ISetView) => {
-                iSet.destroy();
-            });
-
-            //2. Change it with the corresponding one in treelist
-            // this.treeController.tree = this.treesList[this.currentTreeIndex].clone();
-            //TODO: Check this!
-            this.treeController.tree = this.treeParser.parse(this.treeParser.stringify(this.treesList[this.currentTreeIndex]));
-            this.treeController.treeView = new TreeView(this.treeController.game, this.treeController.tree, this.treeController.treeViewProperties);
-            this.treeController.emptySelectedNodes();
-            this.treeController.treeView.nodes.forEach(n => {
-                n.resetNodeDrawing();
-                n.resetLabelText(this.treeController.treeViewProperties.zeroSumOn);
-            });
-
-            this.treeController.treeView.showOrHideLabels(true);
-            this.treeController.attachHandlersToNodes();
-            this.treeController.treeView.iSets.forEach((iSet) => {
-                this.treeController.attachHandlersToISet(iSet);
-            });
-
-            if (this.treeCoordinates[this.currentTreeIndex]) {
-                for (let i = 0; i < this.treeController.treeView.nodes.length; i++) {
-                    this.treeController.treeView.nodes[i].position.x = this.treeCoordinates[this.currentTreeIndex][i].x;
-                    this.treeController.treeView.nodes[i].position.y = this.treeCoordinates[this.currentTreeIndex][i].y;
-                }
-
-                this.treeController.treeView.drawISets()
-            }
-            this.treeController.resetTree(false, false);
-
+            this.treeController.reloadTreeFromJSON(newTree, this.treeCoordinatesList[this.currentTreeIndex]);
             this.resetUndoReddoButtons();
         }
 
@@ -80,7 +48,7 @@ module GTE {
                 this.treeController.treeView.nodes.forEach((n: NodeView) => {
                     coordsArray.push({x: n.position.x, y: n.position.y});
                 });
-                this.treeCoordinates[this.currentTreeIndex + 1] = coordsArray;
+                this.treeCoordinatesList[this.currentTreeIndex + 1] = coordsArray;
             }
             this.resetUndoReddoButtons();
             this.currentTreeIndex++;

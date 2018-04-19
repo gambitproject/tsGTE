@@ -59,8 +59,7 @@ module GTE {
 
         /** The update method is built-into the engine for every state. It executes at most 60 times a second*/
         update() {
-            this.treeController.update();
-            this.userActionController.updateCutSpriteHandler();
+            this.userActionController.update();
         }
 
         /** This is used for testing purposes - displays a text 60 times a second in the app*/
@@ -102,7 +101,7 @@ module GTE {
             // });
             // }
             // if(this.userActionController.undoRedoController){
-            //     this.game.debug.text(this.userActionController.undoRedoController.treesList.length+" "+this.userActionController.undoRedoController.treeCoordinates.length, 20,40, "#ff0000", "20px Arial");
+            //     this.game.debug.text(this.userActionController.undoRedoController.treesList.length+" "+this.userActionController.undoRedoController.treeCoordinatesList.length, 20,40, "#ff0000", "20px Arial");
             //
             // }
             // if(this.treeController.treeView && this.treeController.treeView.treeTweenManager){

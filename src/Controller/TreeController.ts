@@ -19,26 +19,21 @@ module GTE {
         tree: Tree;
         treeView: TreeView;
         treeViewProperties: TreeViewProperties;
-
-        selectionRectangle: SelectionRectangle;
-        errorPopUp: ErrorPopUp;
+        labelInput = new LabelInput(this.game);
 
         // An array used to list all nodes that need to be deleted
         private nodesToDelete: Array<Node>;
-        selectedNodes: Array<NodeView>;
+
         hoverSignal: Phaser.Signal;
-        labelInput: LabelInput;
+
 
         constructor(game: Phaser.Game) {
             this.game = game;
             this.setCircleBitmapData(1);
             this.nodesToDelete = [];
-            this.selectedNodes = [];
             this.labelInput = new LabelInput(this.game);
-            this.selectionRectangle = new SelectionRectangle(this.game);
             this.createInitialTree();
             this.attachHandlersToNodes();
-            this.errorPopUp = new ErrorPopUp(this.game);
             this.hoverSignal = new Phaser.Signal();
         }
 
@@ -52,7 +47,7 @@ module GTE {
 
             this.treeViewProperties = new TreeViewProperties(this.game.height * INITIAL_TREE_HEIGHT, this.game.width * INITIAL_TREE_WIDTH);
             this.treeView = new TreeView(this.game, this.tree, this.treeViewProperties);
-            this.addNodeHandler(this.treeView.nodes[0]);
+            this.addNodeHandler([this.treeView.nodes[0]]);
             this.resetTree(true, true);
         }
 
@@ -64,25 +59,6 @@ module GTE {
             this.bmd.ctx.beginPath();
             this.bmd.ctx.arc(this.bmd.width / 2, this.bmd.width / 2, this.bmd.width * 0.45, 0, Math.PI * 2);
             this.bmd.ctx.fill();
-        }
-
-        /**The update method is built-into Phaser and is called 60 times a second.
-         * It handles the selection of nodes, while holding the mouse button*/
-        update() {
-            if (this.game.input.activePointer.isDown && this.selectionRectangle.active) {
-                this.treeView.nodes.forEach((n: NodeView) => {
-                    if (this.selectionRectangle.overlap(n) && this.selectedNodes.indexOf(n) === -1) {
-                        n.isSelected = true;
-                        n.resetNodeDrawing();
-                        this.selectedNodes.push(n);
-                    }
-                    if (!this.selectionRectangle.overlap(n) && this.selectedNodes.indexOf(n) !== -1 && !this.game.input.keyboard.isDown(Phaser.Keyboard.SHIFT)) {
-                        n.isSelected = false;
-                        n.resetNodeDrawing();
-                        this.selectedNodes.splice(this.selectedNodes.indexOf(n), 1);
-                    }
-                });
-            }
         }
 
         //region Input Handlers and Signals
@@ -179,82 +155,87 @@ module GTE {
                 this.labelInput.show(label, node);
             }
         }
+
         //endregion
 
         //region Nodes Logic
         /**Adding child or children to a node*/
-        addNodeHandler(nodeV: NodeView) {
-            this.handleInputOutNode(nodeV);
-            if (nodeV.node.children.length === 0) {
-                let child1 = this.treeView.addChildToNode(nodeV);
-                let child2 = this.treeView.addChildToNode(nodeV);
-                this.attachHandlersToNode(child1);
-                this.attachHandlersToNode(child2);
-            }
-            else {
-                let child1 = this.treeView.addChildToNode(nodeV);
-                this.attachHandlersToNode(child1);
-            }
+        addNodeHandler(nodesV: Array<NodeView>) {
+            nodesV.forEach((nodeV: NodeView) => {
+                this.handleInputOutNode(nodeV);
+                if (nodeV.node.children.length === 0) {
+                    let child1 = this.treeView.addChildToNode(nodeV);
+                    let child2 = this.treeView.addChildToNode(nodeV);
+                    this.attachHandlersToNode(child1);
+                    this.attachHandlersToNode(child2);
+                }
+                else {
+                    let child1 = this.treeView.addChildToNode(nodeV);
+                    this.attachHandlersToNode(child1);
+                }
+            });
+            this.tree.cleanISets();
+            this.treeView.cleanISets();
+            this.resetTree(true, true);
         }
 
         /**A method for deleting a node - 2 step deletion.*/
-        deleteNodeHandler(node: Node) {
-            if (this.tree.nodes.indexOf(node) === -1) {
-                return;
-            }
-            if (node.children.length === 0 && node !== this.tree.root) {
-                this.deleteNode(node);
-            }
-            else {
-                this.nodesToDelete = [];
-                this.getAllBranchChildren(node);
-                this.nodesToDelete.pop();
-                this.nodesToDelete.forEach(n => {
-                    this.deleteNode(n);
-                });
-                this.nodesToDelete = [];
-                node.convertToDefault();
-            }
+        deleteNodeHandler(nodesV: Array<NodeView>) {
+            nodesV.forEach((nodeV: NodeView) => {
+                let node = nodeV.node;
+                if (this.tree.nodes.indexOf(node) === -1) {
+                    return;
+                }
+                if (node.children.length === 0 && node !== this.tree.root) {
+                    this.deleteNode(node);
+                }
+                else {
+                    this.nodesToDelete = [];
+                    this.getAllBranchChildren(node);
+                    this.nodesToDelete.pop();
+                    this.nodesToDelete.forEach(n => {
+                        this.deleteNode(n);
+                    });
+                    this.nodesToDelete = [];
+                    node.convertToDefault();
+                }
+            });
+            this.tree.cleanISets();
+            this.treeView.cleanISets();
+            this.resetTree(true, true);
         }
 
-        /** Empties the selected nodes in a better way*/
-        emptySelectedNodes() {
-            while (this.selectedNodes.length !== 0) {
-                this.selectedNodes.pop();
-            }
-        }
         //endregion
 
         //region Players Logic
         /** A method for assigning a player to a given node.*/
-        assignPlayerToNode(playerID: number, n: NodeView) {
+        assignPlayerToNode(playerID: number, nodesV: Array<NodeView>) {
             //if someone adds player 4 before adding player 3, we will add player 3 instead.
             if (playerID > this.tree.players.length) {
                 playerID--;
             }
 
             this.addPlayer(playerID);
+            nodesV.forEach((nodeV: NodeView) => {
+                nodeV.node.convertToLabeled(this.tree.findPlayerById(playerID));
+                // If the node is in an iset, change the owner of the iSet to the new player
+                if (nodeV.node.iSet && nodeV.node.iSet.nodes.length > 1) {
+                    nodeV.node.iSet.player = this.tree.players[playerID];
+                    let iSetView = this.treeView.findISetView(nodeV.node.iSet);
+                    iSetView.tint = iSetView.iSet.player.color;
+                }
+            });
 
-            n.node.convertToLabeled(this.tree.findPlayerById(playerID));
-            // If the node is in an iset, change the owner of the iSet to the new player
-            if (n.node.iSet && n.node.iSet.nodes.length > 1) {
-                n.node.iSet.player = this.tree.players[playerID];
-                let iSetView = this.treeView.findISetView(n.node.iSet);
-                iSetView.nodes.forEach(nv => {
-                    nv.resetNodeDrawing();
-                    nv.resetLabelText(this.treeViewProperties.zeroSumOn);
-                });
-                iSetView.tint = iSetView.iSet.player.color;
-            }
-            n.resetNodeDrawing();
-            n.resetLabelText(this.treeViewProperties.zeroSumOn);
+            this.resetTree(false, false);
         }
 
         /**A method for assigning chance player to a given node*/
-        assignChancePlayerToNode(n: NodeView) {
-            n.node.convertToChance(this.tree.players[0]);
-            n.resetNodeDrawing();
-            n.resetLabelText(this.treeViewProperties.zeroSumOn);
+        assignChancePlayerToNode(nodesV: Array<NodeView>) {
+            nodesV.forEach((nodeV: NodeView) => {
+                nodeV.node.convertToChance(this.tree.players[0]);
+            });
+
+            this.resetTree(false, false);
         }
 
         /**A method for adding a new player if there isn't one created already*/
@@ -271,6 +252,7 @@ module GTE {
                 this.treeView.showOrHideLabels(true);
             }
         }
+
         //endregion
 
         //region ISets Logic
@@ -281,13 +263,8 @@ module GTE {
                 nodes.push(n.node);
             });
             //Check for errors
-            try {
-                this.tree.canCreateISet(nodes);
-            }
-            catch (err) {
-                this.errorPopUp.show(err.message);
-                return;
-            }
+            this.tree.canCreateISet(nodes);
+
             // Create a list of nodes to put into an iSet - create the union of all iSets
             let iSetNodes = [];
             let player = null;
@@ -322,8 +299,8 @@ module GTE {
         }
 
         /**A method which removes all isets from the selected nodes*/
-        removeISetsByNodesHandler() {
-            let iSetsToRemove = this.getSelectedISets();
+        removeISetsByNodesHandler(selectedNodes: Array<NodeView>) {
+            let iSetsToRemove = this.getDistinctISetsFromNodes(selectedNodes);
 
             for (let i = 0; i < iSetsToRemove.length; i++) {
                 this.removeISetHandler(iSetsToRemove[i]);
@@ -332,9 +309,9 @@ module GTE {
         }
 
         /**A helper method which returns all iSets from the selected nodes*/
-        getSelectedISets() {
+        getDistinctISetsFromNodes(nodesV: Array<NodeView>) {
             let distinctISets = [];
-            this.selectedNodes.forEach((n) => {
+            nodesV.forEach((n) => {
                 if (n.node.iSet && distinctISets.indexOf(n.node.iSet) === -1) {
                     distinctISets.push(n.node.iSet);
                 }
@@ -375,6 +352,7 @@ module GTE {
             }
             this.resetTree(false, false);
         }
+
         //endregion
 
         /**A method for assigning random payoffs to nodes*/
@@ -392,6 +370,40 @@ module GTE {
             if (this.tree.nodes.length > 1) {
                 this.treeView.drawTree(fullReset, startAnimations);
             }
+        }
+
+        reloadTreeFromJSON(newTree: Tree, treeCoordinates: Array<{ x: number, y: number }>) {
+            //1. Delete the current Tree and ISets in tree controller
+            this.deleteNodeHandler([this.treeView.nodes[0]]);
+            this.treeView.nodes[0].destroy();
+            this.treeView.iSets.forEach((iSet: ISetView) => {
+                iSet.destroy();
+            });
+
+            //2. Change it with the corresponding one in treelist
+            // this.tree = this.treesList[this.currentTreeIndex].clone();
+            this.tree = newTree;
+            this.treeView = new TreeView(this.game, this.tree, this.treeViewProperties);
+            this.treeView.nodes.forEach(n => {
+                n.resetNodeDrawing();
+                n.resetLabelText(this.treeViewProperties.zeroSumOn);
+            });
+
+            this.treeView.showOrHideLabels(true);
+            this.attachHandlersToNodes();
+            this.treeView.iSets.forEach((iSet) => {
+                this.attachHandlersToISet(iSet);
+            });
+
+            if (treeCoordinates) {
+                for (let i = 0; i < this.treeView.nodes.length; i++) {
+                    this.treeView.nodes[i].position.x = treeCoordinates[i].x;
+                    this.treeView.nodes[i].position.y = treeCoordinates[i].y;
+                }
+
+                this.treeView.drawISets()
+            }
+            this.resetTree(false, false);
         }
 
         /**Get all children of a given node*/

@@ -10,34 +10,73 @@
 ///<reference path="../Model/StrategicForm.ts"/>
 ///<reference path="../View/StrategicFormView.ts"/>
 ///<reference path="../Model/Move.ts"/>
+///<reference path="../Menus/LabelInput/LabelInput.ts"/>
 
 
 module GTE {
     export class UserActionController {
         game: Phaser.Game;
-        treeController: TreeController;
-        backgroundInputSprite: Phaser.Sprite;
-        cutSprite: Phaser.Sprite;
-        cutInformationSet: ISetView;
-        undoRedoController: UndoRedoController;
-        treeParser: TreeParser;
 
+        treeController: TreeController;
+        //TODO: Create a strategic form controller
         strategicForm: StrategicForm;
         strategicFormView: StrategicFormView;
+        undoRedoController: UndoRedoController;
+
         // Used for going to the next node on tab pressed
         private nodesBFSOrder: Array<Node>;
         private leavesDFSOrder: Array<Node>;
 
+        selectedNodes: Array<NodeView>;
+        selectionRectangle: SelectionRectangle;
+        backgroundInputSprite: Phaser.Sprite;
+        cutSprite: Phaser.Sprite;
+        cutInformationSet: ISetView;
+        treeParser: TreeParser;
+        errorPopUp: ErrorPopUp;
+        labelInput: LabelInput;
 
         constructor(game: Phaser.Game, treeController: TreeController) {
             this.game = game;
             this.treeController = treeController;
+            this.treeParser = new TreeParser();
+            this.undoRedoController = new UndoRedoController(this.treeController);
+            this.selectedNodes = [];
+
+            this.selectionRectangle = new SelectionRectangle(this.game);
+            this.errorPopUp = new ErrorPopUp(this.game);
             this.nodesBFSOrder = [];
             this.leavesDFSOrder = [];
-            this.undoRedoController = new UndoRedoController(this.treeController);
-            this.treeParser = new TreeParser();
             this.createBackgroundForInputReset();
             this.createCutSprite();
+        }
+
+        /**The update method is built-into Phaser and is called 60 times a second.
+         * It handles the selection of nodes, while holding the mouse button*/
+        update() {
+            if (this.game.input.activePointer.isDown && this.selectionRectangle.active) {
+                this.treeController.treeView.nodes.forEach((n: NodeView) => {
+                    if (this.selectionRectangle.overlap(n) && this.selectedNodes.indexOf(n) === -1) {
+                        n.isSelected = true;
+                        n.resetNodeDrawing();
+                        this.selectedNodes.push(n);
+                    }
+                    if (!this.selectionRectangle.overlap(n) && this.selectedNodes.indexOf(n) !== -1 && !this.game.input.keyboard.isDown(Phaser.Keyboard.SHIFT)) {
+                        n.isSelected = false;
+                        n.resetNodeDrawing();
+                        this.selectedNodes.splice(this.selectedNodes.indexOf(n), 1);
+                    }
+                });
+            }
+
+            this.updateCutSpriteHandler();
+        }
+
+        /** Empties the selected nodes in a better way*/
+        emptySelectedNodes() {
+            while (this.selectedNodes.length !== 0) {
+                this.selectedNodes.pop();
+            }
         }
 
         /**This sprite is created for the cut functionality of an independent set*/
@@ -93,7 +132,7 @@ module GTE {
         /**A method which loads the tree from a selected file*/
         private loadTreeFromFile(text: string) {
             try {
-                this.treeController.deleteNodeHandler(this.treeController.tree.root);
+                this.treeController.deleteNodeHandler([this.treeController.treeView.nodes[0]]);
                 this.treeController.treeView.nodes[0].destroy();
                 this.treeController.treeView.iSets.forEach((iSet: ISetView) => {
                     iSet.destroy();
@@ -121,7 +160,7 @@ module GTE {
                             this.treeController.tree.moves[i].label = labels[i];
                         }
                     }
-                    this.treeController.emptySelectedNodes();
+                    this.emptySelectedNodes();
                     this.treeController.treeView.nodes.forEach(n => {
                         n.resetNodeDrawing();
                         n.resetLabelText(this.treeController.treeViewProperties.zeroSumOn);
@@ -134,7 +173,7 @@ module GTE {
                 }
             }
             catch (err) {
-                this.treeController.errorPopUp.show("Error in reading file. ");
+                this.errorPopUp.show("Error in reading file. ");
                 this.treeController.createInitialTree();
             }
             this.destroyStrategicForm();
@@ -153,28 +192,23 @@ module GTE {
 
         /**A method for deselecting nodes.*/
         deselectNodesHandler() {
-            if (this.treeController.selectedNodes.length > 0) {
-                this.treeController.selectedNodes.forEach(n => {
+            if (this.selectedNodes.length > 0) {
+                this.selectedNodes.forEach(n => {
                     n.isSelected = false;
                     n.resetNodeDrawing();
                 });
-                this.treeController.emptySelectedNodes();
+                this.emptySelectedNodes();
             }
         }
 
         /**A method for adding children to selected nodes (keyboard N).*/
         addNodesHandler(nodeV?: NodeView) {
             if (nodeV) {
-                this.treeController.addNodeHandler(nodeV);
+                this.treeController.addNodeHandler([nodeV]);
             }
-            else if (this.treeController.selectedNodes.length > 0) {
-                this.treeController.selectedNodes.forEach(n => {
-                    this.treeController.addNodeHandler(n);
-                });
+            else if (this.selectedNodes.length > 0) {
+                this.treeController.addNodeHandler(this.selectedNodes);
             }
-            this.treeController.tree.cleanISets();
-            this.treeController.treeView.cleanISets();
-            this.treeController.resetTree(true, true);
             this.destroyStrategicForm();
             this.undoRedoController.saveNewTree();
         }
@@ -182,16 +216,14 @@ module GTE {
         /** A method for deleting nodes (keyboard DELETE).*/
         deleteNodeHandler(nodeV?: NodeView) {
             if (nodeV) {
-                this.treeController.deleteNodeHandler(nodeV.node);
+                this.treeController.deleteNodeHandler([nodeV]);
             }
-            else if (this.treeController.selectedNodes.length > 0) {
-                this.treeController.selectedNodes.forEach(n => {
-                    this.treeController.deleteNodeHandler(n.node);
-                });
+            else if (this.selectedNodes.length > 0) {
+                this.treeController.deleteNodeHandler(this.selectedNodes);
             }
             let deletedNodes = [];
-            if (this.treeController.selectedNodes.length > 0) {
-                this.treeController.selectedNodes.forEach(n => {
+            if (this.selectedNodes.length > 0) {
+                this.selectedNodes.forEach(n => {
                     if (n.node === null) {
                         deletedNodes.push(n);
                     }
@@ -199,12 +231,8 @@ module GTE {
             }
 
             deletedNodes.forEach(n => {
-                this.treeController.selectedNodes.splice(this.treeController.selectedNodes.indexOf(n), 1);
+                this.selectedNodes.splice(this.selectedNodes.indexOf(n), 1);
             });
-
-            this.treeController.tree.cleanISets();
-            this.treeController.treeView.cleanISets();
-            this.treeController.resetTree(true, true);
 
             this.destroyStrategicForm();
             this.undoRedoController.saveNewTree();
@@ -213,39 +241,30 @@ module GTE {
         /**A method for assigning players to nodes (keyboard 1,2,3,4)*/
         assignPlayerToNodeHandler(playerID: number, nodeV?: NodeView) {
             if (nodeV) {
-                this.treeController.assignPlayerToNode(playerID, nodeV);
+                this.treeController.assignPlayerToNode(playerID, [nodeV]);
             }
-            else if (this.treeController.selectedNodes.length > 0) {
-                this.treeController.selectedNodes.forEach((n) => {
-                    this.treeController.assignPlayerToNode(playerID, n);
-                });
+            else if (this.selectedNodes.length > 0) {
+                this.treeController.assignPlayerToNode(playerID, this.selectedNodes);
             }
             this.undoRedoController.saveNewTree();
-            this.treeController.resetTree(false,false);
         }
 
         /**A method for assigning chance player to a node (keyboard 0)*/
         assignChancePlayerToNodeHandler(nodeV?: NodeView) {
             if (nodeV) {
-                this.treeController.assignChancePlayerToNode(nodeV);
+                this.treeController.assignChancePlayerToNode([nodeV]);
             }
-            else if (this.treeController.selectedNodes.length > 0) {
-                this.treeController.selectedNodes.forEach((n) => {
-                    this.treeController.assignChancePlayerToNode(n);
-                });
+            else if (this.selectedNodes.length > 0) {
+                this.treeController.assignChancePlayerToNode(this.selectedNodes);
             }
             this.undoRedoController.saveNewTree();
-            this.treeController.resetTree(false,false);
         }
 
         /**A method which removes the last player from the list of players*/
         removeLastPlayerHandler() {
             this.treeController.tree.removePlayer(this.treeController.tree.players[this.treeController.tree.players.length - 1]);
             $("#player-number").html((this.treeController.tree.players.length - 1).toString());
-            this.treeController.treeView.nodes.forEach((n: NodeView) => {
-                n.resetNodeDrawing();
-                n.resetLabelText(this.treeController.treeViewProperties.zeroSumOn);
-            });
+
             this.treeController.resetTree(false, false);
             this.destroyStrategicForm();
             this.undoRedoController.saveNewTree();
@@ -253,8 +272,14 @@ module GTE {
 
         /**A method for creating an iSet (keyboard I)*/
         createISetHandler() {
-            if (this.treeController.selectedNodes.length > 1) {
-                this.treeController.createISet(this.treeController.selectedNodes);
+            if (this.selectedNodes.length > 1) {
+                try {
+                    this.treeController.createISet(this.selectedNodes);
+                }
+                catch (err) {
+                    this.errorPopUp.show(err.message);
+                    return;
+                }
             }
             this.destroyStrategicForm();
             this.undoRedoController.saveNewTree();
@@ -273,7 +298,7 @@ module GTE {
                 this.removeISetHandler(nodeV.node.iSet);
             }
             else {
-                this.treeController.removeISetsByNodesHandler();
+                this.treeController.removeISetsByNodesHandler(this.selectedNodes);
             }
             this.destroyStrategicForm();
             this.undoRedoController.saveNewTree();
@@ -283,6 +308,7 @@ module GTE {
         undoRedoHandler(undo: boolean) {
             this.undoRedoController.changeTreeInController(undo);
             $("#player-number").html((this.treeController.tree.players.length - 1).toString());
+            this.emptySelectedNodes();
             this.destroyStrategicForm();
         }
 
@@ -442,9 +468,8 @@ module GTE {
                         m.updateLabel(this.treeController.treeViewProperties.fractionOn);
                     });
                 }
-                // If we are currently looking at nodes
+                // If we are looking at nodes
                 else if (this.treeController.labelInput.currentlySelected instanceof NodeView) {
-
                     let nodeV = (<NodeView>this.treeController.labelInput.currentlySelected);
                     if (nodeV.ownerLabel.alpha === 1) {
                         nodeV.node.player.label = this.treeController.labelInput.inputField.val();
@@ -520,7 +545,7 @@ module GTE {
 
         /**Moves a node manually and does not move the children*/
         moveNodeManually(directionX: number, directionY: number, distance: number) {
-            this.treeController.selectedNodes.forEach(node => {
+            this.selectedNodes.forEach(node => {
                 node.position.add(directionX * distance, directionY * distance);
                 node.resetNodeDrawing();
             });
@@ -539,11 +564,11 @@ module GTE {
                 this.strategicFormView = new StrategicFormView(this.game, this.strategicForm);
                 this.strategicFormView.background.events.onDragStart.add(() => {
                     this.game.canvas.style.cursor = "move";
-                    this.treeController.selectionRectangle.active = false;
+                    this.selectionRectangle.active = false;
                 });
                 this.strategicFormView.background.events.onDragStop.add(() => {
                     this.game.canvas.style.cursor = "move";
-                    this.treeController.selectionRectangle.active = true;
+                    this.selectionRectangle.active = true;
                 });
                 this.strategicFormView.closeIcon.events.onInputDown.add(() => {
                     this.strategicForm.destroy();
@@ -552,7 +577,7 @@ module GTE {
             }
         }
 
-         destroyStrategicForm() {
+        destroyStrategicForm() {
             if (this.strategicForm) {
                 this.strategicForm.destroy();
             }

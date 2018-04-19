@@ -54,6 +54,8 @@ module GTE {
             this.nodes.forEach(n=>{
                n.ownerLabel.alpha = 0;
             });
+            this.game.add.tween(this)
+                .from({alpha:0},300,Phaser.Easing.Default,true);
         }
 
         /**Sorts the nodes left to right before drawing*/

@@ -173,7 +173,7 @@ module GTE {
             // Cut information set
             this.cKey.onDown.add(() => {
                 if (!this.userActionController.treeController.labelInput.active) {
-                    let distinctISetsSelected = this.userActionController.treeController.getSelectedISets();
+                    let distinctISetsSelected = this.userActionController.treeController.getDistinctISetsFromNodes(this.userActionController.selectedNodes);
                     if (distinctISetsSelected.length === 1) {
                         this.userActionController.initiateCutSpriteHandler(this.userActionController.treeController.treeView.findISetView(distinctISetsSelected[0]));
                     }

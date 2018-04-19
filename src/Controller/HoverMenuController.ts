@@ -69,7 +69,7 @@ module GTE {
             },300);
 
 
-            this.selectedNodesSprites = this.userActionController.treeController.selectedNodes;
+            this.selectedNodesSprites = this.userActionController.selectedNodes;
         }
 
         private createButtonSprites() {
@@ -123,10 +123,10 @@ module GTE {
                     }
                     else if (this.previouslyHoveredSprite instanceof ISetView) {
                         //A hack in order not to break the information set.
-                        this.userActionController.treeController.emptySelectedNodes();
-                        this.userActionController.treeController.selectedNodes = (<ISetView>this.previouslyHoveredSprite).nodes.slice(0);
+                        this.userActionController.emptySelectedNodes();
+                        this.userActionController.selectedNodes = (<ISetView>this.previouslyHoveredSprite).nodes.slice(0);
                         this.userActionController.addNodesHandler();
-                        this.userActionController.treeController.emptySelectedNodes();
+                        this.userActionController.emptySelectedNodes();
                     }
                 }
             });
@@ -149,10 +149,10 @@ module GTE {
 
                             });
                             // Same hack as above
-                            this.userActionController.treeController.emptySelectedNodes();
-                            this.userActionController.treeController.selectedNodes = nodesToDelete.slice(0);
+                            this.userActionController.emptySelectedNodes();
+                            this.userActionController.selectedNodes = nodesToDelete.slice(0);
                             this.userActionController.deleteNodeHandler();
-                            this.userActionController.treeController.emptySelectedNodes();
+                            this.userActionController.emptySelectedNodes();
                         }
                     }
                 }

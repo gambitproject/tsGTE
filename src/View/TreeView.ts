@@ -129,8 +129,8 @@ module GTE {
         /** Resets the drawing of each node, depending on the node type*/
         resetNodeLabels() {
             this.nodes.forEach((nV: NodeView) => {
-                nV.resetLabelText(this.properties.zeroSumOn);
                 nV.resetNodeDrawing();
+                nV.resetLabelText(this.properties.zeroSumOn);
             });
         }
 
