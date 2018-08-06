@@ -37,7 +37,6 @@ module GTE {
 
             //Get all P1 and P2 information sets and singletons separated from the DFS order.
             nodes.forEach(n => {
-                //TODO: Refactor repetition
                 if (n.player === this.tree.players[1]) {
                     if (n.iSet && p1InfoSets.indexOf(n.iSet) === -1) {
                         p1InfoSets.push(n.iSet);
@@ -196,6 +195,7 @@ module GTE {
             }
             return false;
         }
+
         //endregion
 
         //region Payoff matrices generation
@@ -329,6 +329,7 @@ module GTE {
                 return true;
             }
         }
+
         //endregion
 
 
