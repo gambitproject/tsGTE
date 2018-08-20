@@ -26,9 +26,15 @@ module GTE {
         fractionDecimalButton: JQuery;
 
         strategicFormButton: JQuery;
+        solveButton: JQuery;
+
         infoButton: JQuery;
         infoContainer: JQuery;
         closeInfoButton: JQuery;
+
+        solutionContainer: JQuery;
+        closeSolutionContainer: JQuery;
+
         overlay: JQuery;
         settingsButton: JQuery;
         settingsWindow: JQuery;
@@ -61,9 +67,15 @@ module GTE {
             this.zeroSumButton = $("#zero-sum-wrapper");
             this.fractionDecimalButton = $("#fraction-decimal-wrapper");
             this.strategicFormButton = $("#strat-form-button");
+            this.solveButton = $("#solve-form-button");
+
             this.infoButton = $("#info-button-wrapper");
             this.infoContainer = $("#info-container");
             this.closeInfoButton = $("#close-info");
+
+            this.solutionContainer = $("#solution-container");
+            this.closeSolutionContainer = $("#close-solution");
+
             this.videoButton = $("#video-button-wrapper");
             this.videoContainer = $("#video-container");
             this.closeVideoButton = $("#close-video");
@@ -168,6 +180,21 @@ module GTE {
                 this.userActionController.createStrategicForm();
             });
 
+            this.solveButton.on("click",()=>{
+               this.userActionController.solveGame();
+            });
+
+            setTimeout(()=>{
+                this.userActionController.solvedSignal.add(function() {
+                    this.handleSolution(arguments[0]);
+                },this);
+            },2000);
+
+            this.closeSolutionContainer.on("click",()=>{
+               this.solutionContainer.removeClass("show-container");
+               this.overlay.removeClass("show-overlay");
+            });
+
             this.infoButton.on("click", () => {
                 this.infoContainer.addClass("show-container");
                 this.overlay.addClass("show-overlay");
@@ -193,6 +220,7 @@ module GTE {
 
             this.overlay.on("click", () => {
                 this.closeInfoButton.click();
+                this.closeSolutionContainer.click();
             });
 
             this.settingsButton.on("click", () => {
@@ -242,6 +270,13 @@ module GTE {
                 this.userActionController.treeController.resetTree(true, false);
             });
 
+        }
+
+        handleSolution(solution:any){
+
+            $("#solution-text").text("\n"+JSON.parse(solution).solver_output);
+            this.solutionContainer.addClass("show-container");
+            this.overlay.addClass("show-overlay");
         }
     }
 }

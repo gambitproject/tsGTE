@@ -394,7 +394,6 @@ module GTE {
                         current = current.parent;
                     }
                 });
-                console.log(iSetReachability);
                 for (let j = 0; j < iSetReachability.length; j++) {
                     let pair1 = iSetReachability[j];
                     for (let k = j + 1; k < iSetReachability.length; k++) {

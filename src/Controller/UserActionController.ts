@@ -34,7 +34,7 @@ module GTE {
         cutInformationSet: ISetView;
         treeParser: TreeParser;
         errorPopUp: ErrorPopUp;
-        labelInput: LabelInput;
+        solvedSignal: Phaser.Signal;
 
         constructor(game: Phaser.Game, treeController: TreeController) {
             this.game = game;
@@ -47,6 +47,8 @@ module GTE {
             this.errorPopUp = new ErrorPopUp(this.game);
             this.nodesBFSOrder = [];
             this.leavesDFSOrder = [];
+            this.solvedSignal = new Phaser.Signal();
+
             this.createBackgroundForInputReset();
             this.createCutSprite();
         }
@@ -584,6 +586,48 @@ module GTE {
             if (this.strategicFormView) {
                 this.strategicFormView.destroy();
             }
+        }
+
+        solveGame() {
+            if (!this.strategicForm) {
+                this.createStrategicForm();
+            }
+            if (this.strategicForm) {
+                console.log(this.strategicForm.payoffsMatrix);
+                let rows = this.strategicForm.payoffsMatrix.length;
+                let cols = this.strategicForm.payoffsMatrix[0].length;
+
+                let m1 = "";
+                let m2 = "";
+                for (let i = 0; i < this.strategicForm.payoffsMatrix.length; i++) {
+                    for (let j = 0; j < this.strategicForm.payoffsMatrix[i].length; j++) {
+                        m1+=this.strategicForm.payoffsMatrix[i][j].outcomes[0]+" ";
+                        m2+=this.strategicForm.payoffsMatrix[i][j].outcomes[0]+" ";
+                    }
+                    m1+="\n";
+                    m2+="\n";
+                }
+
+                let objToSend = rows+" "+cols+"\n\n"+m1+"\n"+m2;
+
+                let data = new FormData();
+                data.append("game_text", objToSend);
+                let xhr = new XMLHttpRequest();
+
+                xhr.addEventListener("readystatechange",  ()=>{
+                    if (xhr.readyState === 4) {
+                        this.solvedSignal.dispatch(xhr.responseText);
+                    }
+                });
+
+
+                xhr.open("POST", "http://test.api.logos.bg/api/solve/");
+                xhr.send(data);
+            }
+        }
+
+        sendSignal(){
+
         }
     }
 }

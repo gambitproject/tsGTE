@@ -136,7 +136,7 @@ module GTE {
             }
         }
 
-        /**Halder for the signal CLICK on a Move Label*/
+        /**Handler for the signal CLICK on a Move Label*/
         private handleInputDownMoveLabel(label: Phaser.Text, move: MoveView) {
             if (label.alpha !== 0) {
                 this.labelInput.show(label, move);

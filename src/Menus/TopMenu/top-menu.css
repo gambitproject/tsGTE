@@ -125,8 +125,7 @@
     margin-left: 5%;
 }
 
-#strat-form-button {
-    margin-left: 10%;
+.text-button {
     background: -webkit-gradient(linear, left top, left bottom, from(#757575), to(#4b4b4b));
     border: 1px solid #555;
     color: white;
@@ -140,9 +139,16 @@
     transition-duration: 0.4s;
 }
 
-#strat-form-button:hover {
+.text-button:hover {
     background: -webkit-gradient(linear, left top, left bottom, from(#f0f0f0), to(#e0e0e0));
     color: black;
+}
+
+#strat-form-button{
+    margin-left:10%;
+}
+#solve-form-button{
+    margin-left:3%;
 }
 
 #info-button-wrapper {
@@ -425,4 +431,12 @@ input {
 #video-wrapper iframe {
     width: 100%;
     height: 100%;
+}
+
+#solution-text{
+    padding: 3%;
+    background-color: white;
+    white-space:pre;
+    overflow-y:scroll;
+    height:500px;
 }
